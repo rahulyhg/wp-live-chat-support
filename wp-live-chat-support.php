@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
@@ -10,7 +10,7 @@
   Domain Path: /languages
  */
 
-/* ASDF
+/* ASDF2
  * 6.0.00 -2015-10-26 - Freedom of Speech Update- Medium Priority
  * New functionality
  *  Unlimited simultaneous chats now available
