@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
@@ -10,7 +10,7 @@
   Domain Path: /languages
  */
 
-/* ASDF2
+/* 
  * 6.0.00 -2015-10-26 - Freedom of Speech Update- Medium Priority
  * New functionality
  *  Unlimited simultaneous chats now available
@@ -19,6 +19,15 @@
  *  wplc_hook_missed_chat - Hook for when a live chat is missed - fires in the live chat ajax call so be careful not to output anything as it will break the JSON return
  *  wplc_hook_initiate_chat - Hook for when a live chat is initiated - fires in the live chat ajax call so be careful not to output anything as it will break the JSON return
  * Many new filters added
+ *
+ * 5.0.14 - 2016-01-13 - High priority
+ * Bug fix: When activating WP Live Chat Support, a table is created with a shared MySQL column name which caused issues on some servers. The column name has been changed
+ * 
+ * 5.0.13 - 2016-01-05 - High priority
+ * UTF8 encoding bug fixed
+ * 
+ * 5.0.12 - 2016-01-04 - Low priority
+ * Tested with WP 4.4
  * 
  * 5.0.11 - 2015-10-14 - Low priority
  * Translation string changes
@@ -323,6 +332,9 @@ add_action('init', 'wplc_version_control');
 add_action('wp_footer', 'wplc_display_box');
 
 add_action('init', 'wplc_init');
+
+require_once (plugin_dir_path(__FILE__) . 'includes/update_control.class.php');
+
 
 if (function_exists('wplc_head_pro')) {
     add_action('admin_init', 'wplc_head_pro');
@@ -660,6 +672,12 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
     wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
+
+    if (!isset($wplc_settings['wplc_pro_offline1'])) { $wplc_settings["wplc_pro_offline1"] = __("We are currently offline. Please leave a message and we'll get back to you shortly.", "wplivechat"); }
+    if (!isset($wplc_settings['wplc_pro_offline2'])) { $wplc_settings["wplc_pro_offline2"] =  __("Sending message...", "wplivechat"); }
+    if (!isset($wplc_settings['wplc_pro_offline3'])) { $wplc_settings["wplc_pro_offline3"] = __("Thank you for your message. We will be in contact soon.", "wplivechat"); }
+
+    
     wp_localize_script('wplc-user-script', 'wplc_offline_msg', stripslashes($wplc_settings['wplc_pro_offline2']));
     wp_localize_script('wplc-user-script', 'wplc_offline_msg3',stripslashes($wplc_settings['wplc_pro_offline3']));
 
@@ -1512,7 +1530,7 @@ function wplc_admin_display_chat($cid) {
         "
     );
     foreach ($results as $result) {
-        $from = $result->from;
+        $from = $result->msgfrom;
         $msg = stripslashes($result->msg);
         $msg_hist .= "$from: $msg<br />";
     }
@@ -1559,7 +1577,7 @@ function wplc_hook_control_superadmin_head() {
 
 function wplc_superadmin_javascript() {
 
-    if (isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu') {
+    if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' || $_GET['page'] == 'wplivechat-menu-settings')) {
 
         if (!isset($_GET['action'])) {
             if (function_exists("wplc_register_pro_version")) {
@@ -2123,11 +2141,23 @@ function wplc_handle_db() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
+
+    /* check for previous versions containing 'from' instead of 'msgfrom' */
+    $results = $wpdb->get_results("DESC $wplc_tblname_msgs");
+    $founded = 0;
+    foreach ($results as $row ) {
+        if ($row->Field == "from") {
+            $founded++;
+        }
+    }
+
+    if ($founded>0) { $wpdb->query("ALTER TABLE ".$wplc_tblname_msgs." CHANGE `from` `msgfrom` varchar(150)"); }
+
     $sql = '
         CREATE TABLE ' . $wplc_tblname_msgs . ' (
           id int(11) NOT NULL AUTO_INCREMENT,
           chat_sess_id int(11) NOT NULL,
-          `from` varchar(150) CHARACTER SET utf8 NOT NULL,
+          msgfrom varchar(150) CHARACTER SET utf8 NOT NULL,
           msg varchar(700) CHARACTER SET utf8 NOT NULL,
           timestamp datetime NOT NULL,
           status INT(3) NOT NULL,
@@ -2744,7 +2774,7 @@ function wplc_extensions_menu() {
         echo "</div></p>";
 
 
-        $response = wp_remote_post( "http://ccplugins.co/api-wplc-extensions", array(
+        $response = wp_remote_post( "https://ccplugins.co/api-wplc-extensions", array(
                 'method' => 'POST',
                 'body' => array( 
                     'action' => 'extensions',
@@ -2755,9 +2785,17 @@ function wplc_extensions_menu() {
         );
         $data = json_decode($response['body']);
 
+        global $wplc_version;
+        $wplc_version = str_replace(",","",$wplc_version);
+
+
         if ($data) {
             $output = "";
             foreach ($data as $extension) {
+              if (!isset($extension->fromversion)) { $extension->fromversion = 0; }
+              if (intval($wplc_version) >= intval($extension->fromversion)) {
+
+
                 $output .= '<div class="wplc-extension">';
                 $output .= '<h3 class="wplc-extension-title">'.$extension->title.'</h3>';
                 $output .= '<a href="'.$extension->link.'" title="'.$extension->title.'" target="_BLANK">';
@@ -2774,6 +2812,7 @@ function wplc_extensions_menu() {
                 }
                 $output .= $button;
                 $output .= '</div>';
+              }
             }
             echo $output;
         }
@@ -2995,38 +3034,38 @@ function wplc_get_chat_messages($cid) {
 
 function wplc_build_api_check($page_content, $data) {
         $link = "#";
-        $image = "http://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
+        $image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
         if ($data['string'] == "Multiple Agents") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/Agents-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/Agents-Small.jpg";
         }
         if ($data['string'] == "Cloud Server") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/Cloud-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/Cloud-Small.jpg";
         }
         if ($data['string'] == "Advanced Chat Box Control") { 
           $link = "http://wp-livechat.com/extensions/advanced-chat-control/";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/AdvancedChatBox-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/AdvancedChatBox-Small.jpg";
         }        
         if ($data['string'] == "Choose When Online") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/ChooseOnline-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/ChooseOnline-Small.jpg";
         }        
-        if ($data['string'] == "Encrypt Chats") { 
+        if ($data['string'] == "Encryption") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/Encryption-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/Encryption-Small.jpg";
         } 
         if ($data['string'] == "Mobile and Desktop App") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Small.jpg";
         } 
         if ($data['string'] == "Initiate Chats") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/InitiateChat-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/InitiateChat-Small.jpg";
         } 
         if ($data['string'] == "Include Exclude Pages") { 
           $link = "";
-          $image = "http://ccplugins.co/api-wplc-extensions/images/IncludeAndExclude-Small.jpg";
+          $image = "https://ccplugins.co/api-wplc-extensions/images/IncludeAndExclude-Small.jpg";
         }         
         
         
@@ -3082,7 +3121,7 @@ function wplc_filter_control_relevant_extensions_main_initiate($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
   
   $rel_name = __("Initiate Chats","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/InitiateChat-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/InitiateChat-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/initiate-chat-extension/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_initiate1";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3103,7 +3142,7 @@ function wplc_filter_control_relevant_extensions_main_mobile($text) {
   if (function_exists("wplc_mobile_check_if_logged_in")) { return $text; }
   
   $rel_name = __("Mobile & Desktop App","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/mobile-desktop-app-extension/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_mobile";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3124,7 +3163,7 @@ function wplc_filter_control_relevant_extensions_main_cloud($text) {
   if (function_exists("wplc_cloud_filter_control_chat_messages")) { return $text; }
   
   $rel_name = __("Cloud Server","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/Cloud-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/Cloud-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/cloud-server-extension/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_cloud";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3146,7 +3185,7 @@ function wplc_filter_control_relevant_extensions_chatbox_initiate($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
   
   $rel_name = __("Initiate Chats","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/InitiateChat-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/InitiateChat-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/initiate-chat-extension/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_initiate2";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3167,7 +3206,7 @@ add_filter("wplc_filter_relevant_extensions_chatbox","wplc_filter_control_releva
 function wplc_filter_control_relevant_extensions_chatbox_acbc($text) {
   if (function_exists("wplc_acbc_hook_control_settings_page")) { return $text; }
   $rel_name = __("Advanced Chat Box Control","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/AdvancedChatBox-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/AdvancedChatBox-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/advanced-chat-box-control/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_acbc";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3188,7 +3227,7 @@ add_filter("wplc_filter_relevant_extensions_chatbox","wplc_filter_control_releva
 function wplc_filter_control_relevant_extensions_chatbox_include($text) {
   if (function_exists("wplc_inex_filter_control_display_contents")) { return $text; }
   $rel_name = __("Include and Exclude Pages","wplivechat");
-  $rel_image = "http://ccplugins.co/api-wplc-extensions/images/IncludeAndExclude-Icon.jpg";
+  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/IncludeAndExclude-Icon.jpg";
   $rel_link = "http://wp-livechat.com/extensions/include-exclude-chat/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_include";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -3244,4 +3283,82 @@ function wplc_hook_control_settings_page_relevant_extensions_main() {
       echo "";
       echo "</div>";
     }
+}
+
+
+
+function wplc_admin_download_history($type, $cid){
+  
+    global $wpdb;
+    global $wplc_tblname_msgs;
+    
+    $results = $wpdb->get_results(
+        "
+        SELECT *
+        FROM $wplc_tblname_msgs
+        WHERE `chat_sess_id` = '$cid'
+        ORDER BY `timestamp` ASC
+        LIMIT 0, 100
+        "
+    );
+
+    $fields[] = array(
+        'id' => __('Chat ID', 'wplivechat'),
+        'msgfrom' => __('From', 'wplivechat'),
+        'msg' => __('Message', 'wplivechat'),
+        'time' => __('Timestamp', 'wplivechat'),
+        'orig' => __('Origin', 'wplivechat'),
+    );
+
+    foreach ($results as $result => $key) {
+        if($key->originates == 2){
+            $user = __('user', 'wplivechat');
+        } else {
+            $user = __('agent', 'wplivechat');
+        }
+        
+        $fields[] = array(
+            'id' => $key->chat_sess_id,
+            'msgfrom' => $key->msgfrom,
+            'msg' => apply_filters("wplc_filter_message_control_out",$key->msg),
+            'time' => $key->timestamp,
+            'orig' => $user,
+        );
+    }      
+    
+    ob_end_clean();
+    
+    wplc_convert_to_csv_new($fields, 'live_chat_history_'.$cid.'.csv', ',');
+    
+    exit();
+}
+
+function wplc_convert_to_csv_new($in, $out, $del){
+    
+    $f = fopen('php://memory', 'w');
+
+    foreach ($in as $line) {
+        wplc_fputcsv_eol_new($f, $line, $del, "\r\n");
+    }
+
+    fseek($f, 0);
+
+    header('Content-Type: application/csv');
+    
+    header('Content-Disposition: attachement; filename="' . $out . '";');
+
+    fpassthru($f);
+}
+function wplc_fputcsv_eol_new($fp, $array, $del, $eol) {
+  fputcsv($fp, $array,$del);
+  if("\n\r" != $eol && 0 === fseek($fp, -1, SEEK_CUR)) {
+    fwrite($fp, $eol);
+  }
+}
+
+
+function wplc_plugin_row_invalid_api() {
+  echo '<tr class="active"><td>&nbsp;</td><td colspan="2" style="color:red;">
+    &nbsp; &nbsp; '.__('Your API Key is Invalid. You are not eligible for future updates. Please enter your API key <a href="admin.php?page=wplivechat-menu-api-keys-page">here</a>.','wplivechat').'
+    </td></tr>';  
 }

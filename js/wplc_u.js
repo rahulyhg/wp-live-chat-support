@@ -253,11 +253,14 @@ jQuery(document).ready(function() {
                                    
                     //jQuery("#wp-live-chat").css({ "display" : "block" });
                     if(jQuery("#wp-live-chat").attr('wplc-auto-pop-up') === "1"){
-                        jQuery("#wp-live-chat-2").css({ "display" : "block" });
+
+                        open_chat();
+
+                        /*jQuery("#wp-live-chat-2").css({ "display" : "block" });
                         jQuery("#wp-live-chat-minimize").show();
                         jQuery("#wp-live-chat-close").show();
                         jQuery('#wp-live-chat').removeClass("wplc_close");
-                        jQuery('#wp-live-chat').addClass("wplc_open");
+                        jQuery('#wp-live-chat').addClass("wplc_open");*/
                     }
                 }, parseInt(window.wplc_delay));
             }
@@ -517,7 +520,7 @@ jQuery(document).ready(function() {
 
                     jQuery.cookie('wplc_name', wplc_name, { path: '/' } );
                     jQuery.cookie('wplc_email', wplc_email, { path: '/' } );
-                    //console.log("wplc_start_chat");
+
                     wplc_cid = jQuery.trim(response);
             });
         });

@@ -158,7 +158,7 @@ function wplc_record_chat_msg($from,$cid,$msg) {
 	array( 
             'chat_sess_id' => $cid, 
             'timestamp' => current_time('mysql'),
-            'from' => $fromname,
+            'msgfrom' => $fromname,
             'msg' => $msg,
             'status' => 0,
             'originates' => $orig
@@ -523,7 +523,7 @@ function wplc_return_user_chat_messages($cid) {
     $msg_hist = "";
     foreach ($results as $result) {
         $id = $result->id;
-        $from = $result->from;
+        $from = $result->msgfrom;
 
         $msg = $result->msg;
         //$timestamp = strtotime($result->timestamp);
@@ -616,7 +616,7 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
     $previous_time = "";
     $previous_timestamp = 0;
     foreach ($results as $result) {
-        $from = $result->from;
+        $from = $result->msgfrom;
         $msg = stripslashes($result->msg);
         $timestamp = strtotime($result->timestamp);
 
@@ -747,7 +747,7 @@ function wplc_return_admin_chat_messages($cid) {
         foreach ($results as $result) {
 
             $id = $result->id;
-            $from = $result->from;
+            $from = $result->msgfrom;
             wplc_mark_as_read_admin_chat_messages($id);    
             $msg = $result->msg;
             //$timestamp = strtotime($result->timestamp);
@@ -921,7 +921,7 @@ function wplc_filter_control_mail_body($header,$msg) {
               <tbody>
                   <tr>
                     <td class="sortable-list ui-sortable" style="padding:20px; text-align:center;">
-                        '.$msg.'
+                        '.nl2br($msg).'
                     </td>
                   </tr>
                 </tbody>
