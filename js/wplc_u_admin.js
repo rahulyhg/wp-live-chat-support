@@ -269,7 +269,7 @@ var v_nr_html = "<span class='wplc_headerspan_nr'><span class='browser-tag'>"+v_
 var v_time_html = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+v_time+"</span></span>";
 var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>";
 var v_nr_status_html = "<span class='wplc_headerspan_s'>"+v_status_string+"</span>";
-var v_nr_action_html = "<span class='wplc_headerspan_a'>"+v_action+"</span>";
+var v_nr_action_html = "<span class='wplc_headerspan_a 1'>"+v_action+"</span>";
 
 var wplc_v_html = "\
     <ul id='wplc_p_ul_"+key+"' class='wplc_p_cul' cid='"+key+"'>\n\
