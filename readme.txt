@@ -3,7 +3,7 @@ Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
 Requires at least: 3.8
-Tested up to: 4.3
+Tested up to: 4.5
 Stable tag: trunk
 License: GPLv2
 
@@ -17,19 +17,34 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 
 * Most popular WordPress chat plugin
 * WP Live Chat Support is a fully functional live chat plugin
+* Unlimited simultaneous live chats
 * Live chat directly with your visitors
 * Easy to use interface for both the admin and the visitor
+* Edit all text fields shown on the live chat box
 * Users can drag the live chat box around their page
 * Change the colors of the live chat box
 * Fully responsive admin chat dashboard
+* Offline messages are now stored (When Live Chat is switched off)
+* 6 predefined live chat box themes to choose from
+* Fully customizable live chat experience
+* Apply animations to the chat window
+* Access historical live chat records
+* Compatible with translation plugins
 * No advertising or links
+* Quick Responses (insert a predefined response to your live chat box)
+* Anonymity for your visitors
 * No "Powered by" links on the live chat window
 * No monthly live chat subscriptions needed
+* Allow the live chat box to automatically pop up
+* Limit the live chat box to only show to registered users
 * Compatible with all caching plugins (live chat window loaded via Ajax)
 * Desktop Notifications when receiving new live chats
 * View any live chats you may have missed
 * Set the starting position of your chat box
 * Comprehensive list of live chat options
+* Enable/Disable the chat box on mobile devices
+* Enable/Disable the sound when a new live chat message is received
+* Select whether Name and Email is required when users initiate a chat
 * Ban visitors from chatting to you based on IP Address
 * Allow the live chat box to automatically pop up
 * Limit the live chat box to only show to registered users
@@ -37,42 +52,30 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Enable/Disable the chat box on mobile devices
 * Enable/Disable the sound when a new live chat message is received
 
-= Pro Version Features =
+= Extend the functionality of WP Live Chat Support with the WP Live Chat Support Pro =
 
 * Unlimited live chat agents
 * Initiate live chats with online visitors
-* Chat to more than one visitor at a time
 * Quick Responses (insert a predefined response to your live chat box)
-* 6 predefined live chat box themes to choose from
 * Encrypt your live chat conversations
 * Fully responsive admin chat dashboard
 * Compatible with all caching plugins (live chat window loaded via Ajax)
 * Desktop Notifications when receiving new live chats
-* Access historical live chat records
-* Compatible with translation plugins
 * Set up your user profile
 * Add your company logo to the live chat window
 * Add your photo to the live chat window
 * Edit all text fields shown on the live chat box
 * Include/exclude the live chat from appearing on certain pages
 * Fully customizable live chat experience
-* Offline messages are now stored (When Live Chat is switched off)
-* Apply animations to the chat window
-* Anonymity for your visitors
 * Choose when to accept chats
-* Allow the live chat box to automatically pop up
-* Limit the live chat box to only show to registered users
-* Select whether Name and Email is required when users initiate a chat
-* Enable/Disable the chat box on mobile devices
-* Enable/Disable the sound when a new live chat message is received
 * World-class support
 
 Get the [WP Live Chat Support Pro Add-on](http://wp-livechat.com/purchase-pro/?utm_source=readme&utm_medium=wordpress&utm_campaign=buy) for a once off payment!
 
 = Coming soon =
-* (Free & Pro) Improvements - Better link and image handling within the live chat text area
-* (Pro) New feature - Triggers - Build custom live chat triggers. For example, if a user has been idle for more than 2 minutes, initiate a live chat and send a response.
-* (Pro) Chat App - We're currently building an Android App that will allow you to accept chat requests from anywhere.
+* Mobile and desktop App - we are currently in beta stage with our mobile and desktop live chat app. If you would like to help test, please get in touch.
+* Improvements - Better link and image handling within the live chat text area
+* New feature - Triggers - Build custom live chat triggers. For example, if a user has been idle for more than 2 minutes, initiate a live chat and send a response.
 
 = 30 second live chat installation =
 
@@ -88,7 +91,7 @@ One of the most important tasks of your website is to educate potential customer
 * Live chat is convenient for customers
 * Live chat builds trust with your potential customers
 * Increase sales by using live chat
-* Take advantage of a fully functional live chat plugin for free. Get Pro features for a once off payment!
+* Take advantage of a fully functional live chat plugin for free.
 * Reduce costs by using live chat on your website with minimum staff
 * Learn to understand the pain points of your customers
 
@@ -97,13 +100,13 @@ One of the most important tasks of your website is to educate potential customer
 You now have the choice to host your live chat on either your own website (using your own resources) or our live chat server (using our resources). Making use of our live chat server will improve your chat's performance by up to 300% and reduce the load on your host. Although we initially built our live chat plugin to be used on your own website and for you to host your own live chat server, we now offer you the ability to make use of an offsite live chat server - this is perfect for users that are on low-level hosting packages, or users that are more concerned about live chat performance and chat security.
 
 = Translations =
-Get a free copy of the WP Live Chat Support Pro version in exchange for translating our plugin!
+Get a free copy of one of the premium WP Live Chat Support extensions in exchange for translating our plugin!
 
 * English
-* German (Dennis Klinger)
-* Spanish (Sergio Castrillon & Ana Ayelen Martinez)
+* German (Dennis Klinger & Benjamin Schindler)
+* Spanish (Sergio Castrillon & Ana Ayelen Martinez & Olivier Gantois)
 * Russian (Igor Butsky)
-* French (Marcello Cavallucci)
+* French (Marcello Cavallucci & Olivier Gantois)
 * Brazilian (Gustavo Silva)
 * Hebrew (David Cohen)
 * Slovakian (Dana Kadarova)
@@ -111,17 +114,20 @@ Get a free copy of the WP Live Chat Support Pro version in exchange for translat
 * Mongolian (Monica Batuskh)
 * Romanian (Sergiu Balaes)
 * Czech (Pavel Cvejn)
-* Danish (Mikkel Jeppesen Juhl)
+* Danish (Mikkel Jeppesen Juhl & Kasper Jensen)
 * Italian (Angelo Giammarresi)
 * Dutch (Elsy Aelvoet)
 * Greek (Peter Stavropoulos)
-* Norwegian (Robert Nilsen)
+* Norwegian (Robert Nilsen & Ole Petter Holthe-Berg)
 * Hungarian (GInception & Andor Molnar)
 * Indonesian (Andrie Willyanta)
 * Finnish (Arttu Piipponen)
 * Dutch (Niek Groot Bleumink) 
 * Polish (Sebastian Kajzer)
 * Turkish (Yavuz Aksu)
+* Brazilian Portuguese (Luis Simioni)
+* Farsi (Maisam)
+* Croatian (Petar Garzina)
 * Chinese - Simplified^
 * Chinese - Traditional^
 
@@ -185,8 +191,8 @@ If the live chat box still does not appear on your website, please go through th
 1. Front-end of WP Live Chat Support
 2. Back-end of WP Live Chat Support
 3. Settings page of WP Live Chat Support
-4. "Leave a message" functionality available in WP Live Chat Support Pro
-5. Initiate a live chat with a visitor on your website (pro version)
+4. "Leave a message" functionality available in WP Live Chat Support
+5. Initiate a live chat with a visitor on your website (extension required)
 
 
 == Upgrade Notice ==
@@ -198,6 +204,89 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 It is highly recommended that you upgrade to WP Live Chat Support version 4.1.4
 
 == Changelog ==
+
+= 6.1.02 - 2016-04-13 - Low Priority =
+* Tested on WordPress 4.5
+* Fixed a bug that sent offline messages to the wrong email address
+
+= 6.1.01 - 2016-04-07 - Low Priority =
+* You can now delete inidividual offline messages from your history
+* Code improvements done to the way scripts are loaded when displaying the chat
+* Fixed a bug that returned an undefined index when recording a visitors IP address
+* Fixed a bug that displayed chat messages over the logo
+* Code improvement - A visitors name will display if filled out automatically, instead of 'Guest'
+* WHOIS for IP Address now opens in a new window
+* Fixed a bug that caused issues when downloading the chat history containing non UTF-8 characters
+* Fixed a bug that displayed the incorrect Gravatar images in the chat messages
+* Translations Added:
+*  German Updated (Thank you Benjamin Schindler)
+*  Brazilian Portuguese Updated (Thank you Luis Simioni)
+*  Farsi (Thank you Maisam)
+*  Norwegian Updates (Thank you Ole Petter Holthe-Berg)
+*  Croatian (Thank you Petar Garzina)
+*  Italian Updated (Thank you Angelo Giammarresi)
+*  Danish Updated (Thank you Kasper Jensen)
+*  Spanish Updated (Thank you Olivier Gantois)
+*  French Updated (Thank you Olivier Gantois)
+
+= 6.1.00 - 2016-03-18 - Medium priority =
+* Fixed a bug that caused the chat agent to be nullified if you saved the settings
+* NEW: Introduced a new modern theme
+* Fixed the bug that caused the chat box to not open again if you minimized it while in chat
+* Fixed a style bug on the admin chat box
+* Performance improvements for the basic version - there are no longer regular longpoll requests when using the basic version. Long polling only starts once a chat has been started
+* Fixed a styling bug in the settings page
+* Longpoll requests no longer run when you're offline - this will introduce significant performance imporvements
+* We have removed the "X" on the chat box and it will now only show up when there is an active chat on the user's side. This avoids the confusion when the user presses "X" and the chat hides for 24 hours.
+* Images of the chat agent and user now show up correctly in the chat box
+* Fixed a bug that added slashes to apostrophes in the chat window
+* Fixed a bug that caused an error when trying to load the chat box when a banned user visited the site
+* Fixed a bug that still displayed the offline message window even if the setting was set to false
+
+= 6.0.07 - 2016-03-11 - High priority =
+* Bug fix - agent status was lost when saving settings
+
+= 6.0.06 - 2016-03-07 - Medium priority =
+* More stable fix for the menu item bug that has been experienced lately
+
+= 6.0.05 - 2016-02-23 - Medium priority =
+* Fixed the bug that caused the menu item to not display for some users
+
+= 6.0.04 - 2016-02-22 - Low priority =
+* Offline message bug fix with the cloud server extension
+* Choose when online bug fix
+* Agent bug fix
+* Styling adjustment for viewpots of 481px and below
+* All content now loaded and pushed via SSL links
+
+= 6.0.03 - 2016-02-04 - Low priority =
+* Fixed a bug that caused a warning if an incorrect IP address was in the banned IP address field
+* Offline messaging bug fixed
+
+= 6.0.02 - 2016-02-03 - Low priority =
+* Added a new filter to fix a bug with WP Live Chat Support - Advanced Chat Box Control Extension
+
+= 6.0.01 - 2016-02-02 - High priority =
+* Crucial bug fix that stopped the live chat from working in some instances
+* New filter to fix the bug with the WP Live Chat Choose When Online bug
+
+= 6.0.00 - 2016-01-26 - Freedom of Speech Update - Medium Priority =
+* New functionality
+*  Unlimited simultaneous chats now available
+*  Offline messages are now available
+* Many new filters added
+* jQuery.cookie updated to version 2.1
+* Many of the WP Live Chat Support Pro features have been moved into the free version
+
+= 5.0.14 - 2016-01-13 - High priority =
+* Bug fix: When activating WP Live Chat Support, a table is created with a shared MySQL column name which caused issues on some servers. The column name has been changed
+* WP Live Chat Support Pro users need to update to the latest version when using this version (there is a notice for this in the live chat dashboard)
+
+= 5.0.13 - 2016-01-05 - High priority =
+* UTF8 encoding bug fixed
+
+= 5.0.12 - 2016-01-04 - Low priority =
+* Tested with WordPress 4.4
 
 = 5.0.11 - 2015-10-14 - Low priority =
 * Translation strings changed

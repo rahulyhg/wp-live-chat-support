@@ -11,7 +11,7 @@ function wplc_log_user_on_page($name,$email,$session) {
 
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
 
-        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
+        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
@@ -78,8 +78,14 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
     $wplc_settings = get_option('WPLC_SETTINGS');
      
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+        
+        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
+            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+        }
         $user_data = array(
-            'ip' => $_SERVER['REMOTE_ADDR'],
+            'ip' => $ip_address,
             'user_agent' => $_SERVER['HTTP_USER_AGENT']
         );
     } else {
@@ -137,7 +143,14 @@ function wplc_record_chat_msg($from,$cid,$msg) {
     global $wplc_tblname_msgs;
 
     if ($from == "2") {
-        if (current_user_can("wplc_ma_agent") || current_user_can("manage_options")) {  } else { return "security issue"; }
+        $wplc_current_user = get_current_user_id();
+
+        if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
+        /*
+          -- modified in in 6.0.04 --
+
+          if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
+         */  } else { return "security issue"; }
     }
 
     if ($from == "1") {
@@ -146,7 +159,7 @@ function wplc_record_chat_msg($from,$cid,$msg) {
         $orig = '2';
     }
     else {
-        $fromname = "admin";
+        $fromname = apply_filters("wplc_filter_admin_name","Admin");
         //$fromemail = "SET email";
         $orig = '1';
     }
@@ -274,7 +287,7 @@ function wplc_list_chats() {
             if($user_ip == ""){
                 $user_ip = __('IP Address not recorded', 'wplivechat');
             } else {
-                $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."'>".$user_ip."</a>";
+                $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."' target='_BLANK'>".$user_ip."</a>";
             } 
             
             if ($result->status == 2) {
@@ -404,20 +417,33 @@ function wplc_time_ago($time_ago)
 }
 
 add_filter("wplc_filter_list_chats_actions","wplc_filter_control_list_chats_actions",15,3); 
+/**
+ * Only allow agents access
+ * @return void
+ * @since  6.0.00
+ * @version  6.0.04 Updated to ensure those with the correct access can access this function
+ * @author  Nick Duncan <nick@codecabin.co.za>
+ */
 function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
     $aid = apply_filters("wplc_filter_aid_in_action","");
-    if (intval($result->status) == 2) {
-        $url_params = "&action=ac&cid=".$result->id.$aid;
-        $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-        $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Accept Chat","wplivechat")."</a>";
-    }
-    else if (intval($result->status) == 3) {
-        $url_params = "&action=ac&cid=".$result->id.$aid;
-        $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-        $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
-    }
+    
+    $wplc_current_user = get_current_user_id();
 
+    if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
 
+        if (intval($result->status) == 2) {
+            $url_params = "&action=ac&cid=".$result->id.$aid;
+            $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
+            $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Accept Chat","wplivechat")."</a>";
+        }
+        else if (intval($result->status) == 3) {
+            $url_params = "&action=ac&cid=".$result->id.$aid;
+            $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
+            $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
+        }
+    } else {
+        $actions = "<a href='#'>".__( 'Only chat agents can accept chats', 'wplivechat' )."</a>";
+    }
     return $actions;
 }
 
@@ -453,7 +479,7 @@ function wplc_list_chats_new($post_data) {
             if($user_ip == ""){
                 $user_ip = __('IP Address not recorded', 'wplivechat');
             } else {
-                $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."'>".$user_ip."</a>";
+                $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."' target='_BLANK'>".$user_ip."</a>";
             } 
 
 
@@ -481,7 +507,7 @@ function wplc_list_chats_new($post_data) {
                $data_array[$result->id]['type'] = __("Returning","wplivechat");
            }
            
-           $data_array[$result->id]['image'] = "<img src=\"//www.gravatar.com/avatar/".md5($result->email)."?s=20&d=mm\" />";
+           $data_array[$result->id]['image'] = "<img src=\"//www.gravatar.com/avatar/".md5($result->email)."?s=30&d=mm\"  class='wplc-user-message-avatar' />";
            $data_array[$result->id]['data']['browsing'] = $result->url;
            $path = parse_url($result->url, PHP_URL_PATH);
            
@@ -503,6 +529,7 @@ function wplc_list_chats_new($post_data) {
 
 
 function wplc_return_user_chat_messages($cid) {
+
     global $wpdb;
     global $wplc_tblname_msgs;
     
@@ -520,16 +547,18 @@ function wplc_return_user_chat_messages($cid) {
 
         "
     );
+    $cdata = wplc_get_chat_data($cid);
     $msg_hist = "";
     foreach ($results as $result) {
         $id = $result->id;
         $from = $result->msgfrom;
 
+
         $msg = $result->msg;
         //$timestamp = strtotime($result->timestamp);
         //$timeshow = date("H:i",$timestamp);
         if($result->originates == 1){
-            $class = "wplc-admin-message";
+            $class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
             if(function_exists("wplc_pro_get_admin_picture")){
                 $src = wplc_pro_get_admin_picture();
                 if($src){
@@ -538,15 +567,31 @@ function wplc_return_user_chat_messages($cid) {
                     $image = "";
                 }
             } else {
-                $image = "";
+                $other = maybe_unserialize($cdata->other);
+                if (isset($other['aid'])) {
+                    $user_info = get_userdata(intval($other['aid']));
+                    /* get agent id */
+                    $image = "<img src='//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30'  class='wplc-admin-message-avatar' />";    
+                } else {
+
+                    /* get default setting in the notifications tab */
+                    $image = "";
+                    if(1 == 1) {
+
+                    } else {
+                        /* there's nothing Jim.. */
+                        $image = "";
+                    }
+                }
+                
             }
         } else {
-            $class = "wplc-user-message";
+            $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
             if(isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != ""){ $wplc_user_gravatar = md5(strtolower(trim(sanitize_text_field($_COOKIE['wplc_email'])))); } else { $wplc_user_gravatar = ""; }
         
             if($wplc_user_gravatar != ""){
-                $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' />";
+                $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30'  class='wplc-user-message-avatar' />";
             } else {
                 $image = "";
             }
@@ -559,9 +604,9 @@ function wplc_return_user_chat_messages($cid) {
 
             
         if($display_name){
-            $msg_hist .= "<span class='wplc-admin-message'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
+            $msg_hist .= "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
         } else {            
-            $msg_hist .= "<span class='wplc-admin-message'>$msg</span><div class='wplc-clear-float-message'></div>";
+            $msg_hist .= "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$msg</span><div class='wplc-clear-float-message'></div>";
         }
         
         
@@ -575,26 +620,69 @@ function wplc_return_user_chat_messages($cid) {
 }
 
 
-function wplc_change_chat_status($id,$status) {
+function wplc_change_chat_status($id,$status,$aid = 0) {
     global $wpdb;
     global $wplc_tblname_chats;
-    $results = $wpdb->get_results(
-        "
-        UPDATE $wplc_tblname_chats
-        SET `status` = '$status'
-        WHERE `id` = '$id'
-        LIMIT 1
-        "
-    );
-    $wpdb->update( 
-        $wplc_tblname_chats, 
-        array( 
-            'status' => $status
-        ), 
-        array('id' => $id), 
-        array('%d'), 
-        array('%d') 
-    );
+
+
+
+
+    if ($aid > 0) {
+        /* only run when accepting a chat */
+        $results = $wpdb->get_results("SELECT * FROM ".$wplc_tblname_chats." WHERE `id` = '".$id."' LIMIT 1");
+        foreach ($results as $result) {
+            $other = maybe_unserialize($result->other);
+            if (isset($other['aid']) && $other['aid'] > 0) {
+                /* we have recorded this already */
+
+            } else {
+                /* first time answering the chat! */
+
+
+                /* send welcome note */
+                $wplc_settings = get_option("WPLC_SETTINGS");
+                $wplc_welcome = __('Welcome. How may I help you?', 'wplivechat');
+                if(isset($wplc_settings['wplc_using_localization_plugin']) && $wplc_settings['wplc_using_localization_plugin'] == 1){ $wplc_using_locale = true; } else { $wplc_using_locale = false; }
+                if (!isset($wplc_settings['wplc_user_welcome_chat']) || $wplc_settings['wplc_user_welcome_chat'] == "") { $wplc_settings['wplc_user_welcome_chat'] = $wplc_welcome; }
+                $text2 = ($wplc_using_locale ? $wplc_welcome : stripslashes($wplc_settings['wplc_user_welcome_chat']));  
+
+                $chat_id = sanitize_text_field($id);
+                $chat_msg = sanitize_text_field($text2);
+                $wplc_rec_msg = wplc_record_chat_msg("2",$chat_id,$chat_msg);
+            }
+
+            $other['aid'] = $aid;
+        }
+    }
+
+        
+
+
+    if ($aid > 0) { 
+        $wpdb->update( 
+            $wplc_tblname_chats, 
+            array( 
+                'status' => $status,
+                'other' => maybe_serialize($other)
+            ), 
+            array('id' => $id), 
+            array(
+                '%d',
+                '%s'
+                ), 
+            array('%d') 
+        );        
+    } else {
+        $wpdb->update( 
+            $wplc_tblname_chats, 
+            array( 
+                'status' => $status
+            ), 
+            array('id' => $id), 
+            array('%d'), 
+            array('%d') 
+        );
+    }
     return true;
 
 }
@@ -611,7 +699,7 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
     $results = wplc_get_chat_messages($cid);
     if (!$results) { return; }
    
-
+    $cdata = wplc_get_chat_data($cid);
     $msg_hist = "";
     $previous_time = "";
     $previous_timestamp = 0;
@@ -632,20 +720,45 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
         
         $image = "";        
         if($result->originates == 1){
-            $class = "wplc-admin-message";
+            
+            
+
+            $class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
             if(function_exists("wplc_pro_get_admin_picture")){
                 $src = wplc_pro_get_admin_picture();
                 if($src){
                     $image = "<img src=".$src." width='20px' id='wp-live-chat-2-img'/>";
                 }
+            } else {
+                if (isset($cdata->other)) {
+                    $other = maybe_unserialize($cdata->other);
+                    if (isset($other['aid'])) {
+                        $user_info = get_userdata(intval($other['aid']));
+                        /* get agent id */
+                        $image = "<img src='//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30'  class='wplc-admin-message-avatar' />";    
+                    } else {
+
+                        /* get default setting in the notifications tab */
+                        $image = "";
+                        if(1 == 1) {
+
+                        } else {
+                            /* there's nothing Jim.. */
+                            $image = "";
+                        }
+                    }
+                } else {
+                    $image = "";
+                }
+                
             }
         } else {
-            $class = "wplc-user-message";
+            $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
             if(isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != ""){ $wplc_user_gravatar = md5(strtolower(trim(sanitize_text_field($_COOKIE['wplc_email'])))); } else { $wplc_user_gravatar = ""; }
         
             if($wplc_user_gravatar != ""){
-                $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' />";
+                $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30'  class='wplc-user-message-avatar' />";
             } else {
                 $image = "";
             }
@@ -659,13 +772,13 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
 
         if($display_name){
             if ($html) {
-                $msg_hist .= "<span class='chat_time'>$timeshow</span> <span class='$class'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
+                $msg_hist .= "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
             } else {
                 $msg_hist .= "($timeshow) $from: $msg\r\n";
             }
         } else {
             if ($html) {
-                $msg_hist .= "<span class='chat_time'>$timeshow</span> <span class='$class'>$msg</span><br /><div class='wplc-clear-float-message'></div>";    
+                $msg_hist .= "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$msg</span><br /><div class='wplc-clear-float-message'></div>";    
             } else {
                 $msg_hist .= "($timeshow) $from: $msg\r\n";
             }
@@ -723,8 +836,13 @@ function wplc_mark_as_read_user_chat_messages($cid) {
 }
 //here
 function wplc_return_admin_chat_messages($cid) {
-    
-    if (current_user_can("wplc_ma_agent") || current_user_can("manage_options")) { 
+    $wplc_current_user = get_current_user_id();
+    if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
+    /*
+      -- modified in in 6.0.04 --
+
+      if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
+     */
         $wplc_settings = get_option("WPLC_SETTINGS");
 
 
@@ -754,20 +872,23 @@ function wplc_return_admin_chat_messages($cid) {
             //$timeshow = date("H:i",$timestamp);
             $image = "";        
             if($result->originates == 1){
-                $class = "wplc-admin-message";
+                $class = "wplc-admin-message  wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
                 if(function_exists("wplc_pro_get_admin_picture")){
                     $src = wplc_pro_get_admin_picture();
                     if($src){
                         $image = "<img src=".$src." width='20px' id='wp-live-chat-2-img'/>";
                     }
+                } else {
+                    /* HERE */
+                    $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' class='wplc-admin-message-avatar' />";
                 }
             } else {
-                $class = "wplc-user-message";
+                $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
 
                 if(isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != ""){ $wplc_user_gravatar = md5(strtolower(trim($_COOKIE['wplc_email']))); } else { $wplc_user_gravatar = ""; }
 
                 if($wplc_user_gravatar != ""){
-                    $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' />";
+                    $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' class='wplc-user-message-avatar' />";
                 } else {
                     $image = "";
                 }
@@ -780,9 +901,9 @@ function wplc_return_admin_chat_messages($cid) {
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
 
             if($display_name){
-                $msg_hist .= "<span class='wplc-user-message'>".$image."<strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";            
+                $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>".$image."<strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";            
             } else {            
-                $msg_hist .= "<span class='wplc-user-message'>$msg</span><br /><div class='wplc-clear-float-message'></div>";
+                $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>$msg</span><br /><div class='wplc-clear-float-message'></div>";
             }
         }
 
@@ -796,22 +917,18 @@ function wplc_return_admin_chat_messages($cid) {
 
 }
 function wplc_mark_as_read_admin_chat_messages($mid) {
-    if (current_user_can("wplc_ma_agent") || current_user_can("manage_options")) {  
+    $wplc_current_user = get_current_user_id();
 
+    if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
+    /*
+      -- modified in in 6.0.04 --
+
+      if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
+     */
 
         global $wpdb;
         global $wplc_tblname_msgs;
-            
-    //    $check = $wpdb->query(
-    //        "
-    //        UPDATE $wplc_tblname_msgs
-    //        SET `status` = 1
-    //        WHERE `id` = '$mid'
-    //        LIMIT 1
-    //
-    //    "
-    //    );
-        
+
         $wpdb->update( 
             $wplc_tblname_msgs, 
             array( 
@@ -970,14 +1087,13 @@ function wplc_filter_control_mail_body($header,$msg) {
  */
 function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
     
-    $wplc_pro_settings = get_option("WPLC_PRO_SETTINGS");
-    
+    $wplc_pro_settings = get_option("WPLC_SETTINGS");
     if(isset($wplc_pro_settings['wplc_pro_chat_email_address'])){
         $email_address = $wplc_pro_settings['wplc_pro_chat_email_address'];
-    } else {
+    }else{
         $email_address = get_option('admin_email');
     }
-    
+
     $email_address = explode(',', $email_address);  
     
     if(get_option("wplc_mail_type") == "wp_mail" || !get_option('wplc_mail_type')){
@@ -1090,7 +1206,7 @@ function wplc_store_offline_message($name, $email, $message){
     $wplc_settings = get_option('WPLC_SETTINGS');
         
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
-        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
+        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
@@ -1115,6 +1231,7 @@ function wplc_store_offline_message($name, $email, $message){
 }
 
 
+
 function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
 
     global $wpdb;
@@ -1128,7 +1245,7 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
     $wplc_settings = get_option('WPLC_SETTINGS');
         
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
-        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
+        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
@@ -1154,8 +1271,7 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
     }
     
     if ($cid != null) { /* change from a visitor to a chat */                
-        
-        
+
         $wpdb->update( 
             $wplc_tblname_chats, 
             array( 
@@ -1181,16 +1297,14 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
             ), 
             array('%d') 
         );
-        
         return $cid;
     }
     else { 
         
-        
         $wpdb->insert( 
             $wplc_tblname_chats, 
             array( 
-                'status' => '2', 
+                'status' => 2, 
                 'timestamp' => current_time('mysql'),
                 'name' => $name,
                 'email' => $email,
@@ -1473,7 +1587,7 @@ function wplc_admin_display_missed_chats() {
         foreach ($results as $result) {
             echo "<tr id=\"record_" . $result->id . "\">";
             echo "<td class='chat_id column-chat_d'>" . $result->timestamp . "</td>";
-            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\" /> " . $result->name . "</td>";
+            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\"  class='wplc-user-message-avatar' /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . $result->url . "</td>";
             echo "</tr>";
@@ -1495,21 +1609,25 @@ function wplc_is_user_banned_basic(){
     if($banned_ip){
         $banned_ip = maybe_unserialize($banned_ip);
         $banned = 0;
-        foreach($banned_ip as $ip){
+        if (is_array($banned_ip)) {
+            foreach($banned_ip as $ip){
 
-            if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
-                $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            } else {
-                $ip_address = $_SERVER['REMOTE_ADDR'];
-            }
-            
-            if(isset($ip_address)){
-                if($ip == $ip_address){
-                    $banned++;
+                if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
+                    $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $ip_address = $_SERVER['REMOTE_ADDR'];
                 }
-            } else {
-                $banned = 0;
+                
+                if(isset($ip_address)){
+                    if($ip == $ip_address){
+                        $banned++;
+                    }
+                } else {
+                    $banned = 0;
+                }
             }
+        } else {
+            return 0;
         }
     } else {
         $banned = 0;

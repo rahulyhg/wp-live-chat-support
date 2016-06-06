@@ -24,6 +24,10 @@ final class wplc_update_control {
     public function set_api($api) {
         $this->wplc_api_key = $api;
     }
+    public function set_custom_option($option) {
+        $this->wplc_option = $option;
+    }
+
     public function set_path($path) {
         $this->wplc_path = $path;
     }   
@@ -37,6 +41,9 @@ final class wplc_update_control {
     public function __wakeup() {
         // Unserializing instances of the class is forbidden
         exit();
+    }
+    public function set_api_url($url) {
+        $this->wplc_api_url = $url;
     }
 
     public function activate() {
@@ -62,6 +69,7 @@ final class wplc_update_control {
             'slug' => $this->wplc_api_slug,
             'version' => $checked_data->checked[$this->wplc_api_slug . '/' . $this->wplc_api_slug . '.php'],
         );
+        
         $request_string = array(
             'body' => array(
                 'action' => 'basic_check', 
@@ -72,7 +80,6 @@ final class wplc_update_control {
             ),
             'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo('url')
         );
-
         // Start checking for an update
         $raw_response = wp_remote_post($this->wplc_api_url, $request_string);
 
@@ -155,6 +162,8 @@ final class wplc_update_control {
             "is_valid" => $this->wplc_option_is_valid
 
         );
+
+
         if (function_exists("wplc_build_api_check")) { return wplc_build_api_check($page_content,$data_array); }
         return $page_content;
         
