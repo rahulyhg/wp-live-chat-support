@@ -2,6 +2,7 @@
 /* will soon become deprecated */
 function wplc_output_box_ajax() {
 
+    
     if(function_exists('wplc_display_chat_contents')){
         $display_contents = wplc_display_chat_contents();
     } else {
@@ -81,12 +82,12 @@ function wplc_output_box_ajax() {
             $wplc_class = "wplc_right";
         }
         
-        if ($wplc_settings["wplc_settings_fill"]) {
+        if (isset($wplc_settings["wplc_settings_fill"])) {
             $wplc_settings_fill = "#" . $wplc_settings["wplc_settings_fill"];
         } else {
             $wplc_settings_fill = "#ed832f";
         }
-        if ($wplc_settings["wplc_settings_font"]) {
+        if (isset($wplc_settings["wplc_settings_font"])) {
             $wplc_settings_font = "#" . $wplc_settings["wplc_settings_font"];
         } else {
             $wplc_settings_font = "#FFFFFF";

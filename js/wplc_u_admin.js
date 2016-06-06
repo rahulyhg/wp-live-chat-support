@@ -23,12 +23,9 @@ Object.size = function(obj) {
     return size;
 };
 function wplc_notify_agent() {
-    console.log("trying");
- 
 
 
     if (typeof wplc_wav_file !== 'undefined') {
-        console.log("trying to play"+wplc_wav_file);
         new Audio(wplc_wav_file).play()                               
     }
 
@@ -70,9 +67,20 @@ function wplc_call_to_server(data) {
 
             //Update your dashboard gauge
             if (response) {
+                if (response === "0") { if (window.console) { console.log('WP Live Chat Support Return Error'); } wplc_run = false;  return; }
+
                 response = JSON.parse(response);
+                
+                if(response.hasOwnProperty("error")){
+                    /* stopping due to error */
+                    wplc_run = false;
+                    if (response['error'] === 1) {
+                     location.reload();
+                    }
+                    
+                }
+
                 data["wplc_update_admin_chat_table"] = response['wplc_update_admin_chat_table'];
-                console.log(response);
                 if (response['action'] === "wplc_update_chat_list") {
                     wplc_handle_chat_output(response['wplc_update_admin_chat_table']);
                     if (response['pending'] === true) {
@@ -83,7 +91,6 @@ function wplc_call_to_server(data) {
                             wplc_notify_agent();
                         }, 5000);
                     } else {
-                        //console.log("end");
                         clearInterval(wplc_pending_refresh);
                         ringer_cnt = 0;
                     }
@@ -95,7 +102,6 @@ function wplc_call_to_server(data) {
                         var orig_title = document.getElementsByTagName("title")[0].innerHTML;
                         var ringer_cnt = 0;
                         wplc_pending_refresh = setInterval(function () {
-                            //console.log("chat request");
 
                             if (ringer_cnt <= 0) {
                                 wplc_desktop_notification();
@@ -124,7 +130,6 @@ function wplc_call_to_server(data) {
 
                         }, 5000);
                     } else {
-                        //console.log("end");
                         clearInterval(wplc_pending_refresh);
                     }
                 }
@@ -248,6 +253,7 @@ if (type === "Returning") {
     return "<span class='wplc_status_box wplc_type_returning'>Returning</span>";
 }
 }
+
 
 function wplc_create_chat_ul_element_after_eating_vindaloo(obj,key) {
 
@@ -388,21 +394,32 @@ jQuery(document).ready(function () {
             }
         });
        
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
     });
 
     wplc_call_to_server(data);
+
+    jQuery("body").on("click", ".wplc_delete_message", function(e){
+
+        var message_id = jQuery(this).attr('mid');
+
+        var data = {
+            action: 'delete_offline_message',
+            security: wplc_ajax_nonce,
+            mid: message_id
+        }
+
+        jQuery.post( wplc_ajaxurl, data, function( response ){
+
+            if( response ){
+
+                jQuery('#record_'+message_id).fadeOut(700);
+
+            }
+
+
+        });
+
+    });
+
 });
+
