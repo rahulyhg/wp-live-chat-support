@@ -343,6 +343,43 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </td>
               </tr>              
           </table>
+
+          <?php if(!function_exists("wplc_chat_social_div")){ ?>
+
+              <h3><?php _e("Social", 'wplivechat') ?></h3>
+              <hr>
+              <table class='form-table' width='100%'>
+                  <tbody>
+                      <tr>
+                          <td width='200' valign='top'><?php _e("Facebook URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Facebook page here. Leave blank to hide", "wplivechat") ?>"></i></td> 
+                          <td>
+                            <input id='wplc_social_fb' name='wplc_social_fb' placeholder="<?php _e("Facebook URL...", "wplivechat") ?>" type='text' disabled/> 
+                            <small>
+                              <i> 
+                                  <?php _e("available in the","wplivechat")?> 
+                                  <a href="http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=social_media" title="<?php _e("Pro Add-on","wplivechat")?>" target="_BLANK"><?php _e("Pro Add-on","wplivechat")?></a> 
+                                  <?php _e("only","wplivechat")?>    
+                              </i>
+                            </small>
+                          </td>    
+                      </tr>
+                      <tr>
+                          <td width='200' valign='top'><?php _e("Twitter URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Twitter page here. Leave blank to hide", "wplivechat") ?>"></i></td> 
+                          <td>
+                            <input id='wplc_social_tw' name='wplc_social_tw' placeholder="<?php _e("Twitter URL...", "wplivechat") ?>" type='text' disabled/>  
+                            <small>
+                              <i> 
+                                  <?php _e("available in the","wplivechat")?> 
+                                  <a href="http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=social_media" title="<?php _e("Pro Add-on","wplivechat")?>" target="_BLANK"><?php _e("Pro Add-on","wplivechat")?></a> 
+                                  <?php _e("only","wplivechat")?>    
+                              </i>
+                            </small>
+                          </td>   
+                      </tr>
+                  </tbody>
+              </table>
+          <?php } ?>
+
           <?php do_action('wplc_hook_admin_settings_chat_box_settings_after'); ?>
 
       </div>

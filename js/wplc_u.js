@@ -156,7 +156,12 @@ jQuery(document).ready(function() {
                         if(response['status'] == 3 && response['data'] != null){ // if active and data is returned
                             wplc_run = true;
 
-                            jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
+                            if(typeof niftyFormatParser !== "undefined"){
+                                //Function is available (PRO)
+                                jQuery("#wplc_chatbox").append(niftyFormatParser(response['data'].wplcStripSlashes()));
+                            }else{
+                                jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
+                            }
                             if(response['data']){
                                 var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                                 jQuery('#wplc_chatbox').scrollTop(height);
@@ -202,7 +207,12 @@ jQuery(document).ready(function() {
                                 
                             }
                             if(response['data'] != null){ // append messages to chat area
-                                jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
+                                if(typeof niftyFormatParser !== "undefined"){
+                                    jQuery("#wplc_chatbox").append(niftyFormatParser(response['data'].wplcStripSlashes()));
+                                }else{
+                                    jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
+                                }
+
                                 if(response['data']){
                                     var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                                     jQuery('#wplc_chatbox').scrollTop(height);
@@ -397,6 +407,8 @@ jQuery(document).ready(function() {
             jQuery("#wp-live-chat-2").hide();
             jQuery("#wp-live-chat-3").hide();
             jQuery("#wp-live-chat-4").hide();
+            jQuery("#wplc_social_holder").hide();
+            jQuery("#nifty_ratings_holder").hide();
             jQuery("#wp-live-chat-react").hide();
             jQuery("#wp-live-chat-minimize").hide();
             if (typeof wplc_hide_chat !== "undefined" && wplc_hide_chat !== "" && wplc_hide_chat !== null) { Cookies.set('wplc_hide', wplc_hide_chat , { expires: 1, path: '/' });  } else {
@@ -458,6 +470,8 @@ jQuery(document).ready(function() {
             } 
             else if(wplc_chat_status == 1){
                 jQuery("#wp-live-chat-4").show();
+                jQuery("#wplc_social_holder").show();
+                jQuery("#nifty_ratings_holder").show();
                 jQuery.event.trigger({type: "wplc_animation_done"});
                 jQuery("#wplc_chatbox").append("The chat has been ended by the operator.<br />");
                 var height = jQuery('#wplc_chatbox')[0].scrollHeight;
@@ -614,15 +628,21 @@ jQuery(document).ready(function() {
 
 
             jQuery("#wplc_chatmsg").val('');
+
+            /*Nifty format Parse*/
+            var wplc_chat_parsed = wplc_chat;
+            if(typeof niftyFormatParser !== "undefined"){
+                wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
+            }
                         
             if(wplc_display_name == 'display'){
                 if (wplc_gravatar_image.length > 1) {
-                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+" <strong>"+wplc_name+"</strong>: "+wplc_chat+"</span><br /><div class='wplc-clear-float-message'></div>");
+                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+" <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
                 } else {
-                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'><img src='//www.gravatar.com/avatar/"+md5(wplc_email)+"?s=30' class='wplc-user-message-avatar' \/> <strong>"+wplc_name+"</strong>: "+wplc_chat+"</span><br /><div class='wplc-clear-float-message'></div>");
+                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'><img src='//www.gravatar.com/avatar/"+md5(wplc_email)+"?s=30' class='wplc-user-message-avatar' \/> <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
                 }
             } else {
-                jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat+"</span><div class='wplc-clear-float-message'></div>");
+                jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");
             }
             
             var height = jQuery('#wplc_chatbox')[0].scrollHeight;
@@ -675,4 +695,4 @@ jQuery(document).ready(function() {
             return this.replace(/\\(.)/mg, "$1");
         }
         
-    });
+});
