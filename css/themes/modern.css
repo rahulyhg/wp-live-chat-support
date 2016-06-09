@@ -599,9 +599,9 @@
 
 #nifty_ratings_form {
     position: absolute;
-    left: 55px;
+    left: 65px;
     top: -4px;
-    width: 250px;
+    width: 220px;
     padding: 2px;
     border-radius: 2px;
 }
@@ -611,12 +611,12 @@ input#nifty_ratings_comment {
     margin-bottom: 0px;
     line-height: inherit;
     font-size: 12px;
-    top: -1px;
+    top: -2px;
     position: relative;
 }
 
 #nifty_ratings_form:before {
-    top: 9px;
+    top: 11px;
     left: -7px;
     border-width: 6px 7px 6px 0;
     border-color: transparent #666;
@@ -638,7 +638,7 @@ input#nifty_ratings_comment {
     text-align: center;
     font-size: 12px;
     padding: 4px;
-    top: 0px;
+    top: 3px;
     right: 2px;
     position: relative;
 }
