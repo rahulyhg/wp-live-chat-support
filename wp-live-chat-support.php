@@ -9,7 +9,7 @@
   Text Domain: wplivechat
   Domain Path: /languages
  */
-
+ 
 /* 
  * 6.1.03 - 2016-04-xx - Low priority
  * Cloud server bug fix
@@ -1519,9 +1519,6 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
 
   $ret_msg .= "</div>";
   $ret_msg .= "</div>";
-
-  
-
   return $ret_msg;
 }
 
@@ -1609,6 +1606,7 @@ function wplc_filter_control_loggedin($logged_in) {
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
 function wplc_output_box_ajax_new() {
+
        
         $ret_msg = array();
         $logged_in = false;
@@ -1985,6 +1983,7 @@ function wplc_admin_javascript() {
       $not_icon = plugins_url('/images/wplc_notification_icon.png', __FILE__); 
 
       $wplc_wav_file = plugins_url('/ring.wav', __FILE__);
+      $wplc_wav_file = apply_filters("wplc_filter_wav_file",$wplc_wav_file);
       wp_localize_script('wplc-admin-js', 'wplc_wav_file', $wplc_wav_file);
 
       wp_localize_script('wplc-admin-js', 'wplc_ajax_nonce', $ajax_nonce);
@@ -3099,6 +3098,7 @@ function wplc_head_basic() {
     if (isset($_POST['wplc_save_settings'])) {
         do_action("wplc_hook_admin_settings_save");
         if (isset($_POST['wplc_settings_align'])) { $wplc_data['wplc_settings_align'] = esc_attr($_POST['wplc_settings_align']); }
+        if (isset($_POST['wplc_environment'])) { $wplc_data['wplc_environment'] = esc_attr($_POST['wplc_environment']); }
         if (isset($_POST['wplc_settings_fill'])) { $wplc_data['wplc_settings_fill'] = esc_attr($_POST['wplc_settings_fill']); }
         if (isset($_POST['wplc_settings_font'])) { $wplc_data['wplc_settings_font'] = esc_attr($_POST['wplc_settings_font']); }
 
@@ -3183,6 +3183,12 @@ function wplc_head_basic() {
         } else {
           update_option("WPLC_HIDE_CHAT", false);
         }
+
+
+        $wplc_advanced_settings = array();
+        if (isset($_POST['wplc_iterations'])) { $wplc_advanced_settings['wplc_iterations'] = esc_attr($_POST['wplc_iterations']); }
+		if (isset($_POST['wplc_delay_between_loops'])) { $wplc_advanced_settings['wplc_delay_between_loops'] = esc_attr($_POST['wplc_delay_between_loops']); }
+		update_option("wplc_advanced_settings",$wplc_advanced_settings);
 
 
         update_option('wplc_mail_type', $_POST['wplc_mail_type']);
@@ -4085,4 +4091,67 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 	            </div>";
     }
 	return $msg;
+}
+
+
+
+add_action("wplc_hook_admin_settings_main_settings_after","wplc_hook_control_admin_settings_chat_box_settings_after",2);
+function wplc_hook_control_admin_settings_chat_box_settings_after() {
+
+	$wplc_settings = get_option("WPLC_SETTINGS");
+    if (isset($wplc_settings["wplc_environment"])) { $wplc_environment[intval($wplc_settings["wplc_environment"])] = "SELECTED"; }
+
+	?>
+	<table class='form-table' width='700'>
+          <tr>
+              <td width='400' valign='top'>
+                  <h4><?php _e("Advanced settings", "wplivechat") ?></h4>
+                  <p><em><small><?php _e("Only change these settings if you are experiencing performance issues.","wplivechat"); ?></small></em></p>
+              </td>
+              <td valign='top'>
+                  &nbsp;
+              </td>
+          </tr>
+          </tr>
+          <?php do_action("wplc_advanced_settings_settings"); ?>
+          <tr>
+              <td valign='top'>
+                  <?php _e("What type of environment are you on?","wplivechat"); ?>
+              </td>
+              <td valign='top'>
+                  <select name='wplc_environment' id='wplc_environment'>
+                    <option value='1' <?php if (isset($wplc_environment[1])) { echo $wplc_environment[1]; } ?>><?php _e("Shared hosting - low level plan","wplivechat"); ?></option>
+                    <option value='2' <?php if (isset($wplc_environment[2])) { echo $wplc_environment[2]; } ?>><?php _e("Shared hosting - normal plan","wplivechat"); ?></option>
+                    <option value='3' <?php if (isset($wplc_environment[3])) { echo $wplc_environment[3]; } ?>><?php _e("VPS","wplivechat"); ?></option>
+                    <option value='4' <?php if (isset($wplc_environment[4])) { echo $wplc_environment[4]; } ?>><?php _e("Dedicated server","wplivechat"); ?></option>
+                  </select>  
+              </td>
+          </tr>
+          <tr>
+              <td valign='top'>
+                  <?php _e("Long poll setup","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Only change these if you are an experienced developer or if you have received these figures from the Code Cabin Support team.", "wplivechat") ?>"></i>
+              </td>
+              <td valign='top'>
+                <?php 
+                  $wplc_advanced_settings = get_option("wplc_advanced_settings");
+                  ?>
+                  <table>
+                    <tr>
+                      <td><?php _e("Iterations","wplivechat"); ?></td>
+                      <td><input id="wplc_iterations" name="wplc_iterations" type="number" max='200' min='10'  value="<?php if (isset($wplc_advanced_settings['wplc_iterations'])) { echo $wplc_advanced_settings['wplc_iterations']; } else { echo '55'; } ?>" /></td>
+                    </tr>
+                    <tr>
+                      <td><?php _e("Sleep between iterations","wplivechat"); ?></td>
+                      <td>
+                        <input id="wplc_delay_between_loops" name="wplc_delay_between_loops" type="number" max='1000000' min='25000'  value="<?php if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { echo $wplc_advanced_settings['wplc_delay_between_loops']; } else { echo '500000'; } ?>" />
+                        <small><em><?php _e("microseconds","wplivechat"); ?></em></small>
+                      </td>
+                    </tr>
+                  </table>
+
+              </td>
+          </tr>
+
+      </table>
+  <?php
 }

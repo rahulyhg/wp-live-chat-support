@@ -36,7 +36,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
         if (isset($wplc_settings["wplc_settings_color2"])) { $wplc_settings_color2 = $wplc_settings["wplc_settings_color2"]; } else { $wplc_settings_color2 = "FFFFFF"; }
         if (isset($wplc_settings["wplc_settings_color3"])) { $wplc_settings_color3 = $wplc_settings["wplc_settings_color3"]; } else { $wplc_settings_color3 = "EEEEEE"; }
         if (isset($wplc_settings["wplc_settings_color4"])) { $wplc_settings_color4 = $wplc_settings["wplc_settings_color4"]; } else { $wplc_settings_color4 = "666666"; }
-
+        if (isset($wplc_settings["wplc_environment"])) { $wplc_environment[intval($wplc_settings["wplc_environment"])] = "SELECTED"; }
 
         if(get_option("WPLC_HIDE_CHAT") == true) { $wplc_hide_chat = "checked"; } else { $wplc_hide_chat = ""; };
         
@@ -189,12 +189,14 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                     </small>
                   </td>
               </tr>
+
+
+
               <?php } ?>
-
-
-
-          </table>
-          <?php do_action('wplc_hook_admin_settings_main_settings_after'); ?>
+            </table>
+            <?php do_action('wplc_hook_admin_settings_main_settings_after'); ?>
+            
+          
       </div>
       <div id="tabs-2">
           <h3><?php _e("Chat Window Settings",'wplivechat')?></h3>
@@ -223,7 +225,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               <?php if (!function_exists("wplc_pro_activate")) { ?>
               <tr>
                   <td>
-                      <?php _e("Display 'typing...' animation","wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Display the \"typing...\" animation in the chat window as soon as an agent or visitor is typing.","wplivechat") ?>"></i>
+                      <?php _e("Display typing indicator","wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Display a typing animation as soon as someone starts typing.","wplivechat") ?>"></i>
                   </td>
                   <td>
                       <input type="checkbox" name="" value="" disabled />
@@ -808,3 +810,4 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
     </form>
     
     </div>
+

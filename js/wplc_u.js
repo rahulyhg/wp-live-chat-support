@@ -79,7 +79,7 @@ jQuery(document).ready(function() {
                 } else {
                     wplc_online = true;
                 }
-                if (wplc_filter_run_override !== "1") { wplc_run = false; } else { /* we can run */ }
+                if (wplc_filter_run_override !== "1" || wplc_online === false) { wplc_run = false; } else { /* we can run */ }
 
                 /* start long polling */
                 var data = {
@@ -95,7 +95,7 @@ jQuery(document).ready(function() {
 
                 initial_data = data;
                 // ajax long polling function
-                if (wplc_filter_run_override !== "1") { 
+                if (wplc_filter_run_override !== "1" || wplc_online === false) { 
                     wplc_call_to_server_chat(data,true,true);
                 } else { 
                     wplc_call_to_server_chat(data,true,false);
@@ -499,7 +499,9 @@ jQuery(document).ready(function() {
             if (wplc_email.length <= 0) { alert("Please enter your email address"); return false; }
 
             if(jQuery("#wplc_email").attr('wplc_hide') !== "1"){
-                var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+                var testEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                
+                //var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
                 if (!testEmail.test(wplc_email)){
                     alert("Please Enter a Valid Email Address"); return false;
                 }
@@ -508,7 +510,7 @@ jQuery(document).ready(function() {
             /* start the long polling */
             wplc_run = true;
             
-            if (wplc_filter_run_override === "1") { } else {
+            if (wplc_filter_run_override === "1" || wplc_online === false) { } else {
                 initial_data.status = 2;
 
                 /* force the loop to start only now, as we are not using the initiate extension */
@@ -673,7 +675,7 @@ jQuery(document).ready(function() {
         }); 
 
         function wplc_pre_open_check_status(status, callback) {
-            if (wplc_chat_status.length > 0) {
+            if (typeof wplc_chat_status.length !== 'undefined' && wplc_chat_status.length > 0) {
                 if (parseInt(wplc_chat_status) === 10 || parseInt(wplc_chat_status) === 7) {
                     /* it was minimized or timedout, now we need to open it - set status to 3 (back to open chat) */
                     Cookies.set('wplc_chat_status', 3, { expires: 1, path: '/' });
@@ -695,4 +697,4 @@ jQuery(document).ready(function() {
             return this.replace(/\\(.)/mg, "$1");
         }
         
-});
+    });

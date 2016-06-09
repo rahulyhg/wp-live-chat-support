@@ -31,14 +31,40 @@ function wplc_init_ajax_callback() {
 
     if ($check == 1) {
 
+        $wplc_advanced_settings = get_option("wplc_advanced_settings");
+        if (!$wplc_advanced_settings) {
+            $wplc_delay_between_updates = 500000;
+            $wplc_delay_between_loops = 500000;
+            $wplc_iterations = 55;
+        } else {
+            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); }
+            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); }
+            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); }
 
-        $iterations = 55; 
+            if ($wplc_iterations < 10) { $wplc_iterations = 10; }
+            if ($wplc_iterations > 200) { $wplc_iterations = 200; }
+
+            if ($wplc_delay_between_updates < 250000) { $wplc_delay_between_updates = 250000; }
+            if ($wplc_delay_between_updates > 1000000) { $wplc_delay_between_updates = 1000000; }
+
+            if ($wplc_delay_between_loops < 250000) { $wplc_delay_between_loops = 250000; }
+            if ($wplc_delay_between_loops > 1000000) { $wplc_delay_between_loops = 1000000; }
+
+        }
+
+
+        $iterations = $wplc_iterations;
+
+
+
         /* time in microseconds between updating the user on the page within the DB  (lower number = higher resource usage) */
-        define('WPLC_DELAY_BETWEEN_UPDATES',500000);
+        define('WPLC_DELAY_BETWEEN_UPDATES', $wplc_delay_between_updates);
         /* time in microseconds between long poll loop (lower number = higher resource usage) */
-        define('WPLC_DELAY_BETWEEN_LOOPS',500000);
+        define('WPLC_DELAY_BETWEEN_LOOPS', $wplc_delay_between_loops);
         /* this needs to take into account the previous constants so that we dont run out of time, which in turn returns a 503 error */
-        define('WPLC_TIMEOUT',(((WPLC_DELAY_BETWEEN_UPDATES + WPLC_DELAY_BETWEEN_LOOPS))*$iterations)/1000000);
+        define('WPLC_TIMEOUT', (((WPLC_DELAY_BETWEEN_UPDATES + WPLC_DELAY_BETWEEN_LOOPS)) * $iterations) / 1000000);
+
+
 
         global $wpdb;
         global $wplc_tblname_chats;
@@ -149,8 +175,7 @@ function wplc_init_ajax_callback() {
 
             
             while($i <= $iterations) {
-
-
+                
 
                 if($_POST['cid'] == null || $_POST['cid'] == "" || $_POST['cid'] == "null" || $_POST['cid'] == 0){
     //                echo 1;
@@ -300,8 +325,10 @@ function wplc_init_ajax_callback() {
                     break;
                 }
                 $i++;
-                @ob_end_flush();
+                
                 if (defined('WPLC_DELAY_BETWEEN_LOOPS')) { usleep(WPLC_DELAY_BETWEEN_LOOPS); } else { usleep(500000); }
+
+                @ob_end_flush();
             }
         }
         
