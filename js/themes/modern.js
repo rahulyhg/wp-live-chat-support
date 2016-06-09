@@ -60,6 +60,10 @@ jQuery(document).on("wplc_animation_done", function(e) {
     jQuery("#wplc_chatbox").css("top",
         35+jQuery("#wplc_logo").height()+"px"
     );
+    jQuery("#wplc_chatbox").css("bottom",
+        jQuery("#wplc_user_message_div").outerHeight()+"px"
+    );
+
 
 });
 jQuery(document).on( "wplc_open_chat_2", function( e ) {
