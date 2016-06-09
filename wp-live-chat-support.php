@@ -1519,9 +1519,6 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
 
   $ret_msg .= "</div>";
   $ret_msg .= "</div>";
-
-  
-
   return $ret_msg;
 }
 
@@ -1609,6 +1606,7 @@ function wplc_filter_control_loggedin($logged_in) {
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
 function wplc_output_box_ajax_new() {
+
        
         $ret_msg = array();
         $logged_in = false;
@@ -1985,6 +1983,7 @@ function wplc_admin_javascript() {
       $not_icon = plugins_url('/images/wplc_notification_icon.png', __FILE__); 
 
       $wplc_wav_file = plugins_url('/ring.wav', __FILE__);
+      $wplc_wav_file = apply_filters("wplc_filter_wav_file",$wplc_wav_file);
       wp_localize_script('wplc-admin-js', 'wplc_wav_file', $wplc_wav_file);
 
       wp_localize_script('wplc-admin-js', 'wplc_ajax_nonce', $ajax_nonce);
@@ -3099,6 +3098,7 @@ function wplc_head_basic() {
     if (isset($_POST['wplc_save_settings'])) {
         do_action("wplc_hook_admin_settings_save");
         if (isset($_POST['wplc_settings_align'])) { $wplc_data['wplc_settings_align'] = esc_attr($_POST['wplc_settings_align']); }
+        if (isset($_POST['wplc_environment'])) { $wplc_data['wplc_environment'] = esc_attr($_POST['wplc_environment']); }
         if (isset($_POST['wplc_settings_fill'])) { $wplc_data['wplc_settings_fill'] = esc_attr($_POST['wplc_settings_fill']); }
         if (isset($_POST['wplc_settings_font'])) { $wplc_data['wplc_settings_font'] = esc_attr($_POST['wplc_settings_font']); }
 
@@ -3183,6 +3183,12 @@ function wplc_head_basic() {
         } else {
           update_option("WPLC_HIDE_CHAT", false);
         }
+
+
+        $wplc_advanced_settings = array();
+        if (isset($_POST['wplc_iterations'])) { $wplc_advanced_settings['wplc_iterations'] = esc_attr($_POST['wplc_iterations']); }
+		if (isset($_POST['wplc_delay_between_loops'])) { $wplc_advanced_settings['wplc_delay_between_loops'] = esc_attr($_POST['wplc_delay_between_loops']); }
+		update_option("wplc_advanced_settings",$wplc_advanced_settings);
 
 
         update_option('wplc_mail_type', $_POST['wplc_mail_type']);
