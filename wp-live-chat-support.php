@@ -1193,8 +1193,14 @@ function wplc_filter_control_modern_theme_hovercard_content_left($msg) {
  */
 function wplc_filter_control_live_chat_box_html_header_div_top($wplc_settings) {
 
-         
-  $ret_msg = "<div id=\"wp-live-chat-header\" class='wplc-color-bg-1 wplc-color-2'>";
+  $ret_msg = "";
+
+  $current_theme = isset($wplc_settings['wplc_newtheme']) ? $wplc_settings['wplc_newtheme'] : "";
+  if($current_theme === "theme-1"){
+  	$ret_msg .= apply_filters("wplc_filter_chat_header_above","", $wplc_settings); //Ratings/Social Icon Filter
+  }
+
+  $ret_msg .= "<div id=\"wp-live-chat-header\" class='wplc-color-bg-1 wplc-color-2'>";
   $ret_msg .= apply_filters("wplc_filter_chat_header_under","",$wplc_settings);
   return $ret_msg;
 }
@@ -1491,14 +1497,31 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
   $ret_msg .= "</div>";
 
   $ret_msg .= "<div id='wplc_user_message_div'>";
-  $ret_msg .= "<p style=\"text-align:center; font-size:11px;\">".$text."</p>";
+  $ret_msg .= "<p style=\"text-align:center; font-size:11px;\" id='wplc_msg_notice'>".$text."</p>";
+
+  //Editor Controls
+  $ret_msg .= apply_filters("wplc_filter_chat_text_editor","");
+
   $ret_msg .= "<p>";
   $ret_msg .= "<input type=\"text\" name=\"wplc_chatmsg\" id=\"wplc_chatmsg\" value=\"\" />";
+
+  //Upload Controls
+  $ret_msg .= apply_filters("wplc_filter_chat_upload","");
+
   $ret_msg .= "<input type=\"hidden\" name=\"wplc_cid\" id=\"wplc_cid\" value=\"\" />";
   $ret_msg .= "<input id=\"wplc_send_msg\" type=\"button\" value=\"".__("Send", "wplivechat")."\" style=\"display:none;\" />";
   $ret_msg .= "</p>";
+
+  $current_theme = isset($wplc_settings['wplc_newtheme']) ? $wplc_settings['wplc_newtheme'] : "";
+  if($current_theme === "theme-2"){
+  	$ret_msg .= apply_filters("wplc_filter_chat_4th_layer_below_input","", $wplc_settings); //Ratings/Social Icon Filter
+  }
+
   $ret_msg .= "</div>";
   $ret_msg .= "</div>";
+
+  
+
   return $ret_msg;
 }
 
@@ -1586,7 +1609,6 @@ function wplc_filter_control_loggedin($logged_in) {
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
 function wplc_output_box_ajax_new() {
-
        
         $ret_msg = array();
         $logged_in = false;
@@ -2293,6 +2315,25 @@ function wplc_draw_chat_area($cid) {
             clear: both;
         }
 
+        .rating{
+            background-color: lightgray;
+            width: 80px;
+            padding: 2px;
+            border-radius: 4px;
+            text-align: center;
+            color: white;
+            display: inline-block;
+            float: right;
+        }
+        
+        .rating-bad {
+            background-color: #AF0B0B !important;
+        }
+        
+        .rating-good {
+            background-color: #368437 !important;
+        }
+
 
     </style>
     <?php
@@ -2351,9 +2392,12 @@ function wplc_draw_chat_area($cid) {
       echo "      <span class='part1'>" . __("Browser:", "wplivechat") . "</span><span class='part2'> $browser <img src='" . $wplc_basic_plugin_url . "/images/$browser_image' alt='$browser' title='$browser' /><br />";
       echo "      <span class='part1'>" . __("IP Address:", "wplivechat") . "</span><span class='part2'> ".$user_ip;
       echo "  </div>";
+	  echo "<hr />";
+
+      echo (apply_filters("wplc_filter_advanced_info","", $result->id, $result->name));
 
       echo "  <div id=\"wplc_sound_update\"></div>";
-      echo "<hr />";
+      
       echo "<h3>".__("Add-ons","wplivechat")."</h3>";
       do_action("wplc_hook_admin_visitor_info_display_after",$cid);
       echo "<a href='".admin_url('admin.php?page=wplivechat-menu-extensions-page')."' class='button button-primary' target='_BLANK'>".__("Get more add-ons","wplivechat")."</a>";
@@ -2383,6 +2427,10 @@ function wplc_hook_control_admin_below_chat_box() {
 function wplc_return_chat_response_box($cid) {
     $ret = "<div class=\"chat_response_box\">";
     $ret .= "<input type='text' name='wplc_admin_chatmsg' id='wplc_admin_chatmsg' value='' placeholder='" . __("type here...", "wplivechat") . "' />";
+
+    $ret .= apply_filters("wplc_filter_chat_upload","");
+    $ret .= (!function_exists("nifty_text_edit_div") ? apply_filters("wplc_filter_chat_text_editor_upsell","") : apply_filters("wplc_filter_chat_text_editor",""));
+    
     $ret .= "<input id='wplc_admin_cid' type='hidden' value='$cid' />";
     $ret .= "<input id='wplc_admin_send_msg' type='button' value='" . __("Send", "wplivechat") . "' style=\"display:none;\" />";
     $ret .= "</div>";
@@ -4007,4 +4055,34 @@ function wplc_string_check() {
 
   update_option("WPLC_SETTINGS",$wplc_settings);
 
+}
+
+add_filter("wplc_filter_chat_text_editor_upsell","nifty_text_edit_upsell",1,1);
+function nifty_text_edit_upsell($msg){
+	if(!function_exists("nifty_text_edit_div")){
+		//Only show this if in admin area and is not PRO
+		$msg .= "<div id='nifty_text_editor_holder' class='wplc_faded_upsell'>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-bold' id='nifty_tedit_b'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-italic' id='nifty_tedit_i'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-underline' id='nifty_tedit_u'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-strikethrough' id='nifty_tedit_strike'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-square' id='nifty_tedit_mark'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-subscript' id='nifty_tedit_sub'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-superscript' id='nifty_tedit_sup'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon fa fa-link' id='nifty_tedit_link'></i>";
+	    $msg .=   "<i class='nifty_tedit_icon'><a href='https://wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=text_editor'>Pro version only</a></i>";
+	    $msg .= "</div>";
+	}
+	return $msg;
+}
+
+add_filter("wplc_filter_advanced_info","nifty_rating_advanced_info_upsell",1,3);
+function nifty_rating_advanced_info_upsell($msg, $cid, $name){
+	if(!function_exists("nifty_rating_advanced_info_control") && is_admin()){
+		$msg .= "<div class='admin_visitor_advanced_info admin_agent_rating wplc_faded_upsell'>
+	                <strong>" . __("Experience Rating", "wplivechat") . "</strong>
+	                <div class='rating'><a href='https://wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=experience_ratings'>Pro only</a></div>
+	            </div>";
+    }
+	return $msg;
 }
