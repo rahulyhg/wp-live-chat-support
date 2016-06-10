@@ -13,6 +13,7 @@
 /* 
  * 6.1.03 - 2016-04-xx - Low priority
  * Cloud server bug fix
+ * Offline messages bug fix
  * 
  * 6.1.02 - 2016-04-13 - Low Priority
  * Tested on WordPress 4.5
