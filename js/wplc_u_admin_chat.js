@@ -28,6 +28,15 @@ var wplc_display_name = wplc_name;
 var wplc_enable_ding = wplc_enable_ding;
 var wplc_user_email_address = wplc_user_email;
 
+ jQuery(document).ready(function(){
+    //Parse existing data
+    if(typeof niftyFormatParser !== "undefined"){
+        var htmlToParse = jQuery(".admin_chat_box_inner").html();
+        jQuery(".admin_chat_box_inner").html(niftyFormatParser(htmlToParse));
+    }
+    
+});
+
 function wplc_call_to_server_admin_chat(data) {
 jQuery.ajax({
     url: wplc_ajaxurl,
@@ -57,7 +66,11 @@ jQuery.ajax({
             if (response['action'] === "wplc_new_chat_message") {
                 jQuery("#wplc_user_typing").fadeOut("slow").remove();
                 current_len = jQuery("#admin_chat_box_area_" + cid).html().length;
-                jQuery("#admin_chat_box_area_" + cid).append(response['chat_message']);
+                if(typeof niftyFormatParser !== "undefined"){
+                    jQuery("#admin_chat_box_area_" + cid).append(niftyFormatParser(response['chat_message']));
+                }else{
+                    jQuery("#admin_chat_box_area_" + cid).append(response['chat_message']);
+                }
                 new_length = jQuery("#admin_chat_box_area_" + cid).html().length;
                 if (current_len < new_length) {
                     if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
@@ -162,6 +175,13 @@ var wplc_is_typing = false;
 jQuery(document).ready(function () {
 
     var wplc_image = admin_pic;
+
+    jQuery("#nifty_file_input").on("change", function(){
+
+        var file = this.files[0]; //Last file in array
+        niftyShareFile(file,'#nifty_attach_fail_icon', '#nifty_attach_success_icon', '#nifty_attach_uploading_icon',  "#nifty_select_file");
+
+    });
     
 
 
@@ -292,10 +312,17 @@ jQuery(document).ready(function () {
         var wplc_name = "a" + "d" + "m" + "i" + "n";
         jQuery("#wplc_admin_chatmsg").val('');
 
+        /*Nifty Format Parser*/
+        var wplc_chat_parsed = wplc_chat;
+        if(typeof niftyFormatParser !== "undefined"){
+            //PRO
+            wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
+        }
+
         if (wplc_display_name == 'display') {
-            jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_image + " <strong>" + wplc_name + "</strong>:<hr/ style='margin-bottom: 0px;'>" + wplc_chat + "</span><br /><div class='wplc-clear-float-message'></div>");
+            jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_image + " <strong>" + wplc_name + "</strong>:<hr/ style='margin-bottom: 0px;'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
         } else {
-            jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat + "</span><br /><div class='wplc-clear-float-message'></div>");
+            jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
         }
         var height = jQuery('#admin_chat_box_area_' + wplc_cid)[0].scrollHeight;
         jQuery('#admin_chat_box_area_' + wplc_cid).scrollTop(height);
@@ -322,3 +349,87 @@ jQuery(document).ready(function () {
 
 
 });
+
+/* Handles Uploading and sharing a file within chat*/
+function niftyShareFile(fileToUpload, failedID, successID, uploadingID, originalID){
+    var formData = new FormData();
+
+    formData.append('action', 'wplc_upload_file');
+    formData.append('cid', cid);
+    formData.append('file', fileToUpload);
+    formData.append('timestamp', Date.now());
+    formData.append('security', wplc_ajax_nonce );
+    
+    /*Handle jQuery Elements*/
+    jQuery(uploadingID).show();
+    jQuery(originalID).hide();
+    jQuery(successID).hide();
+    jQuery(failedID).hide();
+
+    if(fileToUpload.name.indexOf(".php") === -1 && fileToUpload.name.indexOf(".html") === -1 && fileToUpload.name.indexOf(".asp") === -1){
+        //Files allowed - continue
+        if(fileToUpload.size < 4000000){ //Max size of 4MB
+            jQuery.ajax({
+                   url : wplc_ajaxurl,
+                   type : 'POST',
+                   data : formData,
+                   cache: false,
+                   processData: false, 
+                   contentType: false, 
+                   success : function(data) {    
+                        console.log(data);                    
+                       if(parseInt(data) !== 0){
+                           jQuery(uploadingID).hide();
+                           jQuery(successID).show();
+                           setTimeout(function(){
+                              jQuery(successID).hide();
+                              jQuery(originalID).show(); 
+                           }, 2000);
+
+                            //All good post the link to file            
+                            var tag = (data.indexOf(".png") !== -1 || data.indexOf(".PNG") !== -1 || data.indexOf(".jpg") !== -1  || data.indexOf(".JPG") !== -1 || data.indexOf(".jpeg") !== -1 || data.indexOf(".gif") !== -1 || data.indexOf(".bmp")!== -1 ) ? "img" : "link";
+                           
+                            if(tag !== "img"){
+                                tag = (data.indexOf(".mp4") !== -1 || data.indexOf(".mpeg4") !== -1 || data.indexOf(".webm") !== -1 || data.indexOf(".oog") !== -1 ) ? "vid" : "link"; //video now
+                            }
+                            jQuery("#wplc_admin_chatmsg").val(tag + ":" + data + ":" + tag); //Add to input field
+                            jQuery("#wplc_admin_send_msg").trigger("click"); //Send message
+                       }
+                       else{
+                           jQuery(uploadingID).hide();
+                           jQuery(failedID).show();
+                           setTimeout(function(){
+                              jQuery(failedID).hide();
+                              jQuery(originalID).show(); 
+                           }, 2000);
+
+                       }
+                   },
+                   error : function (){
+                        jQuery(uploadingID).hide();
+                        jQuery(failedID).show();
+                        setTimeout(function(){
+                           jQuery(failedID).hide();
+                           jQuery(originalID).show(); 
+                        }, 2000);
+                   }
+            });
+        }else{
+            alert("File limit is 4mb");
+            jQuery(uploadingID).hide();
+            jQuery(failedID).show();
+            setTimeout(function(){
+               jQuery(failedID).hide();
+               jQuery(originalID).show(); 
+            }, 2000);
+        }
+    } else{
+        alert("File type not supported");
+        jQuery(uploadingID).hide();
+        jQuery(failedID).show();
+        setTimeout(function(){
+           jQuery(failedID).hide();
+           jQuery(originalID).show(); 
+        }, 2000);
+    }
+}
