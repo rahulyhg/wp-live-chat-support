@@ -1151,7 +1151,11 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
             //Set who the message is to be sent from
             $mail->setFrom($reply_to, $reply_to_name);
             //Set who the message is to be sent to
-            $mail->addAddress($wplc_pro_settings['wplc_pro_chat_email_address']);
+            if($email_address){
+                foreach($email_address as $email){
+                    $mail->addAddress($email);
+                }
+            }
             //Set the subject line
             $mail->Subject = $subject;
             //Read an HTML message body from an external file, convert referenced images to embedded,
