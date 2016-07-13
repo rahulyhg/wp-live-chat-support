@@ -37,9 +37,9 @@ function wplc_init_ajax_callback() {
             $wplc_delay_between_loops = 500000;
             $wplc_iterations = 55;
         } else {
-            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); }
-            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); }
-            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); }
+            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); } else { $wplc_delay_between_updates = 500000; }
+            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); } else { $wplc_delay_between_loops = 500000; }
+            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); } else { $wplc_iterations = 55; }
 
             if ($wplc_iterations < 10) { $wplc_iterations = 10; }
             if ($wplc_iterations > 200) { $wplc_iterations = 200; }
@@ -73,6 +73,7 @@ function wplc_init_ajax_callback() {
         session_write_close();
 
         if ($_POST['action'] == "wplc_get_chat_box") {
+            
             echo wplc_output_box_5100();
         }
 
