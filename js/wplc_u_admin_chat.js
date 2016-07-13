@@ -377,7 +377,6 @@ function niftyShareFile(fileToUpload, failedID, successID, uploadingID, original
                    processData: false, 
                    contentType: false, 
                    success : function(data) {    
-                        console.log(data);                    
                        if(parseInt(data) !== 0){
                            jQuery(uploadingID).hide();
                            jQuery(successID).show();
