@@ -396,7 +396,14 @@ jQuery(document).ready(function () {
        
     });
 
-    wplc_call_to_server(data);
+    if (typeof wplc_choose_accept_chats !== "undefined" && wplc_choose_accept_chats === "0" ) {
+        /* do nothing as they do not want to accept chats - kill the whole system! */
+        jQuery("#wplc_admin_chat_area_new").html("<div class='wplc_chat_area_temp'>"+ " " + wplc_localized_quote_string+"</div>");
+        jQuery("#wplc_admin_chat_holder").append(wplc_localized_offline_string)
+    } else {
+        wplc_call_to_server(data);
+    }
+
 
     jQuery("body").on("click", ".wplc_delete_message", function(e){
 
