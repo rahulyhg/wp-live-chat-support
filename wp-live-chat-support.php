@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 6.2.02
+  Version: 6.2.03
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,12 @@
  */
  
 /* 
+ * 6.2.03 - 2016-07-19 - Low priority
+ * Italian translation updated - thank you Angelo Giammarresi
+ * Fixed Danish translation bug
+ * Minor UI fixes
+ * Edge browser bug fix when opening chats
+ * 
  * 6.2.02 - 2016-07-11 - High priority
  * XSS Security patch - Thank you Han Sahin!
  * 
@@ -384,7 +390,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "6.2.02";
+$wplc_version = "6.2.03";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -1465,7 +1471,7 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
  */
 function wplc_filter_control_live_chat_box_html_3rd_layer($wplc_settings,$wplc_using_locale) {
 
-  $wplc_sst_2 = __('Connecting. Please be patient.', 'wplivechat');
+  $wplc_sst_2 = __('Connecting. Please be patient...', 'wplivechat');
   if (!isset($wplc_settings['wplc_pro_sst2']) || $wplc_settings['wplc_pro_sst2'] == "") { $wplc_settings['wplc_pro_sst2'] = $wplc_sst_2; }
   $text = ($wplc_using_locale ? $wplc_sst_2 : stripslashes($wplc_settings['wplc_pro_sst2']));
 
@@ -1490,7 +1496,7 @@ function wplc_filter_control_live_chat_box_above_main_div($msg,$wplc_settings) {
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
 function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_using_locale ) {
-  $wplc_enter = __('Connecting. Please be patient.', 'wplivechat');
+  $wplc_enter = __('Connecting. Please be patient...', 'wplivechat');
   if (!isset($wplc_settings['wplc_user_enter']) || $wplc_settings['wplc_user_enter'] == "") { $wplc_settings['wplc_pro_sst2'] = $wplc_enter; }
   $text = ($wplc_using_locale ? $wplc_enter : stripslashes($wplc_settings['wplc_user_enter']));
 
@@ -2190,15 +2196,15 @@ function wplc_admin_menu_layout_display() {
                 <a class="wplc-support-link wplc-rotate" href="?page=wplivechat-menu-support-page"></a>
             </div>
             <div class='wplc_page_title'>
-                <h1><?php _e("Chat Dashboard", "wplivechat"); ?></h1>
+            	<img src='<?php echo WPLC_BASIC_PLUGIN_URL; ?>/images/wplc-logo.png' class='wplc-logo' />
                 <?php wplc_first_time_tutorial(); ?>
+				<?php do_action("wplc_hook_chat_dashboard_above"); ?>
 
                 <p><?php _e("Please note: This window must be open in order to receive new chat notifications.", "wplivechat"); ?></p>
             </div>
             
             <div id="wplc_sound"></div>
-            <?php do_action("wplc_hook_chat_dashboard_above"); ?>
-
+            
             <div id="wplc_admin_chat_holder">
                 <div id='wplc_admin_chat_info_new'>
                     <div class='wplc_chat_vis_count_box'>
@@ -2229,11 +2235,12 @@ function wplc_admin_menu_layout_display() {
                     <br />
                     <hr />
                     <?php do_action("wplc_hook_chat_dashboard_bottom"); ?>    
+		                
                     </div>
 
                 </div>
-                
             </div>
+
             
             
           
@@ -2313,6 +2320,11 @@ function wplc_hook_control_accept_chat($get_data,$aid) {
 
 }
 
+
+add_action("wplc_hook_chat_dashboard_bottom","wplc_hook_control_app_chat_dashboard_bottom",10);
+function wplc_hook_control_app_chat_dashboard_bottom() {
+	echo "<p>Tired of logging in to accept chats? Use our <a href='https://wp-livechat.com/extensions/mobile-desktop-app-extension/?utm_source=plugin&utm_medium=plugin&utm_campaign=main_app' target='_BLANK'>Android app</a> or <a href='https://wp-livechat.com/extensions/mobile-desktop-app-extension/?utm_source=plugin&utm_medium=plugin&utm_campaign=main_desktop' target='_BLANK'>desktop app</a> to monitor visitors, accept and initiate chats.</p>";
+}
 
 add_action("wplc_hook_draw_chat_area","wplc_hook_control_draw_chat_area",10,1);
 function wplc_hook_control_draw_chat_area($get_data) {
@@ -3822,7 +3834,7 @@ function wplc_filter_control_relevant_extensions_main_mobile($text) {
   $text .= '</a>';
   $text .= '<div class="float:left; padding-left:10px;">';
   $text .= '<h3 class="wplc-extension-title">'.$rel_name.'</h3>';
-  $text .= '<p>'.__("Answer chats directly from your mobile phone or dekstop with our mobile app and desktop client","wplivechat").'</p>';
+  $text .= '<p>'.__("Answer chats directly from your mobile phone or desktop with our mobile app and desktop client","wplivechat").'</p>';
   $text .= '</div>';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" class="button-secondary" target="_BLANK">'.__("Get this extension","wplivechat").'</a>';
   $text .= '</div>';

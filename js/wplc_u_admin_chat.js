@@ -370,7 +370,7 @@ function niftyShareFile(fileToUpload, failedID, successID, uploadingID, original
         //Files allowed - continue
         if(fileToUpload.size < 4000000){ //Max size of 4MB
             jQuery.ajax({
-                   url : wplc_ajaxurl,
+                   url : wplc_home_ajaxurl,
                    type : 'POST',
                    data : formData,
                    cache: false,
