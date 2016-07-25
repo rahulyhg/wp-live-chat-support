@@ -186,6 +186,7 @@ jQuery(document).ready(function() {
                             jQuery("#wplc_chatbox").append("<em>"+response['data']+"</em><br />");
                             var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                             jQuery('#wplc_chatbox').scrollTop(height); 
+                            jQuery.event.trigger({type: "wplc_end_chat"});
                             
                        }
                         else if(parseInt(response['status']) == 11){ /* use moved on to another page (perhaps in another tab so close this instance */

@@ -31,6 +31,7 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Access historical live chat records
 * Compatible with translation plugins
 * No advertising or links
+* Add surveys or polls to your chat box, before or after a chat session
 * Quick Responses (insert a predefined response to your live chat box)
 * Anonymity for your visitors
 * No "Powered by" links on the live chat window
@@ -197,6 +198,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 6.2.02 =
+It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02 for security reasons.
+
 = 4.4.1 =
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
@@ -204,6 +208,20 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 It is highly recommended that you upgrade to WP Live Chat Support version 4.1.4
 
 == Changelog ==
+
+= 6.2.02 - 2016-07-11 - High priority =
+* XSS Security patch - Thank you Han Sahin!
+
+= 6.2.01 - 2016-07-06 - High priority =
+* Surveys/Polls added - you can now add a survey/poll to your chat box either before or after a chat session
+
+= 6.2.00 - 2016-06-10 - High priority =
+* Cloud server bug fix
+* Offline messages bug fix
+* Internet explorer and Edge browser bug fix which caused the chat to not display
+* Fixed the bug that stopped email addresses such as "name@domain.tld" from validating
+* Advanced options to control the long poll variables
+* Support added for many new pro features
 
 = 6.1.02 - 2016-04-13 - Low Priority =
 * Tested on WordPress 4.5

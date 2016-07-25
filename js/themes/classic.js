@@ -96,4 +96,8 @@ jQuery(document).ready(function() {
 	jQuery("body").on("click", "#wp-live-chat-1", function() {
 	    jQuery.event.trigger({type: "wplc_open_chat"});
 	});
+
+    jQuery("body").on("click", "#speeching_button", function() {
+
+    });
 });

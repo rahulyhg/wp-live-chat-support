@@ -346,7 +346,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>              
           </table>
 
-          <?php if(!function_exists("wplc_chat_social_div")){ ?>
+          <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
               <hr>
@@ -802,6 +802,8 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
             ?></textarea>  
             <p class="description"><?php _e('Blocking a user\'s IP Address here will hide the chat window from them, preventing them from chatting with you. Each IP Address must be on a new line', 'wplivechat'); ?></p>
         </div>
+
+
 
         <?php do_action("wplc_hook_settings_page_more_tabs"); ?>
         
