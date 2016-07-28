@@ -71,6 +71,7 @@
     right: 0;
     height: 100%;
     width: 368px;
+    max-width: 100%;
 }
 #wp-live-chat-3 {
     padding: 10px;
@@ -169,7 +170,6 @@
     top: 41px;
 }
 #wp-live-chat-header{
-    padding: 10px 0 0;
     margin-bottom:25px;
     border-radius: 25px 25px;
     position:relative;
@@ -187,6 +187,7 @@
     position: fixed;
     height: 100%;
     width: 368px;
+    max-width: 100%;
     bottom: 0;
     right: 0;
     background: #fafafb;
@@ -339,7 +340,7 @@
     position:relative;   
     left:32px; 
     color:#FFF;
-    max-width:298px;
+    max-width: 82%;
     word-wrap: break-word;
 }
 .wplc-admin-message-avatar {
@@ -387,7 +388,7 @@
     margin-bottom: 3px;
     position: relative;
     right:30px;
-    max-width:300px;
+    max-width:82%;
     word-wrap: break-word;
 
 }
@@ -409,7 +410,7 @@
 }
 .wplc-user-message-avatar {
     position: absolute;
-    right: -40px;
+    right: -38px;
     border-radius: 15px;
 }
 
@@ -438,6 +439,7 @@
     background-color: #FFF;
     border-radius: 5px;
     z-index: 9999999;
+    height:auto;
 }
 
 #wplc_hovercard:before {
@@ -492,6 +494,7 @@
     border-radius: 9px;
     color: #fff;
     cursor: pointer;
+    line-height: 16px;
 }
 #wplc_hovercard_bottom{ 
     border-top: 1px solid #ccc;
@@ -505,6 +508,8 @@
     padding:15px;
     height:100px;
     box-shadow: 0 1px 1px #f0f0f1;
+    display:flex;
+    height:auto;
 }
 
 /* named after the famous words uttered by The Dylan at Code Cabin */
@@ -514,6 +519,8 @@
     text-transform: none;
     float: right;
     margin-right: 15px;
+    border-style: none;
+    line-height: 12px;
 }
 
 #wplc_first_message {
@@ -529,7 +536,7 @@
 .wplc_hovercard_content_left {
     float: left;
     display: block;
-    height: 60px;
+    /*height: 60px;*/
     padding-left: 10px;
     padding-right: 10px;
     width: 80px;
@@ -541,7 +548,7 @@
     /* padding-left: 20px; */
     font-size: 0.8em;
     word-wrap: break-word;
-    height: 70px;
+    /*height: 70px;*/
     width: 188px;
 }
 .wplc_left_logo {
@@ -611,7 +618,7 @@ input#nifty_ratings_comment {
     margin-bottom: 0px;
     line-height: inherit;
     font-size: 12px;
-    top: -2px;
+    top: -1px;
     position: relative;
 }
 
@@ -638,7 +645,7 @@ input#nifty_ratings_comment {
     text-align: center;
     font-size: 12px;
     padding: 4px;
-    top: 3px;
+    top: 1px;
     right: 2px;
     position: relative;
 }
@@ -652,4 +659,8 @@ input#nifty_ratings_comment {
 
 #nifty_recording {
     margin-left: 5px;
+}
+.wplc_powered_by_link {
+    font-size: 10px;
+    padding: 5px;
 }

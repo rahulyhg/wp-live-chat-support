@@ -1552,6 +1552,49 @@ function wplc_admin_display_missed_chats() {
     global $wpdb;
     global $wplc_tblname_chats;
 
+
+    if(isset($_GET['wplc_action']) && $_GET['wplc_action'] == 'remove_cid'){
+        if(isset($_GET['cid'])){
+            if(isset($_GET['wplc_confirm'])){
+                //Confirmed - delete
+                $delete_sql = "";
+                if (function_exists("wplc_register_pro_version")) {
+                    $delete_sql = "
+                        DELETE FROM $wplc_tblname_chats
+                        WHERE `id` = '".intval($_GET['cid'])."'
+                        AND (`status` = 7 OR `agent_id` = 0)
+                        AND `email` != 'no email set'                     
+                        ";
+                } else {
+                    $delete_sql = "
+                        DELETE FROM $wplc_tblname_chats
+                        WHERE `id` = '".intval($_GET['cid'])."'
+                        AND `status` = 7
+                        AND `email` != 'no email set'                     
+                        ";
+                }
+
+                $wpdb->query($delete_sql);
+                if ($wpdb->last_error) { 
+                    echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Error: Could not delete chat", "wp-livechat")."<br>
+                      </div>";
+                } else {
+                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
+                        ".__("Chat Deleted", "wp-livechat")."<br>
+                      </div>";
+                } 
+
+            } else {
+                //Prompt
+                echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
+                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wp-livechat")."</a>
+                      </div>";
+            }
+        }
+    }
+
     echo "
         <table class=\"wp-list-table widefat fixed \" cellspacing=\"0\">
             <thead>
@@ -1560,6 +1603,7 @@ function wplc_admin_display_missed_chats() {
                     <th scope='col' id='wplc_name_colum' class='manage-column column-id'><span>" . __("Name", "wplivechat") . "</span></th>
                     <th scope='col' id='wplc_email_colum' class='manage-column column-id'>" . __("Email", "wplivechat") . "</th>
                     <th scope='col' id='wplc_url_colum' class='manage-column column-id'>" . __("URL", "wplivechat") . "</th>
+                    <th scope='col' id='wplc_url_colum' class='manage-column column-id'>" . __("Action", "wplivechat") . "</th>
                 </tr>
             </thead>
             <tbody id=\"the-list\" class='list:wp_list_text_link'>";
@@ -1594,6 +1638,7 @@ function wplc_admin_display_missed_chats() {
             echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\"  class='wplc-user-message-avatar' /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . esc_url($result->url) . "</td>";
+            echo "<td class='chat_name column_chat_url'><a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$result->id."'><i class='fa fa-trash-o'></i></a></td>";
             echo "</tr>";
         }
     }

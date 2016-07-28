@@ -98,6 +98,18 @@ jQuery(document).ready(function() {
 	});
 
     jQuery("body").on("click", "#speeching_button", function() {
+        jQuery("#wplc_hovercard").hide();
+        wplc_is_chat_open = true;
+        jQuery.event.trigger({type: "wplc_open_chat"});
+        
 
+    });
+
+    jQuery("body").on("click", "#wplc_hovercard_min", function(){
+      jQuery("#wplc_hovercard").fadeOut();
+    });
+
+    jQuery("body").on("click", "#wp-live-chat-header", function(){
+        jQuery("#wplc_hovercard").hide();
     });
 });
