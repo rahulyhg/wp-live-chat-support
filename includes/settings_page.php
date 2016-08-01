@@ -99,6 +99,17 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       </select>
                   </td>
               </tr>
+              <?php /*
+              <tr>
+                <td width='200' valign='top'>
+                <?php _e("Show the 'Powered by WP Live Chat Support' link", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Checking this will display a Powered by WP Live Chat Support link', 'wplivechat'); ?>"></i>
+                </td>
+                <td>
+                    <input type="checkbox" value="1" name="wplc_powered_by_link" <?php if (isset($wplc_settings['wplc_powered_by_link']) && $wplc_settings['wplc_powered_by_link'] == 1) { echo "checked"; } ?> />                                          
+                </td>
+            </tr>
+            */ ?>
+
               <!--
                   <tr>
                       <td width='400' valign='top'>
