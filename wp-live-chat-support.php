@@ -11,15 +11,9 @@
  */
  
 /* 
- * 6.2.04 - 2016-07-28 - Low priority
- * Added compatibility for Pro triggers
- * Added Classic Theme's Hovercard (Will only show with triggers)
- * Fixed a bug which prevented the online/offline mode to affect the 'start chat' button
- * Fixed Responsive issues with modern theme
- * Ability to delete individual Missed Chats
- * Ability to delete individual Chats from History
- * Minor Styling Conflicts Resolved
- *
+ * 6.2.04 - 2016-08-01 - High priority
+ * Security patches in the offline message storing function (https://www.securify.nl/advisory/SFY20190709/stored_cross_site_scripting_vulnerability_in_wp_live_chat_support_wordpress_plugin.html)
+ * 
  * 6.2.03 - 2016-07-19 - Low priority
  * Italian translation updated - thank you Angelo Giammarresi
  * Fixed Danish translation bug
@@ -1160,6 +1154,7 @@ function wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$log
         $original_pos = "right";
         $wplc_class = "wplc_right";
     }
+
 
     $animations = wplc_return_animations_basic();
     if ($animations) {
