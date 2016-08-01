@@ -1223,17 +1223,17 @@ function wplc_store_offline_message($name, $email, $message){
 
     $ins_array = array(
         'timestamp' => current_time('mysql'),
-        'name' => $name,
-        'email' => $email,
-        'message' => $message,
-        'ip' => $offline_ip_address,
+        'name' => sanitize_text_field($name),
+        'email' => sanitize_email($email),
+        'message' => sanitize_text_field($message),
+        'ip' => sanitize_text_field($offline_ip_address),
         'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
     );
     
     $rows_affected = $wpdb->insert( $wplc_tblname_offline_msgs, $ins_array );
     return;
 }
-
+ 
 
 
 function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
