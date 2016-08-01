@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 6.2.03
+  Version: 6.2.04
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,15 @@
  */
  
 /* 
+ * 6.2.04 - 2016-07-28 - Low priority
+ * Added compatibility for Pro triggers
+ * Added Classic Theme's Hovercard (Will only show with triggers)
+ * Fixed a bug which prevented the online/offline mode to affect the 'start chat' button
+ * Fixed Responsive issues with modern theme
+ * Ability to delete individual Missed Chats
+ * Ability to delete individual Chats from History
+ * Minor Styling Conflicts Resolved
+ *
  * 6.2.03 - 2016-07-19 - Low priority
  * Italian translation updated - thank you Angelo Giammarresi
  * Fixed Danish translation bug
@@ -390,7 +399,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "6.2.03";
+$wplc_version = "6.2.04";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -673,10 +682,16 @@ function wplc_admin_menu() {
 
     /* If user is either an agent or an admin, access the page. */
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) || current_user_can("wplc_ma_agent")){
-      $wplc_mainpage = add_menu_page('WP Live Chat', __('Live Chat', 'wplivechat'), $cap[0], 'wplivechat-menu', 'wplc_admin_menu_layout');
+      $wplc_mainpage = add_menu_page('WP Live Chat', __('Live Chat', 'wplivechat'), $cap[0], 'wplivechat-menu', 'wplc_admin_menu_layout', 'dashicons-format-chat');
       add_submenu_page('wplivechat-menu', __('Settings', 'wplivechat'), __('Settings', 'wplivechat'), $cap[1], 'wplivechat-menu-settings', 'wplc_admin_settings_layout');
       add_submenu_page('wplivechat-menu', __('Surveys', 'wplivechat'), __('Surveys', 'wplivechat'). $survey_new, $cap[2], 'wplivechat-menu-survey', 'wplc_admin_survey_layout');
     }
+
+    //Only if pro is not active
+    if(!function_exists("wplc_pro_triggers_page")){
+    	add_submenu_page('wplivechat-menu', __('Triggers', 'wplivechat'), __('Triggers', 'edit_posts') . ' <span class="update-plugins"><span class="plugin-count">Pro</span></span>', $cap[0], 'wplc-basic-triggers', 'wplc_basic_triggers_page');
+    }
+
     /* only if user is both an agent and an admin that has the cap assigned, can they access these pages */
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) && current_user_can("wplc_ma_agent")){
 
@@ -1146,7 +1161,6 @@ function wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$log
         $wplc_class = "wplc_right";
     }
 
-
     $animations = wplc_return_animations_basic();
     if ($animations) {
       isset($animations['animation']) ? $wplc_animation = $animations['animation'] : $wplc_animation = 'animation-4';
@@ -1183,18 +1197,25 @@ function wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$log
   }
 
   if (isset($wplc_settings['wplc_newtheme']) && $wplc_settings['wplc_newtheme'] == "theme-2") {
-
-
+  	$hovercard_content = "<div class='wplc_hovercard_content_left'>".apply_filters("wplc_filter_modern_theme_hovercard_content_left","")."</div><div class='wplc_hovercard_content_right'>".apply_filters("wplc_filter_live_chat_box_html_1st_layer",wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged_in,$wplc_using_locale))."</div>";
+  	$hovercard_content = apply_filters("wplc_filter_hovercard_content", $hovercard_content);
 
     $ret_msg .= "<div id='wplc_hovercard' style='display:none' class='".$wplc_theme_type."'>";
     $ret_msg .= "<div id='wplc_hovercard_min' class='wplc_button_standard wplc-color-border-1 wplc-color-bg-1'>close</div>";
-    $ret_msg .= "<div id='wplc_hovercard_content'>".apply_filters("wplc_filter_live_chat_box_pre_layer1","")."<div class='wplc_hovercard_content_left'>".apply_filters("wplc_filter_modern_theme_hovercard_content_left","")."</div><div class='wplc_hovercard_content_right'>".apply_filters("wplc_filter_live_chat_box_html_1st_layer",wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged_in,$wplc_using_locale))."</div></div>";
-    $ret_msg .= "<div id='wplc_hovercard_bottom'>".apply_filters("wplc_filter_live_chat_box_hover_html_start_chat_button","",$wplc_settings,$logged_in,$wplc_using_locale)."</div>";
+    $ret_msg .= "<div id='wplc_hovercard_content'>".apply_filters("wplc_filter_live_chat_box_pre_layer1","").$hovercard_content."</div>";
+    $ret_msg .= "<div id='wplc_hovercard_bottom'>".apply_filters("wplc_filter_hovercard_bottom_before","").apply_filters("wplc_filter_live_chat_box_hover_html_start_chat_button",$wplc_settings,$logged_in,$wplc_using_locale)."</div>";
     $ret_msg .= "</div>";
 
-  }  
+  } else if (isset($wplc_settings['wplc_newtheme']) && $wplc_settings['wplc_newtheme'] == "theme-1"){
+  	$hovercard_content = "<div class='wplc_hovercard_content_right'>".apply_filters("wplc_filter_live_chat_box_html_1st_layer",wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged_in,$wplc_using_locale, "wplc-color-4"))."</div>";
+  	$hovercard_content = apply_filters("wplc_filter_hovercard_content", $hovercard_content);
 
-
+    $ret_msg .= "<div id='wplc_hovercard' style='display:none' class='".$wplc_theme_type."'>";
+    $ret_msg .= "<div id='wplc_hovercard_min' class='wplc_button_standard wplc-color-border-1 wplc-color-bg-1'>close</div>";
+    $ret_msg .= "<div id='wplc_hovercard_content'>".apply_filters("wplc_filter_live_chat_box_pre_layer1","").$hovercard_content."</div>";
+    $ret_msg .= "<div id='wplc_hovercard_bottom'>".apply_filters("wplc_filter_hovercard_bottom_before","").apply_filters("wplc_filter_live_chat_box_hover_html_start_chat_button",$wplc_settings,$logged_in,$wplc_using_locale)."</div>";
+    $ret_msg .= "</div>";
+  }
 
   $ret_msg .= "<div id=\"wp-live-chat\" wplc_animation=\"".$wplc_animation."\" style=\"".$wplc_starting_point." ".$wplc_box_align.";\" class=\"".$wplc_theme_type." ".$wplc_class." wplc_close\" original_pos=\"".$original_pos."\" ".$wplc_extra_attr." > ";
   return $ret_msg;
@@ -1558,7 +1579,7 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
  * @since  6.0.00
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
-function wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged_in,$wplc_using_locale) {
+function wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged_in,$wplc_using_locale, $class_override = false) {
 
   $ret_msg = "<div id='wplc_first_message'>";
   if ($logged_in) {
@@ -1569,6 +1590,12 @@ function wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged
     } else {
       $coltheme = "wplc-color-2";
     }
+
+    if($class_override){
+    	//Override color class
+    	$coltheme = $class_override;
+    }
+
     $wplc_tl_msg = "<div class='$coltheme'><strong>" . ($wplc_using_locale ? $wplc_fst_1 : stripslashes($wplc_settings['wplc_pro_fst1'])) . "</strong> " . ( $wplc_using_locale ? $wplc_fst_2 : stripslashes($wplc_settings['wplc_pro_fst2'])) ."</div>";
 
     $ret_msg .= $wplc_tl_msg;
@@ -1644,7 +1671,6 @@ function wplc_output_box_ajax_new() {
         
 
         $logged_in = apply_filters("wplc_loggedin_filter",false);
-
 
 
         $wplc_settings = get_option('WPLC_SETTINGS');
@@ -2919,6 +2945,39 @@ function wplc_hook_control_chat_history() {
     global $wpdb;
     global $wplc_tblname_chats;
 
+    if(isset($_GET['wplc_action']) && $_GET['wplc_action'] == 'remove_cid'){
+        if(isset($_GET['cid'])){
+            if(isset($_GET['wplc_confirm'])){
+                //Confirmed - delete
+                $delete_sql = "
+                    DELETE FROM $wplc_tblname_chats
+                    WHERE `id` = '".intval($_GET['cid'])."'
+                    AND (`status` = 1 OR `status` = 8)                   
+                    ";
+              
+
+                $wpdb->query($delete_sql);
+                if ($wpdb->last_error) { 
+                    echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Error: Could not delete chat", "wp-livechat")."<br>
+                      </div>";
+                } else {
+                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
+                        ".__("Chat Deleted", "wp-livechat")."<br>
+                      </div>";
+                } 
+
+            } else {
+                //Prompt
+                echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
+                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wp-livechat")."</a>
+                      </div>";
+            }
+        }
+    }
+
+
     $results = $wpdb->get_results(
             "
         SELECT *
@@ -2955,8 +3014,9 @@ function wplc_hook_control_chat_history() {
 
             $url = admin_url('admin.php?page=wplivechat-menu&action=history&cid=' . $result->id);
             $url2 = admin_url('admin.php?page=wplivechat-menu&action=download_history&type=csv&cid=' . $result->id);
+            $url3 = "?page=wplivechat-menu-history&wplc_action=remove_cid&cid=" . $result->id;
             $actions = "
-                <a href='$url' class='button' title='".__('View Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-eye'></i></a> <a href='$url2' class='button' title='".__('Download Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-download'></i></a>    
+                <a href='$url' class='button' title='".__('View Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-eye'></i></a> <a href='$url2' class='button' title='".__('Download Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-download'></i></a> <a href='$url3' class='button'><i class='fa fa-trash-o'></i></a>      
                 ";
             $trstyle = "style='height:30px;'";
 
@@ -4207,4 +4267,61 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
 
       </table>
   <?php
+}
+
+function wplc_basic_triggers_page(){
+	$content = "<div class='wrap'>";
+    $content .= "<h2>".__('WP Live Chat Support Triggers', 'wp-livechat')." (beta) </h2>";
+
+    $content .= "<script>
+    				var isOn = true;
+    				jQuery(function(){
+    					jQuery(document).ready(function(){
+    						setInterval(function(){
+    							if(isOn){
+    								jQuery('.trigger_img_main').fadeOut('fast', function(){
+    									jQuery('.trigger_img_sec').fadeIn('slow');
+    									jQuery('.trigger_img_sec').fadeIn('slow');
+    								});
+    							} else {
+    								jQuery('.trigger_img_sec').fadeOut('fast');
+    								jQuery('.trigger_img_sec').fadeOut('fast', function(){
+    									jQuery('.trigger_img_main').fadeIn('slow');
+    								});
+    							}
+    							isOn = !isOn;
+    						}, 5000);
+    					});
+    				});
+    			</script>";
+
+	$content .= "<table class=\"wp-list-table widefat fixed form-table\" cellspacing=\"0\" style='width:98%'>";
+	$content .= 	"<tr>";
+	$content .= 		"<td style='width:35%; vertical-align:top;'>";
+	$content .= 			"<img class='trigger_img_main' style='width:99%; height:auto; padding:2px; border:1px lightgray solid;box-shadow: 3px 3px 2px -2px #999;-webkit-box-shadow: 3px 3px 2px -2px #999;-moz-box-shadow: 3px 3px 2px -2px #999;-o-box-shadow: 3px 3px 2px -2px #999;' src='".plugins_url('/images/trigger_sample.jpg', __FILE__)."'>";
+	$content .= 			"<img class='trigger_img_sec'style='display: none; width:49%; height:auto; border:1px lightgray solid;box-shadow: 3px 3px 2px -2px #999;-webkit-box-shadow: 3px 3px 2px -2px #999;-moz-box-shadow: 3px 3px 2px -2px #999;-o-box-shadow: 3px 3px 2px -2px #999;' src='".plugins_url('/images/trigger_sample_front.jpg', __FILE__)."'>";
+	$content .= 		"</td>";
+	$content .= 		"<td style='vertical-align:top;'>";
+	$content .= 			"<h3>".__('WP Live Chat Support Triggers', 'wp-livechat')."</h3>";
+	$content .= 			"<p>".__('Create custom data triggers when users view a certain page, spend a certain amount of time on a page, scroll past a certain point or when their mouse leaves the window.', 'wp-livechat')."</p>";
+	
+	
+	$content .= 			"<br><p><strong>".__('Trigger Types', 'wp-livechat').":</strong></p>";
+	$content .= 			"<ul style='list-style: inherit;margin-left: 22px;'>";
+	$content .= 				"<li>".__('Page Trigger', 'wp-livechat')."</li>";
+	$content .= 				"<li>".__('Time Trigger', 'wp-livechat')."</li>";
+	$content .= 				"<li>".__('Scroll Trigger', 'wp-livechat')."</li>";
+	$content .= 				"<li>".__('Page Leave Trigger', 'wp-livechat')."</li>";			
+	$content .= 			"</ul>";
+	
+	$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers'>".__("Pro add-on", "wp-livechat")."</a></p>";
+
+	$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Upgrade Now" ,"wp-livechat")."</a>";
+
+	$content .= 		"</td>";
+	$content .= 	"</tr>";
+	$content .= "</table>";
+    $content .= "</div>";
+
+    echo $content;
 }
