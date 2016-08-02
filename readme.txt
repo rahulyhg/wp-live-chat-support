@@ -1,9 +1,9 @@
 === WP Live Chat Support ===
-Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long
+Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
 Requires at least: 3.8
-Tested up to: 4.5
+Tested up to: 4.6
 Stable tag: trunk
 License: GPLv2
 
@@ -198,16 +198,25 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 6.2.04 =
+It is highly recommended that you upgrade to WP Live Chat Support version 6.0.04 for security reasons.
+
 = 6.2.02 =
 It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02 for security reasons.
 
 = 4.4.1 =
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
-= 4.1.4 =
-It is highly recommended that you upgrade to WP Live Chat Support version 4.1.4
-
 == Changelog ==
+
+= 6.2.04 - 2016-08-01 - High priority =
+* Security patches in the offline message storing function (https://www.securify.nl/advisory/SFY20190709/stored_cross_site_scripting_vulnerability_in_wp_live_chat_support_wordpress_plugin.html)
+
+ 6.2.03 - 2016-07-19 - Low priority =
+* Italian translation updated - thank you Angelo Giammarresi
+* Fixed Danish translation bug
+* Minor UI fixes
+* Edge browser bug fix when opening chats
 
 = 6.2.02 - 2016-07-11 - High priority =
 * XSS Security patch - Thank you Han Sahin!

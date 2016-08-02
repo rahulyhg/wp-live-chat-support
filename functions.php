@@ -600,8 +600,9 @@ function wplc_return_user_chat_messages($cid) {
         if(function_exists('wplc_decrypt_msg')){
             $msg = wplc_decrypt_msg($msg);
         }
-        $msg = apply_filters("wplc_filter_message_control_out",$msg);
 
+        $msg = apply_filters("wplc_filter_message_control_out",$msg);
+        $msg = stripslashes($msg);
             
         if($display_name){
             $msg_hist .= "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
@@ -767,8 +768,9 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
         if(function_exists('wplc_decrypt_msg')){
             $msg = wplc_decrypt_msg($msg);
         }
-        
+
         $msg = apply_filters("wplc_filter_message_control_out",$msg);
+        $msg = stripslashes($msg);
 
         if($display_name){
             if ($html) {
@@ -899,6 +901,7 @@ function wplc_return_admin_chat_messages($cid) {
             }
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
+            $msg = stripslashes($msg);
 
             if($display_name){
                 $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>".$image."<strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";            
@@ -1223,17 +1226,17 @@ function wplc_store_offline_message($name, $email, $message){
 
     $ins_array = array(
         'timestamp' => current_time('mysql'),
-        'name' => $name,
-        'email' => $email,
-        'message' => $message,
-        'ip' => $offline_ip_address,
+        'name' => sanitize_text_field($name),
+        'email' => sanitize_email($email),
+        'message' => sanitize_text_field($message),
+        'ip' => sanitize_text_field($offline_ip_address),
         'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
     );
     
     $rows_affected = $wpdb->insert( $wplc_tblname_offline_msgs, $ins_array );
     return;
 }
-
+ 
 
 
 function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
