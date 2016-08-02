@@ -4300,7 +4300,6 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
 function wplc_basic_triggers_page(){
 	$content = "<div class='wrap'>";
     $content .= "<h2>".__('WP Live Chat Support Triggers', 'wp-livechat')." (beta) </h2>";
-
     $content .= "<script>
     				var isOn = true;
     				jQuery(function(){
@@ -4341,15 +4340,21 @@ function wplc_basic_triggers_page(){
 	$content .= 				"<li>".__('Scroll Trigger', 'wp-livechat')."</li>";
 	$content .= 				"<li>".__('Page Leave Trigger', 'wp-livechat')."</li>";			
 	$content .= 			"</ul>";
-	
-	$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers'>".__("Pro add-on", "wp-livechat")."</a></p>";
 
-	$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Upgrade Now" ,"wp-livechat")."</a>";
-
+	if (function_exists("wplc_pro_activate")) {
+		global $wplc_pro_version;
+        if (intval(str_replace(".","",$wplc_pro_version)) < 6200) {
+	  		$content .= "<p>In order to use data triggers, please ensure you are using the latest Pro version (version 6.2.00 or newer).</p>";
+			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wp-livechat")."</a>";
+        }
+	} else {
+		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers'>".__("Pro add-on", "wp-livechat")."</a></p>";
+		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Upgrade Now" ,"wp-livechat")."</a>";
+	}
 	$content .= 		"</td>";
 	$content .= 	"</tr>";
 	$content .= "</table>";
     $content .= "</div>";
-
     echo $content;
+
 }
