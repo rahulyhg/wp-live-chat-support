@@ -310,6 +310,11 @@ jQuery(document).ready(function () {
         var wplc_cid = jQuery("#wplc_admin_cid").val();
         var wplc_chat = wplc_strip(document.getElementById('wplc_admin_chatmsg').value);
         var wplc_name = "a" + "d" + "m" + "i" + "n";
+
+        if(typeof wplc_name_override  !== "undefined"){
+            wplc_name = wplc_name_override ;
+        }
+        
         jQuery("#wplc_admin_chatmsg").val('');
 
         /*Nifty Format Parser*/

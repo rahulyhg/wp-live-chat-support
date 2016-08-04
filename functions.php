@@ -585,6 +585,8 @@ function wplc_return_user_chat_messages($cid) {
                 }
                 
             }
+
+            $from = apply_filters("wplc_filter_admin_from",$from, $cid);
         } else {
             $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
@@ -753,6 +755,8 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
                 }
                 
             }
+
+            $from = apply_filters("wplc_filter_admin_from", $from, $cid);
         } else {
             $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
@@ -884,6 +888,9 @@ function wplc_return_admin_chat_messages($cid) {
                     /* HERE */
                     $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' class='wplc-admin-message-avatar' />";
                 }
+
+                $from = apply_filters("wplc_filter_admin_from", $from, $cid);
+
             } else {
                 $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
 
@@ -1815,4 +1822,31 @@ function wplc_return_animations_basic(){
     }
 
     return $animation_data;
+}
+
+
+add_action("wplc_advanced_settings_above_performance", "wplc_advanced_settings_above_performance_control", 10, 1);
+function wplc_advanced_settings_above_performance_control($wplc_settings){
+    $elem_trig_action = isset($wplc_settings['wplc_elem_trigger_action']) ? $wplc_settings['wplc_elem_trigger_action'] : "0";
+    $elem_trig_type = isset($wplc_settings['wplc_elem_trigger_type']) ? $wplc_settings['wplc_elem_trigger_type'] : "0";
+    $elem_trig_id = isset($wplc_settings['wplc_elem_trigger_id']) ? $wplc_settings['wplc_elem_trigger_id'] : "";
+
+    echo "<tr>
+            <td>
+            ".__("Open chat window via", "wp-livechat").":
+            </td>
+            <td>
+                <select name='wplc_elem_trigger_action'>
+                    <option value='0' ".($elem_trig_action == "0" ? "selected" : "").">".__("Click", "wp-livechat")."</option>
+                    <option value='1' ".($elem_trig_action == "1" ? "selected" : "").">".__("Hover", "wp-livechat")."</option>
+                </select>
+                 ".__("element with", "wp-livechat").": 
+                <select name='wplc_elem_trigger_type'>
+                    <option value='0' ".($elem_trig_type == "0" ? "selected" : "").">".__("Class", "wp-livechat")."</option>
+                    <option value='1' ".($elem_trig_type == "1" ? "selected" : "").">".__("ID", "wp-livechat")."</option>
+                </select>
+                <input type='text' name='wplc_elem_trigger_id' value='".$elem_trig_id."'>
+            </td>
+          </tr>
+         ";
 }

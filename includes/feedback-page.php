@@ -5,9 +5,8 @@ get_currentuserinfo();
    
     
     <div id="icon-options-general" class="icon32 icon32-posts-post"><br></div><h2><?php _e("WP Live Chat Support Feedback","wplivechat") ?></h2>
-    <h3><?php _e("We'd love to hear your comments and/or suggestions","wplivechat"); ?></h3>
     <form name="wplc_feedback" action="" method="POST">
-     <table width='100%'>
+     <table width='100%' class="wp-list-table widefat fixed form-table" style='width:50%'>
         <tr>
             <td width="250px" >
                 <label><?php _e("Your Name","wplivechat"); ?></label>
@@ -37,7 +36,7 @@ get_currentuserinfo();
                 <label><?php _e("Feedback","wplivechat"); ?></label>
             </td>
             <td>
-                <textarea name="wplc_nl_feedback_feedback" cols='60' rows='10'></textarea>
+                <textarea name="wplc_nl_feedback_feedback" cols='60' rows='10' style="max-width:100%;"></textarea>
            </td>
         </tr>
         <tr>
