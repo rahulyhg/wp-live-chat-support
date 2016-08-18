@@ -21,6 +21,8 @@
  * Minor Styling Conflicts Resolved
  * Fixed the bug that caused "start chat" to be added to the button in the live chat box when offline
  * Fixed a bug that showed slashes when apostrophes were used 
+ * Added various filters/actions for use in Pro
+ * Added ability to open chat box using an elements ID/Class (Click/Hover)
  * 
  * 6.2.04 - 2016-08-01 - High priority
  * Security patches in the offline message storing function (securify.nl/advisory/SFY20190709/stored_cross_site_scripting_vulnerability_in_wp_live_chat_support_wordpress_plugin.html)
@@ -918,6 +920,16 @@ function wplc_push_js_to_front_basic() {
     
     wp_localize_script('wplc-user-script', 'wplc_offline_msg', stripslashes($wplc_settings['wplc_pro_offline2']));
     wp_localize_script('wplc-user-script', 'wplc_offline_msg3',stripslashes($wplc_settings['wplc_pro_offline3']));
+
+    if(isset($wplc_settings['wplc_elem_trigger_id']) && trim($wplc_settings['wplc_elem_trigger_id']) !== ""){
+    	if(isset($wplc_settings['wplc_elem_trigger_action'])){ 
+    		wp_localize_script('wplc-user-script', 'wplc_elem_trigger_action',stripslashes($wplc_settings['wplc_elem_trigger_action']));
+    	}
+    	if(isset($wplc_settings['wplc_elem_trigger_type'])){ 
+    		wp_localize_script('wplc-user-script', 'wplc_elem_trigger_type',stripslashes($wplc_settings['wplc_elem_trigger_type']));
+    	}
+    	wp_localize_script('wplc-user-script', 'wplc_elem_trigger_id',stripslashes($wplc_settings['wplc_elem_trigger_id']));
+    }
 
     $extra_data_array = array();
     $extra_data_array = apply_filters("wplc_filter_front_js_extra_data",$extra_data_array);
@@ -2433,6 +2445,8 @@ function wplc_draw_chat_area($cid) {
 
       echo "<div class=\"end_chat_div\"><a href=\"javascript:void(0);\" class=\"wplc_admin_close_chat button\" id=\"wplc_admin_close_chat\">" . __("End chat", "wplivechat") . "</a></div>";
 
+      do_action("wplc_add_js_admin_chat_area", $cid);
+
       echo "<div id='admin_chat_box'>";
 
       $result->continue = true;
@@ -3257,13 +3271,17 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_pro_sst2'])) { $wplc_data['wplc_pro_sst2'] = esc_attr($_POST['wplc_pro_sst2']); }
         if (isset($_POST['wplc_pro_tst1'])) { $wplc_data['wplc_pro_tst1'] = esc_attr($_POST['wplc_pro_tst1']); }        
         if (isset($_POST['wplc_pro_intro'])) { $wplc_data['wplc_pro_intro'] = esc_attr($_POST['wplc_pro_intro']); }
-         if (isset($_POST['wplc_user_enter'])) { $wplc_data['wplc_user_enter'] = esc_attr($_POST['wplc_user_enter']); }
+        if (isset($_POST['wplc_user_enter'])) { $wplc_data['wplc_user_enter'] = esc_attr($_POST['wplc_user_enter']); }
         if (isset($_POST['wplc_user_welcome_chat'])) { $wplc_data['wplc_user_welcome_chat'] = esc_attr($_POST['wplc_user_welcome_chat']); }
 
 
         if(isset($_POST['wplc_animation'])){ $wplc_data['wplc_animation'] = esc_attr($_POST['wplc_animation']); } 
         if(isset($_POST['wplc_theme'])){ $wplc_data['wplc_theme'] = esc_attr($_POST['wplc_theme']); }
         if(isset($_POST['wplc_newtheme'])){ $wplc_data['wplc_newtheme'] = esc_attr($_POST['wplc_newtheme']); }
+
+        if(isset($_POST['wplc_elem_trigger_action'])){ $wplc_data['wplc_elem_trigger_action'] = esc_attr($_POST['wplc_elem_trigger_action']); } else{ $wplc_data['wplc_elem_trigger_action'] = "0"; }
+        if(isset($_POST['wplc_elem_trigger_type'])){ $wplc_data['wplc_elem_trigger_type'] = esc_attr($_POST['wplc_elem_trigger_type']); } else { $wplc_data['wplc_elem_trigger_type'] = "0";}
+        if(isset($_POST['wplc_elem_trigger_id'])){ $wplc_data['wplc_elem_trigger_id'] = esc_attr($_POST['wplc_elem_trigger_id']); } else { $wplc_data['wplc_elem_trigger_id'] = ""; }
 
         if(isset($_POST['wplc_agent_select']) && $_POST['wplc_agent_select'] != "") { 
             $user_array = get_users(array(
@@ -4247,9 +4265,17 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
           <tr>
               <td width='400' valign='top'>
                   <h4><?php _e("Advanced settings", "wplivechat") ?></h4>
-                  <p><em><small><?php _e("Only change these settings if you are experiencing performance issues.","wplivechat"); ?></small></em></p>
               </td>
               <td valign='top'>
+                  &nbsp;
+              </td>
+          </tr>
+          <?php do_action("wplc_advanced_settings_above_performance", $wplc_settings); ?>
+          <tr>
+          	<td>
+          		<p><em><small><?php _e("Only change these settings if you are experiencing performance issues.","wplivechat"); ?></small></em></p>
+          	</td>
+          	<td valign='top'>
                   &nbsp;
               </td>
           </tr>
