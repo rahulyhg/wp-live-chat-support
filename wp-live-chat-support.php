@@ -11,7 +11,7 @@
  */
  
 /* 
- * 6.2.05 - 2016-08-01 - Medium priority
+ * 6.2.05 - 2016-08-19 - Medium priority
  * Added compatibility for Pro triggers
  * Added Classic Theme's Hovercard (Will only show with triggers)
  * Fixed a bug which prevented the online/offline mode to affect the 'start chat' button
@@ -2995,7 +2995,7 @@ function wplc_hook_control_chat_history() {
                 //Prompt
                 echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
                         ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wp-livechat")."</a>
+                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-history'>".__("No", "wp-livechat")."</a>
                       </div>";
             }
         }
