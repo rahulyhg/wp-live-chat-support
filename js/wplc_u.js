@@ -698,4 +698,15 @@ jQuery(document).ready(function() {
             return this.replace(/\\(.)/mg, "$1");
         }
         
-    });
+        if(typeof wplc_elem_trigger_id !== "undefined" && wplc_elem_trigger_id !== ""){
+            var wplc_click_or_hover = 0;
+            var wplc_class_or_id = 0;
+
+            if(typeof wplc_elem_trigger_action !== "undefined" && wplc_elem_trigger_action !== ""){ wplc_click_or_hover = parseInt(wplc_elem_trigger_action); }
+            if(typeof wplc_elem_trigger_type !== "undefined" && wplc_elem_trigger_type !== ""){ wplc_class_or_id = parseInt(wplc_elem_trigger_type); }
+            
+            jQuery( (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id).on( (wplc_click_or_hover === 1 ? "mouseenter" : "click"), function(){
+                open_chat(0);
+            });
+        }
+});
