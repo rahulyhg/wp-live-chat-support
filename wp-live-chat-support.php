@@ -3,14 +3,16 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 6.2.05
+  Version: 6.2.06
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
   Domain Path: /languages
  */
  
-/* 
+/* 6.2.06 - 2016-08-29 - Low priority
+ * Fixed a bug where offline strings weren't translating when localization option was checked
+ * 
  * 6.2.05 - 2016-08-19 - Medium priority
  * Added compatibility for Pro triggers
  * Added Classic Theme's Hovercard (Will only show with triggers)
@@ -406,7 +408,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "6.2.05";
+$wplc_version = "6.2.06";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -1479,8 +1481,11 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
       $ret_msg .= "</div>";
     } else {
       /* admin not logged in, show offline messages */
+      $wplc_offline = __("We are currently offline. Please leave a message and we'll get back to you shortly.", "wplivechat");
+      $text = ($wplc_using_locale ? $wplc_offline : stripslashes($wplc_settings['wplc_pro_offline1']));
+
       $ret_msg = "<div id=\"wp-live-chat-2-info\">";
-      $ret_msg .= stripslashes($wplc_settings['wplc_pro_offline1']);
+      $ret_msg .= $text;
       $ret_msg .= "</div>";
       $ret_msg .= "<div id=\"wplc_message_div\">";
       $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value=\"\" placeholder=\"".__("Name", "wplivechat")."\" />";
