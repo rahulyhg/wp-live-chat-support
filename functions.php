@@ -1,7 +1,7 @@
 <?php
 $wplc_basic_plugin_url = get_option('siteurl')."/wp-content/plugins/wp-live-chat-support/";
 
-function wplc_log_user_on_page($name,$email,$session) {
+function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     global $wpdb;
     global $wplc_tblname_chats;
     
@@ -38,6 +38,12 @@ function wplc_log_user_on_page($name,$email,$session) {
      $other = array(
          "user_type" => 1
      );
+
+     if($is_mobile){
+        $other['user_is_mobile'] = true;
+     } else {
+        $other['user_is_mobile'] = false;
+     }
     
     $wpdb->insert( 
 	$wplc_tblname_chats, 
@@ -486,7 +492,7 @@ function wplc_list_chats_new($post_data) {
             $actions = apply_filters("wplc_filter_list_chats_actions","",$result,$post_data);
             
             
-            
+            $other_data = maybe_unserialize($result->other);
             
             
             
@@ -519,6 +525,7 @@ function wplc_list_chats_new($post_data) {
            
            $data_array[$result->id]['data']['browser'] = "<img src='" . $wplc_basic_plugin_url . "/images/$browser_image' alt='$browser' title='$browser' /> ";
            $data_array[$result->id]['data']['ip'] = $user_ip;
+           $data_array[$result->id]['other'] = $other_data;
         }
         $data_array['ids'] = $id_list;
     }

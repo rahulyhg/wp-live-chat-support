@@ -2,21 +2,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wplivechat\n"
 "POT-Creation-Date: 2015-02-19 14:26+0200\n"
-"PO-Revision-Date: 2015-10-14 14:17+0200\n"
+"PO-Revision-Date: 2016-09-14 12:19+0200\n"
 "Last-Translator: Andrie <andriefrista@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.6\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: id\n"
-"X-Poedit-SearchPath-0: C:\\wamp\\www\\wordpress\\wp-content\\plugins\\wp-"
-"live-chat-support\n"
-"X-Poedit-SearchPath-1: C:\\wamp\\www\\wordpress\\wp-content\\plugins\\wp-"
-"live-chat-support-pro\n"
+"X-Poedit-SearchPath-0: C:/wamp/www/wordpress/wp-content/plugins/wp-live-chat-"
+"support\n"
+"X-Poedit-SearchPath-1: C:/wamp/www/wordpress/wp-content/plugins/wp-live-chat-"
+"support-pro\n"
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support-pro/ajax-pro.php:264
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/ajax.php:228
@@ -1434,14 +1434,11 @@ msgstr "dengan pengunjung online anda hanya dengan meng-klik tombol."
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:880
 msgid "Buy the Pro add-on now for only $19.95 once off. Free Updates FOREVER."
 msgstr ""
-"Beli Pro add-on sekarang hanya dengan USD 19,95 sekali bayar. Gratis Update "
-"SELAMANYA."
+"Beli Pro add-on sekarang hanya dengan  sekali bayar. Gratis Update SELAMANYA."
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:882
 msgid "Buy the Pro add-on now for only $19.95 once off. Free Updates Forever."
-msgstr ""
-"Beli Pro add-on sekarang hanya USD 19,95 sekali bayar. Gratis Update "
-"Selamanya."
+msgstr "Beli Pro add-on sekarang hanya sekali bayar. Gratis Update Selamanya."
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:934
 msgid "Previous"
@@ -1479,7 +1476,7 @@ msgstr "Opsi ini hanya terdapat pada"
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1360
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1380
 msgid "Get it now for only $19.95 once off!"
-msgstr "Dapatkan sekarang hanya dengan USD 19,95 sekali bayar!"
+msgstr "Dapatkan sekarang hanya dengan sekali bayar!"
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1365
 msgid "WP Live Chat Missed Chats"

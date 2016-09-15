@@ -2,21 +2,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wplivechat\n"
 "POT-Creation-Date: 2015-03-16 07:56+0200\n"
-"PO-Revision-Date: 2015-10-14 14:17+0200\n"
+"PO-Revision-Date: 2016-09-14 12:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.6\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SearchPath-0: C:\\wamp\\www\\wordpress\\wp-content\\plugins\\wp-"
-"live-chat-support\n"
-"X-Poedit-SearchPath-1: C:\\wamp\\www\\wordpress\\wp-content\\plugins\\wp-"
-"live-chat-support-pro\n"
+"X-Poedit-SearchPath-0: C:/wamp/www/wordpress/wp-content/plugins/wp-live-chat-"
+"support\n"
+"X-Poedit-SearchPath-1: C:/wamp/www/wordpress/wp-content/plugins/wp-live-chat-"
+"support-pro\n"
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support-pro/ajax-pro.php:264
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/ajax.php:228
@@ -1794,7 +1794,7 @@ msgstr "Tämä valinta on käytettävissä ainoastaan "
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1391
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1411
 msgid "Get it now for only $19.95 once off!"
-msgstr "Hanki nyt hintaan $ 19.95!"
+msgstr "Hanki nyt hintaan"
 
 #: C:\wamp\www\wordpress\wp-content\plugins\wp-live-chat-support/wp-live-chat-support.php:1396
 msgid "WP Live Chat Missed Chats"
