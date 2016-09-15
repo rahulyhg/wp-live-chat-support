@@ -173,6 +173,9 @@ function wplc_init_ajax_callback() {
         
         if($_POST['action'] == 'wplc_call_to_server_visitor'){
 
+
+
+
             
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             $i = 1;
