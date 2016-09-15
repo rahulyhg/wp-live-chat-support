@@ -1,6 +1,7 @@
 var wplc_ajaxurl = wplc_ajaxurl;
 var chat_status = 3;
 var cid = wplc_cid;
+var wplc_poll_delay = 1500;
 
 if (typeof wplc_action2 !== "undefined" && wplc_action2 !== "") { 
 
@@ -44,6 +45,7 @@ jQuery.ajax({
     security: wplc_ajax_nonce,
     type: "POST",
     success: function (response) {
+        wplc_poll_delay = 1500;
         if (response) {
             if (response === "0") { if (window.console) { console.log('WP Live Chat Support Return Error'); } wplc_run = false; return; }
 
@@ -89,41 +91,31 @@ jQuery.ajax({
         }
     },
     error: function (jqXHR, exception) {
+        wplc_poll_delay = 5000;
         if (jqXHR.status == 404) {
-            if (window.console) { console.log('Requested page not found. [404]'); }
-            wplc_display_error('Page not found [404]');
+            wplc_display_error('Error: Page not found [404]');
             wplc_run = false;
         } else if (jqXHR.status == 500) {
-            if (window.console) { console.log('Internal Server Error [500].'); }
-            wplc_display_error('Internal server error [500]');
+            wplc_display_error('Error: Internal server error [500]');
+            wplc_display_error('Retrying in 5 seconds...');
             wplc_run = true;
-            wplc_had_error = true;
-            setTimeout(function () {
-                wplc_call_to_server_admin_chat(data);
-            }, 10000);
         } else if (exception === 'parsererror') {
-            if (window.console) { console.log('Requested JSON parse failed.'); }
-            wplc_display_error('JSON error');
+            wplc_display_error('Error: JSON error');
             wplc_run = false;
         } else if (exception === 'abort') {
-            if (window.console) { console.log('Ajax request aborted.'); }
-            wplc_display_error('Ajax request aborted');
+            wplc_display_error('Error: Ajax request aborted');
             wplc_run = false;
         } else {
-            if (window.console) { console.log('Uncaught Error.\n' + jqXHR.responseText); }
-            wplc_display_error('Uncaught Error' + jqXHR.responseText);
+            wplc_display_error('Error: Uncaught Error' + jqXHR.responseText);
+            wplc_display_error('Retrying in 5 seconds...');
             wplc_run = true;
-            wplc_had_error = true;
-            setTimeout(function () {
-                wplc_call_to_server_admin_chat(data);
-            }, 10000);
         }
     },
     complete: function (response) {
-        if (wplc_run && !wplc_had_error) {
+        if (wplc_run) {
             setTimeout(function () {
                 wplc_call_to_server_admin_chat(data);
-            }, 1500);
+            }, wplc_poll_delay);
         }
     },
     timeout: 120000
@@ -131,7 +123,9 @@ jQuery.ajax({
     });
 };
 function wplc_display_error(error) {
-    jQuery("#admin_chat_box_area_" + cid).append("Connection problem ("+error+"). Please reload this page.");
+    if (window.console) { console.log(error); }
+
+    jQuery("#admin_chat_box_area_" + cid).append("<small>" + error + "</small><br>");
     var height = jQuery('#admin_chat_box_area_' + cid)[0].scrollHeight;
     jQuery('#admin_chat_box_area_' + cid).scrollTop(height);
 }
