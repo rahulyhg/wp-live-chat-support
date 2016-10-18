@@ -14,6 +14,11 @@
  * 6.2.10 - 2016-10-18 - High priority for IE users
  * IE bug fix - fixed the bug that stopped the chat window from opening when clicking on it
  * Fixed the bug that caused user messages to not be sent on some websites due to non-unique function names being used in the md5.js file
+ * Translations
+ *   Italian translation updated - thank you Angelo Giammarresi and Eta Entropy and Denny Biasiolli
+ *   Estonian translation added - thank you Joonas Kessel
+ *   Chinese translation updated - thank you Wan Kit
+ *   Missing translation strings added in all languages
  * 
  * 6.2.09 - 2016-09-15 - High priority for cloud users
  * Further cloud server bug fixes
