@@ -61,7 +61,7 @@ msgstr "Accettare Chat"
 #: wp-live-chat-support-pro/functions-pro.php:335
 #: wp-live-chat-support/functions.php:297
 msgid "Incoming Chat"
-msgstr "Avviare Chat"
+msgstr "Chat in arrivo"
 
 #: wp-live-chat-support-pro/functions-pro.php:63
 #: wp-live-chat-support-pro/functions-pro.php:335
@@ -84,7 +84,7 @@ msgstr "Attiva"
 #: wp-live-chat-support-pro/functions-pro.php:347
 #: wp-live-chat-support/functions.php:303
 msgid "This chat is active"
-msgstr "La chat e attiva"
+msgstr "Questa chat e attiva"
 
 #: wp-live-chat-support-pro/functions-pro.php:74
 #: wp-live-chat-support-pro/functions-pro.php:160
@@ -110,7 +110,7 @@ msgstr "Returning"
 
 #: wp-live-chat-support-pro/functions-pro.php:143
 msgid "Visitors on site"
-msgstr "sito per i visitatori"
+msgstr "Visitatori sul sito"
 
 #: wp-live-chat-support-pro/functions-pro.php:207
 #: wp-live-chat-support-pro/functions-pro.php:377
@@ -145,7 +145,7 @@ msgstr "Browser:"
 #: wp-live-chat-support/functions.php:335
 #: wp-live-chat-support/wp-live-chat-support.php:2420
 msgid "IP Address:"
-msgstr "Indirizzo IP"
+msgstr "Indirizzo IP:"
 
 #: wp-live-chat-support-pro/functions-pro.php:259
 msgid "No visitors on-line at the moment"
