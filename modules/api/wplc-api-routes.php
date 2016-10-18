@@ -6,7 +6,9 @@
  * Add the following routes:
  * - '/wp_live_chat_support/v1/accept_chat'  
  */
-add_action('rest_api_init', function(){
+add_action('rest_api_init', 'wplc_rest_routes_init');
+
+function wplc_rest_routes_init() {
 	register_rest_route('wp_live_chat_support/v1','/accept_chat', array(
 						'methods' => 'GET, POST',
 						'callback' => 'wplc_api_accept_chat'
@@ -38,4 +40,4 @@ add_action('rest_api_init', function(){
 	));
 
 	do_action("wplc_api_route_hook");
-});
+}
