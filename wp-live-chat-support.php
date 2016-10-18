@@ -3,14 +3,28 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 6.2.06
+  Version: 6.2.10
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
   Domain Path: /languages
  */
  
-/* 6.2.06 - 2016-09-14 - Medium Priority
+/* 
+ * 6.2.10 - 2016-10-18 - High priority for IE users
+ * IE bug fix - fixed the bug that stopped the chat window from opening when clicking on it
+ * Fixed the bug that caused user messages to not be sent on some websites due to non-unique function names being used in the md5.js file
+ * 
+ * 6.2.09 - 2016-09-15 - High priority for cloud users
+ * Further cloud server bug fixes
+ *
+ * 6.2.08 - 2016-09-15 - High priority for cloud users
+ * Fixed a bug that caused no visitors to be displayed when using the cloud server
+ * 
+ * 6.2.07 - 2016-09-15 - Medium priority
+ * Fixed a bug that caused a fatal error on older PHP version
+ * 
+ * 6.2.06 - 2016-09-14 - Medium Priority
  * Added Rest API functionality (Accept chat, end chat, get messages, send message, get sessions) 
  * Added 'Device' type logging to live chat dashboard area. 
  * Minified User Side JavaScript
@@ -414,7 +428,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "6.2.06";
+$wplc_version = "6.2.10";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -888,7 +902,7 @@ function wplc_push_js_to_front_basic() {
 
 
     
-   // wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery'),$wplc_version);
+    //wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery'),$wplc_version);
     wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.min.js', __FILE__),array('jquery'),$wplc_version);
 
     wp_enqueue_script('wplc-user-script');

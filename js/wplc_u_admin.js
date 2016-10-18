@@ -283,7 +283,7 @@ var v_action = obj[key]['action'];
 var v_status_string = wplc_get_status_name(parseInt(v_status));
 var v_ip_address = obj[key]['data']['ip'];
 
-var v_is_mobile = obj[key]['other']['user_is_mobile'];
+if (typeof obj[key]['other'] !== "undefined" && typeof obj[key]['other']['user_is_mobile'] !== "undefined") { var v_is_mobile = obj[key]['other']['user_is_mobile']; } else { var v_is_mobile = false; }
 
 var v_vis_html = "<span class='wplc_headerspan_v'>"+v_name+"</span>";
 var v_nr_html = "<span class='wplc_headerspan_nr'>"+wplc_get_type_box(v_type)+"</span>";
