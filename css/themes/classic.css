@@ -440,3 +440,138 @@ input#nifty_ratings_comment {
 #nifty_recording {
     margin-left: 5px;
 }
+
+#wplc_hovercard {
+    position: fixed;
+    bottom: 96px;
+    right: 98px;
+    width: 209px;
+    height: 125px;
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    border-radius: 5px;
+    z-index: 9999999;
+}
+
+#wplc_hovercard:before {
+    content: "";
+    position: absolute;
+    bottom: -9px;
+    left: 32px;
+    border-width: 9px 9px 0;
+    border-style: solid;
+    border-color: #ccc transparent;
+    display: block;
+    width: 0;
+}
+#wplc_hovercard:after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 33px;
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #fafafb transparent;
+    display: block;
+    width: 0;
+}
+
+.wplc_button_standard {
+    border: 1px solid #ED832F;
+    background-color: #ED832F;
+    opacity:0.9;
+
+}
+.wplc_button_standard:hover {
+    border: 1px solid #ED832F;
+    background-color: #ED832F;
+    opacity:0.7;
+}
+
+.wplc_button_standard:focus {
+    border: 1px solid #ED832F;
+    background-color: #ED832F;
+    opacity:0.7;
+}
+
+
+#wplc_hovercard_min {
+    position: absolute;
+    width: 61px;
+    height: 18px;
+    right: 0px;
+    top: -25px;
+    font-size: 9px;
+    text-align: center;
+    border-radius: 9px;
+    color: #fff;
+    cursor: pointer;
+}
+#wplc_hovercard_bottom{ 
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    height: 43px;
+    border-bottom-right-radius: 5px;
+    background-color: #fafafb;
+    border-bottom-left-radius: 5px;
+}
+#wplc_hovercard_content { 
+    padding:15px;
+    height:80px;
+    box-shadow: 0 1px 1px #f0f0f1;
+}
+
+/* named after the famous words uttered by The Dylan at Code Cabin */
+#speeching_button {
+    padding: 5px;
+    font-size: 12px;
+    text-transform: none;
+    float: right;
+    margin-right: 15px;
+}
+
+.wplc_hovercard_content_right #wplc_first_message {
+    display:block;
+
+}
+.wplc_hovercard_content_right #wplc_first_message strong {
+    display:block;
+    clear:right;
+}
+
+.wplc_hovercard_content_left {
+    float: left;
+    display: block;
+    height: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 80px;
+}
+.wplc_hovercard_content_right {
+    float: left;
+    display: block;
+    /* margin-left: 30px; */
+    /* padding-left: 20px; */
+    font-size: 0.8em;
+    word-wrap: break-word;
+    height: 70px;
+    width: 188px;
+}
+.wplc_left_logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+}
+
+.wplc_hovercard_content_right .wplc_offline {
+    font-size:0.9em;
+    font-weight:bold;
+}
+
+.wplc_powered_by_link {
+    font-size: 10px;
+    max-width: 120px;
+    position: absolute;
+    bottom: 3px;
+    padding: 3px;
+}

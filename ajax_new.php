@@ -37,9 +37,9 @@ function wplc_init_ajax_callback() {
             $wplc_delay_between_loops = 500000;
             $wplc_iterations = 55;
         } else {
-            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); }
-            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); }
-            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); }
+            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); } else { $wplc_delay_between_updates = 500000; }
+            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); } else { $wplc_delay_between_loops = 500000; }
+            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); } else { $wplc_iterations = 55; }
 
             if ($wplc_iterations < 10) { $wplc_iterations = 10; }
             if ($wplc_iterations > 200) { $wplc_iterations = 200; }
@@ -73,10 +73,15 @@ function wplc_init_ajax_callback() {
         session_write_close();
 
         if ($_POST['action'] == "wplc_get_chat_box") {
+            
             echo wplc_output_box_5100();
         }
 
         if($_POST['action'] == 'wplc_admin_long_poll'){
+             // header("HTTP/1.0 500"); //Simulate 500 error
+             // header("HTTP/1.0 404"); //Simulate 404 error
+             // die();
+
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             //sleep(6);
             $i = 1;
@@ -167,6 +172,11 @@ function wplc_init_ajax_callback() {
         //User Ajax
         
         if($_POST['action'] == 'wplc_call_to_server_visitor'){
+
+
+
+
+            
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             $i = 1;
             $array = array("check" => false);
@@ -191,9 +201,14 @@ function wplc_init_ajax_callback() {
                     } else {
                         $email = "no email set";    
                     }
-                    
-                    
-                    $cid = wplc_log_user_on_page($user,$email,sanitize_text_field($_POST['wplcsession']));
+
+                    if(isset($_POST['wplc_is_mobile']) && ($_POST['wplc_is_mobile'] === 'true' || $_POST['wplc_is_mobile'] === true)){
+                        $is_mobile = true;
+                    } else {
+                        $is_mobile = false;
+                    }
+                     
+                    $cid = wplc_log_user_on_page($user,$email,sanitize_text_field($_POST['wplcsession']), $is_mobile);
                     $array['cid'] = $cid;
                     $array['status'] = wplc_return_chat_status($cid);
                     $array['wplc_name'] = $user;

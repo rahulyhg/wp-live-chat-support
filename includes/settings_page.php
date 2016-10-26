@@ -99,6 +99,17 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       </select>
                   </td>
               </tr>
+              <?php /*
+              <tr>
+                <td width='200' valign='top'>
+                <?php _e("Show the 'Powered by WP Live Chat Support' link", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Checking this will display a Powered by WP Live Chat Support link', 'wplivechat'); ?>"></i>
+                </td>
+                <td>
+                    <input type="checkbox" value="1" name="wplc_powered_by_link" <?php if (isset($wplc_settings['wplc_powered_by_link']) && $wplc_settings['wplc_powered_by_link'] == 1) { echo "checked"; } ?> />                                          
+                </td>
+            </tr>
+            */ ?>
+
               <!--
                   <tr>
                       <td width='400' valign='top'>
@@ -346,7 +357,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>              
           </table>
 
-          <?php if(!function_exists("wplc_chat_social_div")){ ?>
+          <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
               <hr>
@@ -802,6 +813,8 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
             ?></textarea>  
             <p class="description"><?php _e('Blocking a user\'s IP Address here will hide the chat window from them, preventing them from chatting with you. Each IP Address must be on a new line', 'wplivechat'); ?></p>
         </div>
+
+
 
         <?php do_action("wplc_hook_settings_page_more_tabs"); ?>
         

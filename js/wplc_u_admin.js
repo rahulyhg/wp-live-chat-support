@@ -15,6 +15,8 @@ var orig_title = document.getElementsByTagName("title")[0].innerHTML;
 
 var wplc_notification_icon_url = wplc_notification_icon;
 
+var wplc_poll_delay = 1500;
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -64,7 +66,7 @@ function wplc_call_to_server(data) {
         data: data,
         type: "POST",
         success: function (response) {
-
+            wplc_poll_delay = 1500;
             //Update your dashboard gauge
             if (response) {
                 if (response === "0") { if (window.console) { console.log('WP Live Chat Support Return Error'); } wplc_run = false;  return; }
@@ -137,21 +139,22 @@ function wplc_call_to_server(data) {
             }
         },
         error: function (jqXHR, exception) {
+            wplc_poll_delay = 5000;
             if (jqXHR.status == 404) {
-                if( window.console ) { console.log('Requested page not found. [404]'); }
+                wplc_display_error('Connection Error (404)', false);
                 wplc_run = false;
             } else if (jqXHR.status == 500) {
-                if( window.console ) { console.log('Internal Server Error [500].'); }
-                wplc_run = false;
+                wplc_display_error('Connection Error (500) - Retrying in 5 seconds...', true);
+                wplc_run = true;
             } else if (exception === 'parsererror') {
-                if( window.console ) { console.log('Requested JSON parse failed.'); }
+                wplc_display_error('Connection Error (JSON Error)', false);
                 wplc_run = false;
             } else if (exception === 'abort') {
-                if( window.console ) { console.log('Ajax request aborted.'); }
+                wplc_display_error('Connection Error (Ajax Abort)', false);
                 wplc_run = false;
             } else {
-                if( window.console ) { console.log('Uncaught Error.\n' + jqXHR.responseText); }
-                wplc_run = false;
+                wplc_display_error('Connection Error (Uncaught) - Retrying in 5 seconds...', true);
+                wplc_run = true;
             }
         },
         complete: function (response) {
@@ -159,13 +162,23 @@ function wplc_call_to_server(data) {
             if (wplc_run) {
                 setTimeout(function () {
                     wplc_call_to_server(data);
-                }, 1500);
+                }, wplc_poll_delay);
             }
         },
         timeout: 120000
     });
 };
 
+function wplc_display_error(error, dismiss) {
+    if (window.console) { console.log(error); }
+    jQuery(".wplc_network_issue").html("<span>" + error + "</span>");
+    jQuery(".wplc_network_issue").fadeIn();
+    if(dismiss){
+        setTimeout(function(){
+            jQuery(".wplc_network_issue").fadeOut();
+        }, 5000);
+    }
+}
 
 function wplc_handle_chat_output(response) {
 var obj = jQuery.parseJSON(response);
@@ -270,11 +283,14 @@ var v_action = obj[key]['action'];
 var v_status_string = wplc_get_status_name(parseInt(v_status));
 var v_ip_address = obj[key]['data']['ip'];
 
+if (typeof obj[key]['other'] !== "undefined" && typeof obj[key]['other']['user_is_mobile'] !== "undefined") { var v_is_mobile = obj[key]['other']['user_is_mobile']; } else { var v_is_mobile = false; }
+
 var v_vis_html = "<span class='wplc_headerspan_v'>"+v_name+"</span>";
-var v_nr_html = "<span class='wplc_headerspan_nr'><span class='browser-tag'>"+v_browser+"</span> "+wplc_get_type_box(v_type)+"</span>";
+var v_nr_html = "<span class='wplc_headerspan_nr'>"+wplc_get_type_box(v_type)+"</span>";
 var v_time_html = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+v_time+"</span></span>";
+var v_nr_device = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+(v_is_mobile ? "Mobile" : "PC")+"</span></span>"
 var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>";
-var v_nr_status_html = "<span class='wplc_headerspan_s'>"+v_status_string+"</span>";
+var v_nr_status_html = "<span class='wplc_headerspan_s'><span class='browser-tag'>"+v_browser+"</span> "+v_status_string+"</span>";
 var v_nr_action_html = "<span class='wplc_headerspan_a 1'>"+v_action+"</span>";
 
 var wplc_v_html = "\
@@ -282,6 +298,7 @@ var wplc_v_html = "\
             <li>"+v_vis_html+"</li>\n\
             <li>"+v_time_html+"</li>\n\
             <li>"+v_nr_html+"</li>\n\
+            <li>"+v_nr_device+"</li>\n\
             <li>"+v_nr_data+"</li>\n\
             <li>"+v_nr_status_html+"</li>\n\
             <li>"+v_nr_action_html+"</li>\n\
@@ -396,7 +413,14 @@ jQuery(document).ready(function () {
        
     });
 
-    wplc_call_to_server(data);
+    if (typeof wplc_choose_accept_chats !== "undefined" && wplc_choose_accept_chats === "0" ) {
+        /* do nothing as they do not want to accept chats - kill the whole system! */
+        jQuery("#wplc_admin_chat_area_new").html("<div class='wplc_chat_area_temp'>"+ " " + wplc_localized_quote_string+"</div>");
+        jQuery("#wplc_admin_chat_holder").append(wplc_localized_offline_string)
+    } else {
+        wplc_call_to_server(data);
+    }
+
 
     jQuery("body").on("click", ".wplc_delete_message", function(e){
 

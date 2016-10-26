@@ -1,7 +1,7 @@
 <?php
 $wplc_basic_plugin_url = get_option('siteurl')."/wp-content/plugins/wp-live-chat-support/";
 
-function wplc_log_user_on_page($name,$email,$session) {
+function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     global $wpdb;
     global $wplc_tblname_chats;
     
@@ -38,6 +38,12 @@ function wplc_log_user_on_page($name,$email,$session) {
      $other = array(
          "user_type" => 1
      );
+
+     if($is_mobile){
+        $other['user_is_mobile'] = true;
+     } else {
+        $other['user_is_mobile'] = false;
+     }
     
     $wpdb->insert( 
 	$wplc_tblname_chats, 
@@ -48,7 +54,7 @@ function wplc_log_user_on_page($name,$email,$session) {
             'email' => $email,
             'session' => $session,
             'ip' => maybe_serialize($user_data),
-            'url' => $_SERVER['HTTP_REFERER'],
+            'url' => sanitize_text_field($_SERVER['HTTP_REFERER']), 
             'last_active_timestamp' => current_time('mysql'),
             'other' => maybe_serialize($other),
 	), 
@@ -80,18 +86,18 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
+            $ip_address = sanitize_text_field($_SERVER['REMOTE_ADDR']);
         }
         $user_data = array(
             'ip' => $ip_address,
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
     } else {
         $user_data = array(
             'ip' => "",
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
     }
     
@@ -113,7 +119,7 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
     $query = $wpdb->update( 
         $wplc_tblname_chats, 
         array( 
-            'url' => $_SERVER['HTTP_REFERER'],
+            'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
             'last_active_timestamp' => current_time('mysql'),
             'ip' => maybe_serialize($user_data),
             'status' => $status,
@@ -325,7 +331,7 @@ function wplc_list_chats() {
                         <div class='admin_visitor_advanced_info'>
                             <strong>" . __("Site Info", "wplivechat") . "</strong>
                             <hr />
-                            <span class='part1'>" . __("Chat initiated on:", "wplivechat") . "</span> <span class='part2'> <a href='".$result->url."' target='_BLANK'>" . $result->url . "</a></span>
+                            <span class='part1'>" . __("Chat initiated on:", "wplivechat") . "</span> <span class='part2'> <a href='".esc_url($result->url)."' target='_BLANK'>" . esc_url($result->url) . "</a></span>
                         </div>
 
                         <div class='admin_visitor_advanced_info'>
@@ -486,7 +492,7 @@ function wplc_list_chats_new($post_data) {
             $actions = apply_filters("wplc_filter_list_chats_actions","",$result,$post_data);
             
             
-            
+            $other_data = maybe_unserialize($result->other);
             
             
             
@@ -519,6 +525,7 @@ function wplc_list_chats_new($post_data) {
            
            $data_array[$result->id]['data']['browser'] = "<img src='" . $wplc_basic_plugin_url . "/images/$browser_image' alt='$browser' title='$browser' /> ";
            $data_array[$result->id]['data']['ip'] = $user_ip;
+           $data_array[$result->id]['other'] = $other_data;
         }
         $data_array['ids'] = $id_list;
     }
@@ -585,6 +592,8 @@ function wplc_return_user_chat_messages($cid) {
                 }
                 
             }
+
+            $from = apply_filters("wplc_filter_admin_from",$from, $cid);
         } else {
             $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
@@ -600,8 +609,9 @@ function wplc_return_user_chat_messages($cid) {
         if(function_exists('wplc_decrypt_msg')){
             $msg = wplc_decrypt_msg($msg);
         }
-        $msg = apply_filters("wplc_filter_message_control_out",$msg);
 
+        $msg = apply_filters("wplc_filter_message_control_out",$msg);
+        $msg = stripslashes($msg);
             
         if($display_name){
             $msg_hist .= "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
@@ -752,6 +762,8 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
                 }
                 
             }
+
+            $from = apply_filters("wplc_filter_admin_from", $from, $cid);
         } else {
             $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
             
@@ -767,8 +779,9 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
         if(function_exists('wplc_decrypt_msg')){
             $msg = wplc_decrypt_msg($msg);
         }
-        
+
         $msg = apply_filters("wplc_filter_message_control_out",$msg);
+        $msg = stripslashes($msg);
 
         if($display_name){
             if ($html) {
@@ -882,6 +895,9 @@ function wplc_return_admin_chat_messages($cid) {
                     /* HERE */
                     $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' class='wplc-admin-message-avatar' />";
                 }
+
+                $from = apply_filters("wplc_filter_admin_from", $from, $cid);
+
             } else {
                 $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
 
@@ -899,6 +915,7 @@ function wplc_return_admin_chat_messages($cid) {
             }
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
+            $msg = stripslashes($msg);
 
             if($display_name){
                 $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>".$image."<strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";            
@@ -1211,9 +1228,9 @@ function wplc_store_offline_message($name, $email, $message){
         
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
+            $ip_address = sanitize_text_field($_SERVER['REMOTE_ADDR']);
         }
         $offline_ip_address = $ip_address;
     } else {
@@ -1223,17 +1240,17 @@ function wplc_store_offline_message($name, $email, $message){
 
     $ins_array = array(
         'timestamp' => current_time('mysql'),
-        'name' => $name,
-        'email' => $email,
-        'message' => $message,
-        'ip' => $offline_ip_address,
-        'user_agent' => $_SERVER['HTTP_USER_AGENT']
+        'name' => sanitize_text_field($name),
+        'email' => sanitize_email($email),
+        'message' => sanitize_text_field($message),
+        'ip' => sanitize_text_field($offline_ip_address),
+        'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
     );
     
     $rows_affected = $wpdb->insert( $wplc_tblname_offline_msgs, $ins_array );
     return;
 }
-
+ 
 
 
 function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
@@ -1250,19 +1267,19 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
         
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
+            $ip_address = sanitize_text_field($_SERVER['REMOTE_ADDR']);
         }
         $user_data = array(
             'ip' => $ip_address,
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
         $wplc_ce_ip = $ip_address;
     } else {
         $user_data = array(
             'ip' => "",
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
         $wplc_ce_ip = null;
     }
@@ -1270,7 +1287,7 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
     if(function_exists('wplc_ce_activate')){
         /* Log the chat for statistical purposes as well */
         if(function_exists('wplc_ce_record_initial_chat')){
-            wplc_ce_record_initial_chat($name, $email, $cid, $wplc_ce_ip, $_SERVER['HTTP_REFERER']);
+            wplc_ce_record_initial_chat($name, $email, $cid, $wplc_ce_ip, sanitize_text_field($_SERVER['HTTP_REFERER']));
         }                    
     }
     
@@ -1285,7 +1302,7 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 'email' => $email,
                 'session' => $session,
                 'ip' => maybe_serialize($user_data),
-                'url' => $_SERVER['HTTP_REFERER'],
+                'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
                 'last_active_timestamp' => current_time('mysql')
             ), 
             array('id' => $cid), 
@@ -1314,7 +1331,7 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 'email' => $email,
                 'session' => $session,
                 'ip' => maybe_serialize($user_data),
-                'url' => $_SERVER['HTTP_REFERER'],
+                'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
                 'last_active_timestamp' => current_time('mysql')
             ), 
             array( 
@@ -1552,6 +1569,49 @@ function wplc_admin_display_missed_chats() {
     global $wpdb;
     global $wplc_tblname_chats;
 
+
+    if(isset($_GET['wplc_action']) && $_GET['wplc_action'] == 'remove_cid'){
+        if(isset($_GET['cid'])){
+            if(isset($_GET['wplc_confirm'])){
+                //Confirmed - delete
+                $delete_sql = "";
+                if (function_exists("wplc_register_pro_version")) {
+                    $delete_sql = "
+                        DELETE FROM $wplc_tblname_chats
+                        WHERE `id` = '".intval($_GET['cid'])."'
+                        AND (`status` = 7 OR `agent_id` = 0)
+                        AND `email` != 'no email set'                     
+                        ";
+                } else {
+                    $delete_sql = "
+                        DELETE FROM $wplc_tblname_chats
+                        WHERE `id` = '".intval($_GET['cid'])."'
+                        AND `status` = 7
+                        AND `email` != 'no email set'                     
+                        ";
+                }
+
+                $wpdb->query($delete_sql);
+                if ($wpdb->last_error) { 
+                    echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Error: Could not delete chat", "wp-livechat")."<br>
+                      </div>";
+                } else {
+                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
+                        ".__("Chat Deleted", "wp-livechat")."<br>
+                      </div>";
+                } 
+
+            } else {
+                //Prompt
+                echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+                        ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
+                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wp-livechat")."</a>
+                      </div>";
+            }
+        }
+    }
+
     echo "
         <table class=\"wp-list-table widefat fixed \" cellspacing=\"0\">
             <thead>
@@ -1560,6 +1620,7 @@ function wplc_admin_display_missed_chats() {
                     <th scope='col' id='wplc_name_colum' class='manage-column column-id'><span>" . __("Name", "wplivechat") . "</span></th>
                     <th scope='col' id='wplc_email_colum' class='manage-column column-id'>" . __("Email", "wplivechat") . "</th>
                     <th scope='col' id='wplc_url_colum' class='manage-column column-id'>" . __("URL", "wplivechat") . "</th>
+                    <th scope='col' id='wplc_url_colum' class='manage-column column-id'>" . __("Action", "wplivechat") . "</th>
                 </tr>
             </thead>
             <tbody id=\"the-list\" class='list:wp_list_text_link'>";
@@ -1593,7 +1654,8 @@ function wplc_admin_display_missed_chats() {
             echo "<td class='chat_id column-chat_d'>" . $result->timestamp . "</td>";
             echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\"  class='wplc-user-message-avatar' /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
-            echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . $result->url . "</td>";
+            echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . esc_url($result->url) . "</td>";
+            echo "<td class='chat_name column_chat_url'><a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$result->id."'><i class='fa fa-trash-o'></i></a></td>";
             echo "</tr>";
         }
     }
@@ -1767,4 +1829,31 @@ function wplc_return_animations_basic(){
     }
 
     return $animation_data;
+}
+
+
+add_action("wplc_advanced_settings_above_performance", "wplc_advanced_settings_above_performance_control", 10, 1);
+function wplc_advanced_settings_above_performance_control($wplc_settings){
+    $elem_trig_action = isset($wplc_settings['wplc_elem_trigger_action']) ? $wplc_settings['wplc_elem_trigger_action'] : "0";
+    $elem_trig_type = isset($wplc_settings['wplc_elem_trigger_type']) ? $wplc_settings['wplc_elem_trigger_type'] : "0";
+    $elem_trig_id = isset($wplc_settings['wplc_elem_trigger_id']) ? $wplc_settings['wplc_elem_trigger_id'] : "";
+
+    echo "<tr>
+            <td>
+            ".__("Open chat window via", "wp-livechat").":
+            </td>
+            <td>
+                <select name='wplc_elem_trigger_action'>
+                    <option value='0' ".($elem_trig_action == "0" ? "selected" : "").">".__("Click", "wp-livechat")."</option>
+                    <option value='1' ".($elem_trig_action == "1" ? "selected" : "").">".__("Hover", "wp-livechat")."</option>
+                </select>
+                 ".__("element with", "wp-livechat").": 
+                <select name='wplc_elem_trigger_type'>
+                    <option value='0' ".($elem_trig_type == "0" ? "selected" : "").">".__("Class", "wp-livechat")."</option>
+                    <option value='1' ".($elem_trig_type == "1" ? "selected" : "").">".__("ID", "wp-livechat")."</option>
+                </select>
+                <input type='text' name='wplc_elem_trigger_id' value='".$elem_trig_id."'>
+            </td>
+          </tr>
+         ";
 }

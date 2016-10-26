@@ -1,9 +1,9 @@
 === WP Live Chat Support ===
-Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long
+Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
 Requires at least: 3.8
-Tested up to: 4.5
+Tested up to: 4.6.1
 Stable tag: trunk
 License: GPLv2
 
@@ -31,6 +31,7 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Access historical live chat records
 * Compatible with translation plugins
 * No advertising or links
+* Add surveys or polls to your chat box, before or after a chat session
 * Quick Responses (insert a predefined response to your live chat box)
 * Anonymity for your visitors
 * No "Powered by" links on the live chat window
@@ -57,6 +58,10 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Unlimited live chat agents
 * Initiate live chats with online visitors
 * Quick Responses (insert a predefined response to your live chat box)
+* Data triggers (time trigger, scroll trigger, page trigger, on page leave trigger)
+* Reporting (chat stats, popular pages, ROI tracking and reporting, customer satisfaction ratings)
+* Customer satisfaction ratings for each chat session
+* ROI tracking
 * Encrypt your live chat conversations
 * Fully responsive admin chat dashboard
 * Compatible with all caching plugins (live chat window loaded via Ajax)
@@ -197,13 +202,61 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 6.2.04 =
+It is highly recommended that you upgrade to WP Live Chat Support version 6.0.04 for security reasons.
+
+= 6.2.02 =
+It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02 for security reasons.
+
 = 4.4.1 =
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
-= 4.1.4 =
-It is highly recommended that you upgrade to WP Live Chat Support version 4.1.4
-
 == Changelog ==
+
+= 6.2.06 - 2016-09-15 - Medium priority =
+* Added Rest API functionality (Accept chat, end chat, get messages, send message, get sessions) 
+* Added 'Device' type logging to live chat dashboard area. 
+* Minified User Side JavaScript
+* Added Connection Handling (user), which will now retry to establish connection upon fail
+* Added Connection Handling (admin), which will retry to establish connection upon fail
+* Fixed a PHP warning on the feedback page
+* Fixed a bug where offline strings weren't translating when localization option was checked
+
+= 6.2.05 - 2016-08-22 - Medium priority =
+* Added compatibility for Live Chat triggers
+* Added Classic Theme's Hovercard (Will only show with triggers)
+* Fixed a bug which prevented the online/offline mode to affect the 'start chat' button
+* Fixed Responsive issues with modern theme
+* Ability to delete individual Missed Chats
+* Ability to delete individual Chats from History
+* Minor Styling Conflicts Resolved
+* Fixed the bug that caused "start chat" to be added to the button in the live chat box when offline
+* Fixed a bug that showed slashes when apostrophes were used 
+* Added various filters/actions for use in Pro
+* Added ability to open chat box using an elements ID/Class (Click/Hover)
+
+= 6.2.04 - 2016-08-01 - High priority =
+* Security patches in the offline message storing function (https://www.securify.nl/advisory/SFY20190709/stored_cross_site_scripting_vulnerability_in_wp_live_chat_support_wordpress_plugin.html)
+
+= 6.2.03 - 2016-07-19 - Low priority =
+* Italian translation updated - thank you Angelo Giammarresi
+* Fixed Danish translation bug
+* Minor UI fixes
+* Edge browser bug fix when opening chats
+
+= 6.2.02 - 2016-07-11 - High priority =
+* XSS Security patch - Thank you Han Sahin!
+
+= 6.2.01 - 2016-07-06 - High priority =
+* Surveys/Polls added - you can now add a survey/poll to your chat box either before or after a chat session
+
+= 6.2.00 - 2016-06-10 - High priority =
+* Cloud server bug fix
+* Offline messages bug fix
+* Internet explorer and Edge browser bug fix which caused the chat to not display
+* Fixed the bug that stopped email addresses such as "name@domain.tld" from validating
+* Advanced options to control the long poll variables
+* Support added for many new pro features
 
 = 6.1.02 - 2016-04-13 - Low Priority =
 * Tested on WordPress 4.5
