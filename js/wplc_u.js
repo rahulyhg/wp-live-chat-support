@@ -524,7 +524,7 @@ jQuery(document).ready(function() {
             if (wplc_email.length <= 0) { alert("Please enter your email address"); return false; }
 
             if(jQuery("#wplc_email").attr('wplc_hide') !== "1"){
-                var testEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,12}$/i;
                 
                 //var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
                 if (!testEmail.test(wplc_email)){
@@ -590,7 +590,7 @@ jQuery(document).ready(function() {
             
             if (wplc_name.length <= 0) { alert("Please enter your name"); return false; }
             if (wplc_email.length <= 0) { alert("Please enter your email address"); return false; }
-            var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+            var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,12}$/i;
             if (!testEmail.test(wplc_email)){
                 alert("Please Enter a Valid Email Address"); return false;
             }
