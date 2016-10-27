@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 6.2.10
+  Version: 6.2.11
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,14 @@
  */
  
 /* 
+ * 6.2.11 - 2016-10-27 - Medium Priority 
+ * Fixed a bug that caused issues with the User JS file when being minified
+ * Fixed a bug that caused the 'Congratulations' message to never clear when using the Cloud Server
+ * Fixed a bug that caused new TLD's to return invalid when starting a new chat
+ * Fixed a variety of strings that were using the incorrect text domain
+ * Italian translation updated - Thank you Angelo Giammarresi
+ * HTML is now rendered in the Input replacement field of the Classic chat window
+ * 
  * 6.2.10 - 2016-10-18 - High priority for IE users
  * IE bug fix - fixed the bug that stopped the chat window from opening when clicking on it
  * Fixed the bug that caused user messages to not be sent on some websites due to non-unique function names being used in the md5.js file
@@ -1380,7 +1388,7 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
       //Dont ask the user
       $ret_msg .= "<div style=\"padding: 7px; text-align: center;\">";
       if (isset($wplc_settings['wplc_user_alternative_text'])) {
-          $ret_msg .= stripslashes($wplc_settings['wplc_user_alternative_text']);
+          $ret_msg .= html_entity_decode( stripslashes($wplc_settings['wplc_user_alternative_text']) );
       }
       $ret_msg .= '</div>';
 
@@ -3040,19 +3048,19 @@ function wplc_hook_control_chat_history() {
                 $wpdb->query($delete_sql);
                 if ($wpdb->last_error) { 
                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Error: Could not delete chat", "wp-livechat")."<br>
+                        ".__("Error: Could not delete chat", "wplivechat")."<br>
                       </div>";
                 } else {
                      echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
-                        ".__("Chat Deleted", "wp-livechat")."<br>
+                        ".__("Chat Deleted", "wplivechat")."<br>
                       </div>";
                 } 
 
             } else {
                 //Prompt
                 echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-history'>".__("No", "wp-livechat")."</a>
+                        ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
+                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-history'>".__("No", "wplivechat")."</a>
                       </div>";
             }
         }
@@ -4089,7 +4097,7 @@ function wplc_filter_control_hovercard_bottom_before_pro($content) {
 	} else if(!isset($wplc_settings["wplc_powered_by_link"])) { 
 
 	} else{
-		$content .= "<a title='".__("Powered By WP Live Chat Support", "wp-livechat")."' target='_blank' rel='nofollow' href='https://wp-livechat.com?utm_source=poweredby&utm_medium=click&utm_campaign=".esc_html(site_url())."' class='wplc_powered_by_link'>".__("Powered By WP Live Chat Support", "wp-livechat")."</a>"; //Empty Content to start
+		$content .= "<a title='".__("Powered By WP Live Chat Support", "wplivechat")."' target='_blank' rel='nofollow' href='https://wp-livechat.com?utm_source=poweredby&utm_medium=click&utm_campaign=".esc_html(site_url())."' class='wplc_powered_by_link'>".__("Powered By WP Live Chat Support", "wplivechat")."</a>"; //Empty Content to start
 	}
 	return $content;
 }
@@ -4406,11 +4414,11 @@ function wplc_basic_reporting_page(){
 		global $wplc_pro_version;
         if (intval(str_replace(".","",$wplc_pro_version)) < 6300) {
 	  		$content .= "<p>In order to use reporting, please ensure you are using the latest Pro version (version 6.3.00 or newer).</p>";
-			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wp-livechat")."</a>";
+			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wplivechat")."</a>";
         }
 	} else {
-		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=reporting' target='_BLANK'>".__("Pro add-on", "wp-livechat")."</a></p>";
-		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=reporting' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'  target='_BLANK'>".__("Upgrade Now" ,"wp-livechat")."</a>";
+		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=reporting' target='_BLANK'>".__("Pro add-on", "wplivechat")."</a></p>";
+		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=reporting' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'  target='_BLANK'>".__("Upgrade Now" ,"wplivechat")."</a>";
 	}
 	$content .= 		"</td>";
 	$content .= 	"</tr>";
@@ -4468,11 +4476,11 @@ function wplc_basic_triggers_page(){
 		global $wplc_pro_version;
         if (intval(str_replace(".","",$wplc_pro_version)) < 6200) {
 	  		$content .= "<p>In order to use data triggers, please ensure you are using the latest Pro version (version 6.2.00 or newer).</p>";
-			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wp-livechat")."</a>";
+			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wplivechat")."</a>";
         }
 	} else {
-		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' target='_BLANK'>".__("Pro add-on", "wp-livechat")."</a></p>";
-		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary' target='_BLANK'>".__("Upgrade Now" ,"wp-livechat")."</a>";
+		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' target='_BLANK'>".__("Pro add-on", "wplivechat")."</a></p>";
+		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=data_triggers' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary' target='_BLANK'>".__("Upgrade Now" ,"wplivechat")."</a>";
 	}
 	$content .= 		"</td>";
 	$content .= 	"</tr>";

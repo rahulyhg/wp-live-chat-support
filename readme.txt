@@ -213,6 +213,32 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 
 == Changelog ==
 
+= 6.2.11 - 2016-10-27 - Medium Priority =
+* Fixed a bug that caused issues with the User JS file when being minified
+* Fixed a bug that caused the 'Congratulations' message to never clear when using the Cloud Server
+* Fixed a bug that caused new TLD's to return invalid when starting a new chat
+* Fixed a variety of strings that were using the incorrect text domain
+* Italian translation updated - Thank you Angelo Giammarresi
+* HTML is now rendered in the Input replacement field of the Classic chat window
+
+= 6.2.10 - 2016-10-18 - High priority for IE users =
+* IE bug fix - fixed the bug that stopped the chat window from opening when clicking on it
+* Fixed the bug that caused user messages to not be sent on some websites due to non-unique function names being used in the md5.js file
+* Translations
+*   Italian translation updated - thank you Angelo Giammarresi and Eta Entropy and Denny Biasiolli
+*   Estonian translation added - thank you Joonas Kessel
+*   Chinese translation updated - thank you Wan Kit
+*   Missing translation strings added in all languages
+
+= 6.2.09 - 2016-09-15 - High priority for cloud users =
+* Further cloud server bug fixes
+
+= 6.2.08 - 2016-09-15 - High priority for cloud users =
+* Fixed a bug that caused no visitors to be displayed when using the cloud server
+
+= 6.2.07 - 2016-09-15 - Medium priority =
+* Fixed a bug that caused a fatal error on older PHP version
+
 = 6.2.06 - 2016-09-15 - Medium priority =
 * Added Rest API functionality (Accept chat, end chat, get messages, send message, get sessions) 
 * Added 'Device' type logging to live chat dashboard area. 
