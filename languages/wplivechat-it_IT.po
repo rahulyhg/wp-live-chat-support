@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wplc\n"
 "POT-Creation-Date: 2016-10-18 14:16+0200\n"
-"PO-Revision-Date: 2016-10-18 14:43+0200\n"
+"PO-Revision-Date: 2016-10-21 12:36+0100\n"
 "Last-Translator: Angelo Giammarresi <info@wocmultimedia.com>\n"
 "Language-Team: Angelo Giammarresi <info@wocmultimedia.com>\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.10\n"
+"X-Generator: Poedit 1.5.7\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-SearchPath-0: wp-live-chat-support\n"
@@ -57,7 +57,7 @@ msgstr ""
 
 #: wp-live-chat-support-cloud-server/wp-live-chat-support-cloud-server.php:90
 msgid "Are you sure you would like to delete chat history?"
-msgstr ""
+msgstr "Sei certo di voler cancellare la cronologia della chat?"
 
 #: wp-live-chat-support-cloud-server/wp-live-chat-support-cloud-server.php:92
 #: wp-live-chat-support-cloud-server/wp-live-chat-support-cloud-server.php:108
@@ -79,7 +79,7 @@ msgstr "No"
 
 #: wp-live-chat-support-cloud-server/wp-live-chat-support-cloud-server.php:106
 msgid "Are you sure you would like to delete all missed chats?"
-msgstr ""
+msgstr "Sei certo di voler cancellare tutte le chat perse?"
 
 #: wp-live-chat-support-cloud-server/wp-live-chat-support-cloud-server.php:374
 msgid ""
@@ -176,7 +176,7 @@ msgstr "Attiva"
 #: wp-live-chat-support-pro/functions-pro.php:347
 #: wp-live-chat-support/functions.php:309
 msgid "This chat is active"
-msgstr "Questa chat e attiva"
+msgstr "Questa chat è attiva"
 
 #: wp-live-chat-support-pro/functions-pro.php:74
 #: wp-live-chat-support-pro/functions-pro.php:160
@@ -200,7 +200,7 @@ msgstr "Nuovo"
 #: wp-live-chat-support/functions.php:513
 #: wp-live-chat-support/modules/api/wplc-api-functions.php:476
 msgid "Returning"
-msgstr "Returning"
+msgstr "Visitatore Abituale"
 
 #: wp-live-chat-support-pro/functions-pro.php:143
 msgid "Visitors on site"
@@ -718,7 +718,7 @@ msgstr ""
 #: wp-live-chat-support-pro/includes/settings_page_pro.php:242
 #: wp-live-chat-support-pro/wp-live-chat-support-pro.php:2151
 msgid "Allow any user to make themselves a chat agent"
-msgstr "Consentire a qualsiasi utente di farsi un agente di chat"
+msgstr "Consentire a qualsiasi utente di diventare un agente di chat"
 
 #: wp-live-chat-support-pro/includes/settings_page_pro.php:242
 #: wp-live-chat-support-pro/wp-live-chat-support-pro.php:2151
@@ -726,8 +726,8 @@ msgid ""
 "Checking this will allow any of your users to make themselves a chat agent "
 "when editing their profile."
 msgstr ""
-"Verifica questo permetterà uno dei tuoi utenti per farsi un agente di chat "
-"quando modificando il loro profilo ."
+"Selezionando questa scelta permetterà a ciascuno dei tuoi utenti di divenire "
+"un agente di chat quando modificano il proprio profilo."
 
 #: wp-live-chat-support-pro/includes/settings_page_pro.php:255
 #: wp-live-chat-support/includes/settings_page.php:213
@@ -1383,11 +1383,11 @@ msgstr "Annulla"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:72
 msgid "ROI Goals"
-msgstr ""
+msgstr "Obiettivi ROI"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:86
 msgid "WP Live Chat Support ROI Goals"
-msgstr ""
+msgstr "Supporto WP Live Chat Obiettivi ROI"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:129
 #: wp-live-chat-support-pro/wp-live-chat-support-pro.php:3873
@@ -1401,87 +1401,87 @@ msgstr "Valore"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:146
 msgid "None"
-msgstr ""
+msgstr "Nessuno"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:153
 msgid "No ROI Goals Found..."
-msgstr ""
+msgstr "Non è stato trovato alcun Obiettivo ROI..."
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:212
 msgid "Goal Name"
-msgstr ""
+msgstr "Nome Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:217
 msgid "Goal Overview"
-msgstr ""
+msgstr "Panoramica Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:222
 msgid "Goal Page"
-msgstr ""
+msgstr "Pagina Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:231
 msgid "Goal Value"
-msgstr ""
+msgstr "Valore Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:377
 msgid "Goal has been edited."
-msgstr ""
+msgstr "L'obiettivo è stato modificato"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:540
 msgid "Are you sure you would like to delete goal"
-msgstr ""
+msgstr "Sei certo di voler cancellare questo obiettivo?"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:622
 msgid "ROI Reporting"
-msgstr ""
+msgstr "Rapporto ROI"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:636
 msgid "Goal Statistics"
-msgstr ""
+msgstr "Statistiche Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:648
 msgid "No Goals Found"
-msgstr ""
+msgstr "Non è stato trovato alcun Obiettivo"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:657
 msgid "Last 30 Days"
-msgstr ""
+msgstr "Ultimi 30 Giorni"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:658
 msgid "Last 15 Days"
-msgstr ""
+msgstr "Ultimi 15 Giorni"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:659
 msgid "Last 7 Days"
-msgstr ""
+msgstr "Ultimi 7 Giorni"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:660
 msgid "Last 24 Hours"
-msgstr ""
+msgstr "Ultime 24 ore"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:712
 msgid "Value Per Conversion"
-msgstr ""
+msgstr "Valore Per Conversione"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:718
 msgid "Total Value"
-msgstr ""
+msgstr "Valore Totale"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:723
 msgid "Total Conversions"
-msgstr ""
+msgstr "Totale Conversioni"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:757
 msgid "Value By Date"
-msgstr ""
+msgstr "Valore per Data"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:760
 msgid "Value By Agent"
-msgstr ""
+msgstr "Valore per Agente"
 
 #: wp-live-chat-support-pro/includes/wplc_roi.php:766
 msgid "No data available yet..."
-msgstr ""
+msgstr "Non ci sono ancora dati disponibili..."
 
 #: wp-live-chat-support-pro/wp-live-chat-support-pro.php:511
 #, php-format

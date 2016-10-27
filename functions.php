@@ -1594,19 +1594,19 @@ function wplc_admin_display_missed_chats() {
                 $wpdb->query($delete_sql);
                 if ($wpdb->last_error) { 
                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Error: Could not delete chat", "wp-livechat")."<br>
+                        ".__("Error: Could not delete chat", "wplivechat")."<br>
                       </div>";
                 } else {
                      echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
-                        ".__("Chat Deleted", "wp-livechat")."<br>
+                        ".__("Chat Deleted", "wplivechat")."<br>
                       </div>";
                 } 
 
             } else {
                 //Prompt
                 echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Are you sure you would like to delete this chat?", "wp-livechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wp-livechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wp-livechat")."</a>
+                        ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
+                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wplivechat")."</a>
                       </div>";
             }
         }
@@ -1840,17 +1840,17 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
 
     echo "<tr>
             <td>
-            ".__("Open chat window via", "wp-livechat").":
+            ".__("Open chat window via", "wplivechat").":
             </td>
             <td>
                 <select name='wplc_elem_trigger_action'>
-                    <option value='0' ".($elem_trig_action == "0" ? "selected" : "").">".__("Click", "wp-livechat")."</option>
-                    <option value='1' ".($elem_trig_action == "1" ? "selected" : "").">".__("Hover", "wp-livechat")."</option>
+                    <option value='0' ".($elem_trig_action == "0" ? "selected" : "").">".__("Click", "wplivechat")."</option>
+                    <option value='1' ".($elem_trig_action == "1" ? "selected" : "").">".__("Hover", "wplivechat")."</option>
                 </select>
-                 ".__("element with", "wp-livechat").": 
+                 ".__("element with", "wplivechat").": 
                 <select name='wplc_elem_trigger_type'>
-                    <option value='0' ".($elem_trig_type == "0" ? "selected" : "").">".__("Class", "wp-livechat")."</option>
-                    <option value='1' ".($elem_trig_type == "1" ? "selected" : "").">".__("ID", "wp-livechat")."</option>
+                    <option value='0' ".($elem_trig_type == "0" ? "selected" : "").">".__("Class", "wplivechat")."</option>
+                    <option value='1' ".($elem_trig_type == "1" ? "selected" : "").">".__("ID", "wplivechat")."</option>
                 </select>
                 <input type='text' name='wplc_elem_trigger_id' value='".$elem_trig_id."'>
             </td>
