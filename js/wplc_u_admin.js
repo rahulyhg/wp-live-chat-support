@@ -403,7 +403,7 @@ jQuery(document).ready(function () {
             security: wplc_ajax_nonce,
         };
         jQuery.ajax({
-            url: wplc_ajaxurl,
+            url: wplc_ajaxurl_home,
             data: data,
             type: "POST",
             success: function (response) {

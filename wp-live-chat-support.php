@@ -907,8 +907,12 @@ function wplc_push_js_to_front_basic() {
 
 
     
-    //wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery'),$wplc_version);
-    wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.min.js', __FILE__),array('jquery'),$wplc_version);
+    wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery'),$wplc_version);
+    /**
+     * No longer in use as of 6.2.11 as using the minified file causes issues on sites that are minified.
+     * @deprecated 6.2.11
+     */
+    // wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.min.js', __FILE__),array('jquery'),$wplc_version);
 
     wp_enqueue_script('wplc-user-script');
 
@@ -2120,6 +2124,7 @@ function wplc_admin_javascript() {
       $ajax_url = admin_url('admin-ajax.php');
       $wplc_ajax_url = apply_filters("wplc_filter_ajax_url",$ajax_url);
       wp_localize_script('wplc-admin-js', 'wplc_ajaxurl', $wplc_ajax_url);
+      wp_localize_script('wplc-admin-js', 'wplc_ajaxurl_home', admin_url( 'admin-ajax.php' ) );
 
       $wpc_ma_js_strings = array(
           'remove_agent' => __('Remove', 'wplivechat'),
