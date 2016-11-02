@@ -459,6 +459,7 @@ if (function_exists("wplc_pro_version_control") && $checker < 6000) { } else {
 require_once (plugin_dir_path(__FILE__) . "functions.php");
 require_once (plugin_dir_path(__FILE__) . "includes/deprecated.php");
 require_once (plugin_dir_path(__FILE__) . "includes/surveys.php");
+require_once (plugin_dir_path(__FILE__) . "includes/notification_control.php");
 
 require_once (plugin_dir_path(__FILE__) . "modules/api/wplc-api.php");
 
@@ -1174,16 +1175,16 @@ function wplc_hook_control_is_chat_enabled() {
  * @since  6.0.00
  * @author  Nick Duncan - nick@codecabin.co.za
  */
-function wplc_hook_control_show_chat_box() {
+function wplc_hook_control_show_chat_box($cid) {
   if (function_exists("wplc_pro_version_control")) {
     global $wplc_pro_version;
     if (intval(str_replace(".","",$wplc_pro_version)) < 5100) {
       echo wplc_output_box_ajax();    
     } else {
-      echo wplc_output_box_ajax_new();
+      echo wplc_output_box_ajax_new($cid);
     }
   } else {
-    echo wplc_output_box_ajax_new();
+    echo wplc_output_box_ajax_new($cid);
     
   }
   
@@ -1194,7 +1195,7 @@ add_action("wplc_hook_output_box_header","wplc_hook_control_banned_users");
 add_action("wplc_hook_output_box_header","wplc_hook_control_check_mobile");
 add_action("wplc_hook_output_box_header","wplc_hook_control_is_chat_enabled");
 
-add_action("wplc_hook_output_box_body","wplc_hook_control_show_chat_box");
+add_action("wplc_hook_output_box_body","wplc_hook_control_show_chat_box",10,1);
 
 /**
  * Build the chat box
@@ -1202,11 +1203,11 @@ add_action("wplc_hook_output_box_body","wplc_hook_control_show_chat_box");
  * @since  6.0.00
  * @author  Nick Duncan <nick@codecabin.co.za>
  */
-function wplc_output_box_5100() {
+function wplc_output_box_5100($cid = null) {
    wplc_string_check();
-   do_action("wplc_hook_output_box_header");
-   do_action("wplc_hook_output_box_body");
-   do_action("wplc_hook_output_box_footer");
+   do_action("wplc_hook_output_box_header",$cid);
+   do_action("wplc_hook_output_box_body",$cid);
+   do_action("wplc_hook_output_box_footer",$cid);
 }
 
 
@@ -1730,14 +1731,22 @@ function wplc_filter_control_loggedin($logged_in) {
     return $logged_in;
 }
 
+function wplc_shortenurl($url) {
+	if ( strlen($url) > 45) {
+		return substr($url, 0, 30)."[...]".substr($url, -15);
+	} else {
+		return $url;
+	}
+}
+
 
 /**
  * The function that builds the chat box
- * @return void
  * @since  6.0.00
  * @author  Nick Duncan <nick@codecabin.co.za>
+ * @return JSON encoded HTML
  */
-function wplc_output_box_ajax_new() {
+function wplc_output_box_ajax_new($cid = null) {
 
        
         $ret_msg = array();
@@ -1758,6 +1767,10 @@ function wplc_output_box_ajax_new() {
         global $wplc_pro_version;
         $wplc_ver = str_replace('.', '', $wplc_pro_version);
         $checker = intval($wplc_ver); 
+
+        if ($cid !== null) {
+        	wplc_record_chat_notification('user_loaded',$cid,array('uri' => $_SERVER['HTTP_REFERER']));
+        }
         
         if (function_exists("wplc_pro_version_control")) {
           if ($checker < 6000) {
@@ -2409,6 +2422,7 @@ function wplc_hook_control_change_status_on_answer($get_data) {
 
   $user_ID = get_current_user_id();
   wplc_change_chat_status(sanitize_text_field($get_data['cid']), 3,$user_ID );
+  wplc_record_chat_notification("joined",$get_data['cid'],array("aid"=>$user_ID));
 }
 
 

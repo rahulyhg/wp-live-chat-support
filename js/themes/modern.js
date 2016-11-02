@@ -39,7 +39,11 @@ jQuery(document).on("wplc_minimize_chat", function( e ) {
 
 jQuery(document).on("wplc_start_chat", function( e ) { 
 	jQuery("#wp-live-chat-2-inner").hide("slow");
-	jQuery("#wp-live-chat-3").show();
+	/* changed in version 7 as we now allow users to start typing immediately */
+    /* jQuery("#wp-live-chat-3").show(); */
+    jQuery.event.trigger({type: "wplc_open_chat_1"});
+    jQuery.event.trigger({type: "wplc_open_chat_2", wplc_online: wplc_online});
+
 });
 
 jQuery(document).on( "wplc_open_chat_1", function( e ) {
@@ -73,7 +77,9 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
 	jQuery("#wp-live-chat-2").show();
 
     wplc_chat_status = Cookies.get('wplc_chat_status');
+    console.log("x1");
     if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
+        console.log("x2");
 	   jQuery("#wp-live-chat-4").show();
        jQuery("#wplc_social_holder").show();
        jQuery("#nifty_ratings_holder").show();
