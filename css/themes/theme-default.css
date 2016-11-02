@@ -25,3 +25,10 @@
 .wplc-color-border-2:before { border-color: transparent #FFF !important; }
 .wplc-color-border-3:before { border-color: transparent #EEE !important; }
 .wplc-color-border-4:before { border-color: transparent #666 !important; }
+
+span.wplc_system_notification {
+    display: block;
+    padding: 8px;
+    font-style: italic;
+    text-align: right;
+}

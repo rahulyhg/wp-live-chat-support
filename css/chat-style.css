@@ -773,6 +773,7 @@
 .offline-status {
     display: block;
     width: 100%;
+    clear:both;
     text-align: center;
     line-height: 45px;
 }
@@ -816,3 +817,10 @@
     bottom: 0;
 }
 
+
+span.wplc_system_notification {
+    display: block;
+    padding: 8px;
+    font-style: italic;
+    text-align: right;
+}
