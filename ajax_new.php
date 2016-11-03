@@ -23,7 +23,7 @@ add_action('wp_ajax_nopriv_wplc_user_send_msg', 'wplc_init_ajax_callback');
 add_action('wp_ajax_wplc_get_chat_box', 'wplc_init_ajax_callback');
 add_action('wp_ajax_nopriv_wplc_get_chat_box', 'wplc_init_ajax_callback');
 
-
+ 
 
 function wplc_init_ajax_callback() {
     @ob_start();
@@ -74,7 +74,7 @@ function wplc_init_ajax_callback() {
 
         if ($_POST['action'] == "wplc_get_chat_box") {
             
-            echo wplc_output_box_5100();
+            echo wplc_output_box_5100(sanitize_text_field($_POST['cid']));
         }
 
         if($_POST['action'] == 'wplc_admin_long_poll'){
