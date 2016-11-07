@@ -664,3 +664,15 @@ input#nifty_ratings_comment {
     font-size: 10px;
     padding: 5px;
 }
+
+#wp-live-chat-2 select {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 32px;
+    width: 100%;
+    height: 49px;
+    color: #60686e;
+    border: 1px solid #e4e5e7;
+    border-radius: 2px;
+    margin-bottom: 5px;
+}

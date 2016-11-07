@@ -1385,6 +1385,8 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
 
       $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value='".$wplc_loggedin_user_name."' placeholder=\"".__("Name", "wplivechat")."\" />";
       $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"0\" value=\"".$wplc_loggedin_user_email."\" placeholder=\"".__("Email", "wplivechat")."\"  />";
+      $ret_msg .= apply_filters("wplc_start_chat_user_form_after_filter", "");
+
   } else {
       //Dont ask the user
       $ret_msg .= "<div style=\"padding: 7px; text-align: center;\">";
@@ -2338,6 +2340,8 @@ function wplc_admin_menu_layout_display() {
 
                         
                     </div>
+
+                    <?php do_action("wplc_after_chat_visitor_count_hook"); ?>
                     
                 </div>
                 
