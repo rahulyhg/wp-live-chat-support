@@ -15,6 +15,7 @@
  * 
  */
 var wplc_is_chat_open = false;
+var wplc_online = false;
 jQuery(document).ready(function() {        
     var wplc_session_variable = new Date().getTime();
     var wplc_cid;
@@ -24,7 +25,7 @@ jQuery(document).ready(function() {
     var wplc_cookie_email = "";
     var wplc_init_chat_box_check = true;
     var wplc_cid = null;
-    var wplc_online = false;
+    
     var initial_data = {};
     var wplc_fist_run = true; 
     var wplc_long_poll_delay = 1500;
@@ -51,7 +52,8 @@ jQuery(document).ready(function() {
 
     var data = {
         action: 'wplc_get_chat_box',
-        security: wplc_nonce
+        security: wplc_nonce,
+        cid: wplc_cid
     };
     jQuery.ajax({
         url: wplc_ajaxurl_site,
@@ -550,7 +552,8 @@ jQuery(document).ready(function() {
             
             wplc_cid = Cookies.get('wplc_cid');
             
-            if (typeof wplc_cid !== "undefined" && wplc_cid !== null) { // we've already recorded a cookie for this person
+            if (typeof wplc_cid !== "undefined" && wplc_cid !== null) { 
+                /* we've already recorded a cookie for this person */
                 var data = {
                         action: 'wplc_start_chat',
                         security: wplc_nonce,
