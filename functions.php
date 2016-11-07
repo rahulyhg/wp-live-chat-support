@@ -169,6 +169,8 @@ function wplc_record_chat_msg($from,$cid,$msg) {
         $orig = '1';
     }
     
+    $orig_msg = $msg;
+
     $msg = apply_filters("wplc_filter_message_control",$msg);
 
     $wpdb->insert( 
@@ -191,6 +193,13 @@ function wplc_record_chat_msg($from,$cid,$msg) {
     	) 
     );
     
+    $data = array(
+        'cid' => $cid,
+        'from' => $from,
+        'msg' => $orig_msg
+    );
+    do_action("wplc_hook_message_sent",$data);
+
     wplc_update_active_timestamp(sanitize_text_field($cid));
     
     
