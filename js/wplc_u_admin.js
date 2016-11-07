@@ -59,7 +59,9 @@ function wplc_notify_agent() {
 
 }
 function wplc_call_to_server(data) {
-
+    if(typeof wplc_pro_admin_long_poll_data !== "undefined" && typeof wplc_pro_admin_long_poll_data === "function"){
+        data = wplc_pro_admin_long_poll_data(data);
+    }   
 
     jQuery.ajax({
         url: wplc_ajaxurl,
