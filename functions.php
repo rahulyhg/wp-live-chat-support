@@ -33,17 +33,17 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
      * 1 = new
      * 2 = returning
      * 3 = timed out
-    */
+     */
     
-    $other = array(
+     $other = array(
          "user_type" => 1
-    );
+     );
 
-    if($is_mobile){
+     if($is_mobile){
         $other['user_is_mobile'] = true;
-    } else {
+     } else {
         $other['user_is_mobile'] = false;
-    }
+     }
     
 
     $wplc_chat_session_data = array( 
@@ -146,7 +146,6 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
 }
 
 
-
 function wplc_record_chat_msg($from,$cid,$msg) {
     global $wpdb;
     global $wplc_tblname_msgs;
@@ -173,6 +172,8 @@ function wplc_record_chat_msg($from,$cid,$msg) {
         $orig = '1';
     }
     
+    $orig_msg = $msg;
+
     $msg = apply_filters("wplc_filter_message_control",$msg);
 
     $wpdb->insert( 
@@ -195,6 +196,13 @@ function wplc_record_chat_msg($from,$cid,$msg) {
     	) 
     );
     
+    $data = array(
+        'cid' => $cid,
+        'from' => $from,
+        'msg' => $orig_msg
+    );
+    do_action("wplc_hook_message_sent",$data);
+
     wplc_update_active_timestamp(sanitize_text_field($cid));
     
     
@@ -565,6 +573,8 @@ function wplc_return_user_chat_messages($cid) {
     $cdata = wplc_get_chat_data($cid);
     $msg_hist = "";
     foreach ($results as $result) {
+        $system_notification = false;
+
         $id = $result->id;
         $from = $result->msgfrom;
 
@@ -850,7 +860,6 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true) {
             if ($display_notification) {
                 $msg_hist .= "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='wplc_system_notification wplc-color-4'>".$msg."</span>";
             }
-            
         }
 
     }

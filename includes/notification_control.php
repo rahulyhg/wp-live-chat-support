@@ -6,7 +6,7 @@ function wplc_record_chat_notification($type,$cid,$data) {
     do_action("wplc_hook_chat_notification",$type,$cid,$data);
     return true;
     
-
+ 
 }
 
 

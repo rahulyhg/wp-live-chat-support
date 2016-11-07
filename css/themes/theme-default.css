@@ -32,3 +32,10 @@ span.wplc_system_notification {
     font-style: italic;
     text-align: right;
 }
+
+.wplc_doc_suggestion {
+	border:1px solid #666;
+	padding:10px;
+	display:block;
+	
+}
