@@ -48,10 +48,7 @@ function wplc_filter_control_chat_notification_user_loaded($type,$cid,$data) {
 
 add_action("wplc_hook_chat_notification","wplc_filter_control_chat_notification_agent_joined",10,3);
 function wplc_filter_control_chat_notification_agent_joined($type,$cid,$data) {
-
-
     if ($type == "joined") {
-    	var_dump("whos joied");
 
         global $wpdb;
         global $wplc_tblname_msgs;

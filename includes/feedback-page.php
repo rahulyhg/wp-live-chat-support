@@ -5,7 +5,7 @@ $current_user = wp_get_current_user();
     
     <div id="icon-options-general" class="icon32 icon32-posts-post"><br></div><h2><?php _e("WP Live Chat Support Feedback","wplivechat") ?></h2>
     <form name="wplc_feedback" action="" method="POST">
-     <table width='100%' class="wp-list-table widefat fixed form-table" style='width:50%'>
+     <table width='100%' class="wp-list-table widefat fixed striped pages" style='width:50%'>
         <tr>
             <td width="250px" >
                 <label><?php _e("Your Name","wplivechat"); ?></label>
