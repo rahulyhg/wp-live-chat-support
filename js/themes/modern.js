@@ -108,6 +108,13 @@ jQuery(document).ready(function() {
 	    jQuery.event.trigger({type: "wplc_open_chat"});
 	});
 
+    jQuery("body").on("click", ".wplc_retry_chat", function() {
+        jQuery("#wplc_hovercard").fadeOut("fast");
+        wplc_is_chat_open = true;
+        jQuery.event.trigger({type: "wplc_open_chat"});
+    });
+
+
     jQuery("body").on("hover", "#wp-live-chat-header", function(){
         if (!wplc_is_chat_open) {
          jQuery("#wplc_hovercard").fadeIn('fast');
