@@ -451,7 +451,7 @@ function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
         if (intval($result->status) == 2) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
             $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-            $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Accept Chat","wplivechat")."</a>";
+            $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">". apply_filters("wplc_accept_chat_button_filter", __("Accept Chat","wplivechat"), $result->id)."</a>";
         }
         else if (intval($result->status) == 3) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
@@ -1275,7 +1275,7 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
  * @return void
  */
 function wplc_send_offline_msg($name,$email,$msg,$cid) {
-    $subject = __("WP Live Chat Support - Offline Message from ", "wplivechat")."$name";
+    $subject = apply_filters("wplc_offline_message_subject_filter", __("WP Live Chat Support - Offline Message from ", "wplivechat") ) . "$name";
     $msg = __("Name", "wplivechat").": $name \n".
     __("Email", "wplivechat").": $email\n".
     __("Message", "wplivechat").": $msg\n\n".
@@ -1373,6 +1373,8 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
             $other_data = maybe_unserialize( $chat_data->other );
             $other_data['unanswered'] = true;
 
+            $other_data = apply_filters("wplc_start_chat_hook_other_data_hook", $other_data);
+
         }               
 
         $wpdb->update( 
@@ -1409,6 +1411,8 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
     else { 
         $other_data = array();
         $other_data['unanswered'] = true;
+
+        $other_data = apply_filters("wplc_start_chat_hook_other_data_hook", $other_data);
         
         $wpdb->insert( 
             $wplc_tblname_chats, 
@@ -1443,8 +1447,8 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
         if (function_exists("wplc_list_chats_pro")) { /* check if functions-pro is around */
             wplc_pro_notify_via_email();
         }
-
-
+        
+        do_action("wplc_start_chat_hook_after_data_insert", $lastid);
         return $lastid;
     }
 
@@ -1963,4 +1967,13 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
             </td>
           </tr>
          ";
+}
+
+add_filter("wplc_offline_message_subject_filter", "wplc_offline_message_custom_subject", 10, 1);
+function wplc_offline_message_custom_subject($subject){
+    $wplc_settings = get_option("WPLC_SETTINGS");
+    if(isset($wplc_settings['wplc_pro_chat_email_offline_subject']) && $wplc_settings['wplc_pro_chat_email_offline_subject'] !== "" && $wplc_settings['wplc_pro_chat_email_offline_subject'] !== " "){
+        $subject = $wplc_settings['wplc_pro_chat_email_offline_subject'] . " ";
+    }
+    return $subject;
 }
