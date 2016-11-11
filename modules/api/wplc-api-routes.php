@@ -39,5 +39,11 @@ function wplc_rest_routes_init() {
 						'callback' => 'wplc_api_get_sessions'
 	));
 
+	register_rest_route('wp_live_chat_support/v1','/call_to_server_visitor', array(
+						'methods' => 'GET, POST',
+						'callback' => 'wplc_api_call_to_server_visitor'
+	));
+
+
 	do_action("wplc_api_route_hook");
 }

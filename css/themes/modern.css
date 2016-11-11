@@ -207,7 +207,7 @@
     border: 1px solid #e4e5e7;
     border-radius: 2px;
     background-color: #fff;
-    margin-bottom:5px;
+    
 }
 .wplc-clear-float-message{
     clear: both;
@@ -588,8 +588,8 @@
 }
 
 #nifty_text_editor_holder{
-    margin-top:-10px;
-    margin-left:4px;
+    
+    
 }
 .nifty_attach_icon {
     position: absolute;
@@ -665,6 +665,40 @@ input#nifty_ratings_comment {
     padding: 5px;
 }
 
+#wplc_msg_notice { margin-left:4px !important; }
+.typing_indicator {
+    width:100%;
+    position:relative;
+    height: 11px;
+    z-index:99;
+    opacity:0.3;
+    font-size: 0.8em;
+    font-style:italic;
+    margin-left:4px;
+    transition-property:all;
+    -webkit-transition-property:all;
+    -moz-transition-property:all;
+    -o-transition-property:all;
+    transition-duration:0.5s;
+    -webkit-transition-duration:0.5s;
+    -moz-transition-duration:0.5s;
+    -o-transition-propdurationerty:0.5s;    
+}
+.typing_indicator_active {
+    position:relative;
+    height:11px;
+    opacity:0.9;
+    transition-property:all;
+    -webkit-transition-property:all;
+    -moz-transition-property:all;
+    -o-transition-property:all;
+    transition-duration:0.5s;
+    -webkit-transition-duration:0.5s;
+    -moz-transition-duration:0.5s;
+    -o-transition-propdurationerty:0.5s;
+
+}
+
 #wp-live-chat-2 select {
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 15px;
@@ -675,4 +709,20 @@ input#nifty_ratings_comment {
     border: 1px solid #e4e5e7;
     border-radius: 2px;
     margin-bottom: 5px;
+}
+
+span.wplc_system_notification {
+    display: block;
+    padding: 8px;
+    clear:both;
+    font-style: italic;
+    text-align: left;
+}
+
+.wplc_doc_suggestion {
+
+    
+}
+button.wplc_retry_chat {
+    margin: 10px;
 }

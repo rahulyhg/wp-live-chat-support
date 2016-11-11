@@ -1,3 +1,23 @@
+  <style>
+  .ui-tabs-vertical {  }
+  .ui-tabs-vertical .ui-tabs-nav {
+      padding: .2em .1em .2em .2em;
+      float: left;
+      /* width: 10%; */
+      max-width: 20%;
+      min-width: 190px;
+  }
+  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+  .ui-tabs-vertical .ui-tabs-panel {
+      /* padding: 1em; */
+      float: left;
+      min-width: 67%;
+      max-width: 67%;
+  }
+  </style>
+
 <?php wplc_stats("settings");
 
 
@@ -89,7 +109,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
       </ul>
       <div id="tabs-1">
           <h3><?php _e("Main Settings",'wplivechat')?></h3>
-          <table class='form-table wp-list-table widefat fixed striped pages' width='700'>
+          <table class='wp-list-table widefat fixed striped pages' width='700'>
               <tr>
                   <td width='400' valign='top'><?php _e("Chat enabled","wplivechat")?>: </td>
                   <td>
@@ -205,14 +225,14 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
               <?php } ?>
             </table>
-            <hr>
+            
             <?php do_action('wplc_hook_admin_settings_main_settings_after'); ?>
             
           
       </div>
       <div id="tabs-2">
           <h3><?php _e("Chat Window Settings",'wplivechat')?></h3>
-          <table class='form-table wp-list-table widefat fixed striped pages' width='700'>
+          <table class='wp-list-table widefat fixed striped pages' width='700'>
               <tr>
                   <td width='420' valign='top'><?php _e("Chat box alignment","wplivechat")?>:</td>
                   <td>
@@ -361,8 +381,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
           <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
-               
-              <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+              <hr>
+              <table class='form-table' width='100%'>
                   <tbody>
                       <tr>
                           <td width='200' valign='top'><?php _e("Facebook URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Facebook page here. Leave blank to hide", "wplivechat") ?>"></i></td> 
@@ -399,7 +419,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
       </div>
                   <div id="tabs-3">
                 <h3><?php _e("Offline Messages", 'wplivechat') ?></h3> 
-                <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+                <table class='form-table' width='100%'>
                     <tr>
                         <td>
 <?php _e("Do not allow users to send offline messages", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("The chat window will be hidden when it is offline. Users will not be able to send offline messages to you", "wplivechat") ?>"></i>
@@ -433,7 +453,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
 
                 </table>
                 <hr/>
-                <table class="wp-list-table widefat fixed striped pages">
+                <table >
                     <tr>
                         <td width="400"><?php _e("Sending Method", "wplivechat") ?></td>
                         <td width="400" style="text-align: center;"><?php _e("WP Mail", "wplivechat") ?></td>
@@ -450,7 +470,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                     </tr>
                 </table>
                 <hr/>
-                <table id="wplc_smtp_details" class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+                <table id="wplc_smtp_details" class='form-table' width='100%'>
                     <tr>
                         <td width="400" valign="top">
 <?php _e("Host", "wplivechat") ?>: 
@@ -484,7 +504,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
                 </table>
-                <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+                <table class='form-table' width='100%'>
                     <tr>
                         <td width="400" valign="top"><?php _e("Offline Chat Box Title", "wplivechat") ?>:</td>
                         <td>
@@ -549,11 +569,11 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         }
                 </style>
           <h3><?php _e("Styling",'wplivechat')?></h3>
-          <table class='form-table wp-list-table widefat fixed striped pages' width='700'>
+          <table class='form-table' width='700'>
               
 
               <tr style='margin-bottom: 10px;'>
-                <td style="width:300px;"><label for=""><?php _e('Choose a theme', 'wplivechat'); ?></label></td>
+                <td><label for=""><?php _e('Choose a theme', 'wplivechat'); ?></label></td>
                 <td>    
                     <div class='wplc_theme_block'>
                         <div class='wplc_theme_image' id=''>
@@ -690,10 +710,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
 
-                      <tr style='height:30px;'>
-                        <td><strong><?php _e('Localized Strings', 'wplivechat'); ?></strong</td>
-                        <td></td>
-                      </tr>
+              <tr style='height:30px;'><td></td><td></td></tr>
                                 <tr class="wplc_localization_strings">
                         <td width="200" valign="top"><?php _e("First Section Text", "wplivechat") ?>:</td>
                         <td>
@@ -729,42 +746,44 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">
+                        <td width="200" valign="top"><?php _e("No answer", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_user_no_answer" name="wplc_user_no_answer" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo (isset($wplc_settings['wplc_user_no_answer']) ? stripslashes($wplc_settings['wplc_user_no_answer']) : __("There is No Answer. Please Try Again Later.","wplivechat")); ?>" /> <?php _e('This text is shown to the user when an agent has failed to answer a chat ', 'wplivechat'); ?><br />
+                        </td>
+                    </tr>
+                    <tr class="wplc_localization_strings">
                         <td width="200" valign="top"><?php _e("Other text", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /> <?php _e('This text is shown above the user chat input field', 'wplivechat'); ?><br />
                         </td>
                     </tr>
-                       
+            <style>
+                .wplc_animation_block div{
+                    display: inline-block;
+                    width: 150px;
+                    height: 150px;
+                    border: 1px solid #CCC;
+                    border-radius: 5px;
+                    text-align: center;  
+                    margin: 10px;
+                }
+                .wplc_animation_block i{
+                    font-size: 3em;
+                    line-height: 150px;
+                }
+                .wplc_animation_block .wplc_red{
+                    color: #E31230;
+                }
+                .wplc_animation_block .wplc_orange{
+                    color: #EB832C;
+                }
+                .wplc_animation_active{
+                    box-shadow: 2px 2px 2px #CCC;
+                }
+            </style>            
                     <tr>
-                        <style>
-                          .wplc_animation_block div{
-                              display: inline-block;
-                              width: 150px;
-                              height: 150px;
-                              border: 1px solid #CCC;
-                              border-radius: 5px;
-                              text-align: center;  
-                              margin: 10px;
-                          }
-                          .wplc_animation_block i{
-                              font-size: 3em;
-                              line-height: 150px;
-                          }
-                          .wplc_animation_block .wplc_red{
-                              color: #E31230;
-                          }
-                          .wplc_animation_block .wplc_orange{
-                              color: #EB832C;
-                          }
-                          .wplc_animation_active{
-                              box-shadow: 2px 2px 2px #CCC;
-                          }
-                      </style> 
-                        <td><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
+                        <th><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></th>
+
                         <td>    
                             <div class='wplc_animation_block'>
                                 <div class='wplc_animation_image <?php if (isset($wplc_settings['wplc_animation']) && $wplc_settings['wplc_animation'] == 'animation-1') {

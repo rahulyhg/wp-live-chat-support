@@ -15,7 +15,9 @@ jQuery("document").ready(function() {
         }
     });
     
-   jQuery("#wplc_tabs").tabs();
+   jQuery("#wplc_tabs").tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+   jQuery( "#wplc_tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+
 
 
     jQuery(".wplc_hide_input").hide();

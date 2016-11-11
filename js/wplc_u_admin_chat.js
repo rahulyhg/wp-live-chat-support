@@ -161,9 +161,6 @@ if (new_chat_status === "0") {
     }
 }
 }
-var wplc_searchTimeout;
-var wplc_is_typing = false;
-
 
 
 jQuery(document).ready(function () {
@@ -196,50 +193,6 @@ jQuery(document).ready(function () {
 
 
 
-
-    jQuery("body").on("keydown","#wplc_admin_chatmsg", function(e) {
-        if (e.which <= 90 && e.which >= 48) {
-            if (wplc_is_typing) { 
-                wplc_renew_typing();
-                return; /* user already typing */
-            }
-            wplc_is_typing = true;
-            
-            wplc_searchTimeout = setTimeout(wplc_clear_typing, 3000);
-            wplc_usertyping('admin',Math.floor(Date.now() / 1000),cid);
-        }
-    });
-
-    jQuery("body").on("click", "#wplc_admin_send_msg", function() {
-        if (wplc_is_typing) { wplc_clear_typing(); }
-    });
-
-    function wplc_renew_typing() {
-        clearTimeout(wplc_searchTimeout);
-        wplc_searchTimeout = setTimeout(wplc_clear_typing, 3000);
-    }
-    function wplc_clear_typing() {
-        wplc_is_typing = false;
-        clearTimeout(wplc_searchTimeout);
-        wplc_usertyping('admin',0,cid);
-    }
-    function wplc_usertyping(wplc_typing_user,wplc_typing_type,wplc_typing_cid) {
-        if (typeof cid !== "undefined" && cid !== null) { 
-            var data = {
-                    action: 'wplc_typing',
-                    security: wplc_ajax_nonce,
-                    user: wplc_typing_user,
-                    type: wplc_typing_type,
-                    cid: wplc_typing_cid,
-                    wplc_extra_data:wplc_extra_data
-            };
-        } else {
-           /* no cid? */
-        }
-        jQuery.post(wplc_ajaxurl, data, function(response) {
-
-        });
-    }
 
     
 
