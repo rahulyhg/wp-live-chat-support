@@ -2098,7 +2098,7 @@ function wplc_hook_control_superadmin_head() {
 
 function wplc_superadmin_javascript() {
 
-    if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' || $_GET['page'] == 'wplivechat-menu-settings' || $_GET['page'] == 'wplivechat-menu-offline-messages') ) {
+    if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' || $_GET['page'] == 'wplivechat-menu-settings' || $_GET['page'] == 'wplivechat-menu-offline-messages' || $_GET['page'] == 'wplc-pro-custom-fields' ) ) {
 
         if (!isset($_GET['action'])) {
             if (function_exists("wplc_register_pro_version")) {
