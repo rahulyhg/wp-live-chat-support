@@ -29,6 +29,15 @@
 span.wplc_system_notification {
     display: block;
     padding: 8px;
+    clear:both;
     font-style: italic;
-    text-align: right;
+    text-align: left;
+}
+
+.wplc_doc_suggestion {
+
+	
+}
+button.wplc_retry_chat {
+    margin: 10px;
 }

@@ -3,10 +3,12 @@
 
 
 function wplc_record_chat_notification($type,$cid,$data) {
-    do_action("wplc_hook_chat_notification",$type,$cid,$data);
+    if ($cid) {
+        do_action("wplc_hook_chat_notification",$type,$cid,$data);
+    }
     return true;
     
-
+ 
 }
 
 
@@ -41,9 +43,42 @@ function wplc_filter_control_chat_notification_user_loaded($type,$cid,$data) {
             ) 
         );
     }
-    return;
+    return $type;
 } 
 
+
+add_action("wplc_hook_chat_notification","wplc_filter_control_chat_notification_await_agent",10,3);
+function wplc_filter_control_chat_notification_await_agent($type,$cid,$data) {
+
+
+    if ($type == "await_agent") {
+
+        global $wpdb;
+        global $wplc_tblname_msgs;
+
+
+        $wpdb->insert( 
+            $wplc_tblname_msgs, 
+            array( 
+                    'chat_sess_id' => $cid, 
+                    'timestamp' => current_time('mysql'),
+                    'msgfrom' => __('System notification',"wplivechat"),
+                    'msg' => $data['msg'],
+                    'status' => 0,
+                    'originates' => 0
+            ), 
+            array( 
+                    '%s', 
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%d',
+                    '%d'
+            ) 
+        );
+    }
+    return $type;
+} 
 
 
 add_action("wplc_hook_chat_notification","wplc_filter_control_chat_notification_agent_joined",10,3);
@@ -51,7 +86,6 @@ function wplc_filter_control_chat_notification_agent_joined($type,$cid,$data) {
 
 
     if ($type == "joined") {
-    	var_dump("whos joied");
 
         global $wpdb;
         global $wplc_tblname_msgs;
@@ -81,5 +115,5 @@ function wplc_filter_control_chat_notification_agent_joined($type,$cid,$data) {
             ) 
         );
     }
-    return;
+    return $type;
 } 

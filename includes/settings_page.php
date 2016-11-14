@@ -1,3 +1,23 @@
+  <style>
+  .ui-tabs-vertical {  }
+  .ui-tabs-vertical .ui-tabs-nav {
+      padding: .2em .1em .2em .2em;
+      float: left;
+      /* width: 10%; */
+      max-width: 20%;
+      min-width: 190px;
+  }
+  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+  .ui-tabs-vertical .ui-tabs-panel {
+      /* padding: 1em; */
+      float: left;
+      min-width: 67%;
+      max-width: 67%;
+  }
+  </style>
+
 <?php wplc_stats("settings");
 
 
@@ -89,7 +109,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
       </ul>
       <div id="tabs-1">
           <h3><?php _e("Main Settings",'wplivechat')?></h3>
-          <table class='form-table' width='700'>
+          <table class='wp-list-table widefat fixed striped pages' width='700'>
               <tr>
                   <td width='400' valign='top'><?php _e("Chat enabled","wplivechat")?>: </td>
                   <td>
@@ -205,13 +225,14 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
               <?php } ?>
             </table>
+            
             <?php do_action('wplc_hook_admin_settings_main_settings_after'); ?>
             
           
       </div>
       <div id="tabs-2">
           <h3><?php _e("Chat Window Settings",'wplivechat')?></h3>
-          <table class='form-table' width='700'>
+          <table class='wp-list-table widefat fixed striped pages' width='700'>
               <tr>
                   <td width='420' valign='top'><?php _e("Chat box alignment","wplivechat")?>:</td>
                   <td>
@@ -418,6 +439,15 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         <td>
                             <input id="wplc_pro_chat_email_address" name="wplc_pro_chat_email_address" class="regular-text" type="text" value="<?php if (isset($wplc_settings['wplc_pro_chat_email_address'])) {
     echo $wplc_settings['wplc_pro_chat_email_address']; } ?>" />
+                        </td>
+                    </tr>
+
+                     <tr>
+                        <td width='400' valign='top'>
+                            <?php _e("Subject", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("User name will be appended to the end of the subject.", "wplivechat") ?>"></i>
+                        </td>
+                        <td>
+                            <input id="wplc_pro_chat_email_offline_subject" name="wplc_pro_chat_email_offline_subject" class="regular-text" type="text" value="<?php echo(isset($wplc_settings['wplc_pro_chat_email_offline_subject']) ? $wplc_settings['wplc_pro_chat_email_offline_subject'] : ""); ?>" placeholder="<?php echo __("WP Live Chat Support - Offline Message from ", "wplivechat"); ?>"/>
                         </td>
                     </tr>
 
@@ -713,6 +743,12 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         <td width="200" valign="top"><?php _e("User chat welcome", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_user_welcome_chat" name="wplc_user_welcome_chat" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_welcome_chat']) ?>" /> <br />
+                        </td>
+                    </tr>
+                    <tr class="wplc_localization_strings">
+                        <td width="200" valign="top"><?php _e("No answer", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_user_no_answer" name="wplc_user_no_answer" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo (isset($wplc_settings['wplc_user_no_answer']) ? stripslashes($wplc_settings['wplc_user_no_answer']) : __("There is No Answer. Please Try Again Later.","wplivechat")); ?>" /> <?php _e('This text is shown to the user when an agent has failed to answer a chat ', 'wplivechat'); ?><br />
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">

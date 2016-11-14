@@ -19,7 +19,7 @@ function wplc_survey_hook_control_settings_page_more_tabs() {
   ?>
  <div id="tabs-survey">            
     <h3><?php _e("Surveys", "wplivechat") ?></h3>
-    <table class='form-table' width='700'>
+    <table class='form-table wp-list-table widefat fixed striped pages' width='700'>
         <tr>
             <td width='400' valign='top'><?php _e("Enable Surveys", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Enable surveys within your live chat box, either before or after a live chat session.', 'wplivechat'); ?>"></i></td> 
             <td>

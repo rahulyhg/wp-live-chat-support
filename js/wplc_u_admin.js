@@ -59,7 +59,9 @@ function wplc_notify_agent() {
 
 }
 function wplc_call_to_server(data) {
-
+    if(typeof wplc_pro_admin_long_poll_data !== "undefined" && typeof wplc_pro_admin_long_poll_data === "function"){
+        data = wplc_pro_admin_long_poll_data(data);
+    }   
 
     jQuery.ajax({
         url: wplc_ajaxurl,
@@ -230,41 +232,24 @@ chat_count = qty;
 
 
 function wplc_get_status_name(status) {
-if (status === 1) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>complete</span>";
-}
-if (status === 2) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>pending</span>";
-}
-if (status === 3) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>active</span>";
-}
-if (status === 4) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>deleted</span>";
-}
-if (status === 5) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>browsing</span>";
-}
-if (status === 6) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>requesting chat</span>";
-}
-if (status === 8){
-    return "<span class='wplc_status_box wplc_status_"+status+"'>chat ended</span></span>";
-}
-if (status === 9){
-    return "<span class='wplc_status_box wplc_status_"+status+"'>chat closed</span>";
-}
-if (status === 10){
-    return "<span class='wplc_status_box wplc_status_8'>minimized</span>";
-}
+    if (status === 1) { return "<span class='wplc_status_box wplc_status_"+status+"'>complete</span>"; }
+    if (status === 2) { return "<span class='wplc_status_box wplc_status_"+status+"'>pending</span>"; }
+    if (status === 3) { return "<span class='wplc_status_box wplc_status_"+status+"'>active</span>"; }
+    if (status === 4) { return "<span class='wplc_status_box wplc_status_"+status+"'>deleted</span>"; }
+    if (status === 5) { return "<span class='wplc_status_box wplc_status_"+status+"'>browsing</span>"; }
+    if (status === 6) { return "<span class='wplc_status_box wplc_status_"+status+"'>requesting chat</span>"; }
+    if (status === 8){ return "<span class='wplc_status_box wplc_status_"+status+"'>chat ended</span></span>"; }
+    if (status === 9){ return "<span class='wplc_status_box wplc_status_"+status+"'>chat closed</span>"; }
+    if (status === 10){ return "<span class='wplc_status_box wplc_status_8'>minimized</span>"; }
+    if (status === 12) { return "<span class='wplc_status_box wplc_status_8'>missed chat</span>"; }
 }
 function wplc_get_type_box(type) {
-if (type === "New") {
-    return "<span class='wplc_status_box wplc_type_new'>New</span>";
-}
-if (type === "Returning") {
-    return "<span class='wplc_status_box wplc_type_returning'>Returning</span>";
-}
+    if (type === "New") {
+        return "<span class='wplc_status_box wplc_type_new'>New</span>";
+    }
+    if (type === "Returning") {
+        return "<span class='wplc_status_box wplc_type_returning'>Returning</span>";
+    }
 }
 
 

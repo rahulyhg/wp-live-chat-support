@@ -41,7 +41,7 @@
     background-color:white;
     width: 50%;
     min-width:300px;
-    height:315px;
+    /*height:315px;*/
     background-color: #ffffff;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#CCC), to(#FFF));
     background-image: -webkit-linear-gradient(top, #CCC, #FFF);
@@ -63,10 +63,11 @@
 }
 
 .admin_chat_box_inner_bottom {
-    height:60px;
+    /*height:60px;*/
     width:100%;
     border-top:1px solid #ccc;
-
+    display:block;
+    overflow:auto;
 
 
 
@@ -817,6 +818,64 @@
     bottom: 0;
 }
 
+.wplc_dashboard_additional_label {
+    width: 100%;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    cursor: help;
+}
+
+.wplc_modal {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.wplc_modal_inner {
+    width: 60%;
+    height: 300px;
+    margin: auto;
+    background: #ffffff;
+    position: fixed;
+    z-index: 9999;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 1px solid #9f9f9f;
+    border-radius: 3px;
+}
+
+.wplc_modal_inner_title {
+    font-size: 18px;
+    padding: 17px;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+.wplc_modal_inner_content {
+    position: absolute;
+    display: block;
+    left: 10px;
+    right: 10px;
+    bottom: 55px;
+    top: 55px;
+    overflow-y: auto;
+}
+
+.wplc_modal_inner_actions {
+    height: 28px;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
 
 span.wplc_system_notification {
     display: block;
