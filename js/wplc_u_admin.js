@@ -274,7 +274,24 @@ var v_vis_html = "<span class='wplc_headerspan_v'>"+v_name+"</span>";
 var v_nr_html = "<span class='wplc_headerspan_nr'>"+wplc_get_type_box(v_type)+"</span>";
 var v_time_html = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+v_time+"</span></span>";
 var v_nr_device = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+(v_is_mobile ? "Mobile" : "PC")+"</span></span>"
-var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>";
+
+if( additional_data ) {
+    additional_data = additional_data.replace(/\\/g, '');
+    additional_data = JSON.parse( additional_data );
+}
+
+var data_column_html = "";
+if( additional_data ){
+    jQuery.each( additional_data, function( key, val){        
+        var field_name = val[0];
+        var field_value = val[1];
+
+        data_column_html += "<span class='wplc-sub-item-header'>"+field_name+":</span> "+field_value+"<br/>";
+
+    });
+}
+
+var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>"+data_column_html;
 var v_nr_status_html = "<span class='wplc_headerspan_s'><span class='browser-tag'>"+v_browser+"</span> "+v_status_string+"</span>";
 var v_nr_action_html = "<span class='wplc_headerspan_a 1'>"+v_action+"</span>";
 
@@ -458,3 +475,17 @@ jQuery(document).ready(function () {
 
 });
 
+console.log('loaded');
+jQuery("body").on("change","#wplc_field_type", function() {
+
+    var selection = jQuery(this).val();
+    
+    if( selection == '1' ){
+        jQuery("#wplc_field_value_dropdown_row").show();
+        jQuery("#wplc_field_value_row").hide();
+    } else {
+        jQuery("#wplc_field_value_dropdown_row").hide();
+        jQuery("#wplc_field_value_row").show();
+    }
+
+});

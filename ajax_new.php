@@ -75,7 +75,6 @@ function wplc_init_ajax_callback() {
         if ($_POST['action'] == "wplc_get_chat_box") {
             
             echo wplc_output_box_5100(sanitize_text_field($_POST['cid']));
-
         }
 
         if($_POST['action'] == 'wplc_admin_long_poll'){
@@ -173,11 +172,8 @@ function wplc_init_ajax_callback() {
 
         //User Ajax
         
-
-        
         if($_POST['action'] == 'wplc_call_to_server_visitor'){
 
-            
 
 
             $wplc_settings = get_option("WPLC_SETTINGS");
@@ -226,10 +222,9 @@ function wplc_init_ajax_callback() {
                     } else {
                         $is_mobile = false;
                     }
-
+                     
                     $cid = wplc_log_user_on_page($user,$email,sanitize_text_field($_POST['wplcsession']), $is_mobile);
                     $array['cid'] = $cid;
-
                     $array['status'] = wplc_return_chat_status($cid);
                     $array['wplc_name'] = $user;
                     $array['wplc_email'] = $email;
@@ -249,6 +244,7 @@ function wplc_init_ajax_callback() {
 
                     $array = apply_filters("wplc_filter_user_long_poll_chat_loop_iteration",$array,$_POST,$i,$cdata);
                     
+
                     if($new_status == $_POST['status']){ // if status matches do the following
                         if($_POST['status'] != 2){
                             /* check if session_variable is different? if yes then stop this script completely. */
@@ -382,7 +378,6 @@ function wplc_init_ajax_callback() {
                 if (defined('WPLC_DELAY_BETWEEN_LOOPS')) { usleep(WPLC_DELAY_BETWEEN_LOOPS); } else { usleep(500000); }
 
                 @ob_end_flush();
-
             }
         }
         
