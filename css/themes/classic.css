@@ -567,7 +567,38 @@ input#nifty_ratings_comment {
     font-size:0.9em;
     font-weight:bold;
 }
+.typing_indicator {
+    width:100%;
+    position:relative;
+    height: 0px;
+    opacity:0.3;
+    font-size: 0.8em;
+    transition-property:all;
+    -webkit-transition-property:all;
+    -moz-transition-property:all;
+    -o-transition-property:all;
+    transition-duration:0.5s;
+    -webkit-transition-duration:0.5s;
+    -moz-transition-duration:0.5s;
+    -o-transition-propdurationerty:0.5s;    
+}
+.typing_indicator_active {
+    position:relative;
+    height:20px;
+    opacity:0.9;
+    transition-property:all;
+    -webkit-transition-property:all;
+    -moz-transition-property:all;
+    -o-transition-property:all;
+    transition-duration:0.5s;
+    -webkit-transition-duration:0.5s;
+    -moz-transition-duration:0.5s;
+    -o-transition-propdurationerty:0.5s;
 
+}
+.wplc_msg_notice {
+    font-size:0.8em;
+}
 .wplc_powered_by_link {
     font-size: 10px;
     max-width: 120px;
