@@ -225,7 +225,6 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
               <?php } ?>
             </table>
-            
             <?php do_action('wplc_hook_admin_settings_main_settings_after'); ?>
             
           
@@ -524,7 +523,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
                 </table>
-
+                <?php do_action('wplc_hook_admin_settings_offline_messages_settings_after'); ?>
             </div>
 
       
