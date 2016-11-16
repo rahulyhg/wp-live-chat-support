@@ -374,7 +374,18 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       }
                       ?>/>
                   </td>
-              </tr>              
+              </tr>   
+              <tr>
+                  <td>
+                      <?php _e("Display a timestamp in the chat window", "wplivechat") ?>
+                  </td>
+                  <td>  
+                      <?php if (isset($wplc_settings['wplc_show_date']) && $wplc_settings['wplc_show_date'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
+                      <input type="checkbox" name="wplc_show_date" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Date", "wplivechat"); ?></label><br/>
+                      <?php if (isset($wplc_settings['wplc_show_time']) && $wplc_settings['wplc_show_time'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
+                      <input type="checkbox" name="wplc_show_time" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Time", "wplivechat"); ?></label>
+                  </td>
+              </tr>            
           </table>
 
           <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>

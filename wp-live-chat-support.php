@@ -758,6 +758,11 @@ function wplc_admin_menu() {
     	add_submenu_page('wplivechat-menu', __('Triggers', 'wplivechat'), __('Triggers', 'edit_posts') . ' <span class="update-plugins"><span class="plugin-count">Pro</span></span>', $cap[0], 'wplc-basic-triggers', 'wplc_basic_triggers_page');
     }
 
+
+    if(!function_exists("wplc_pro_custom_fields_page")){
+    	add_submenu_page('wplivechat-menu', __('Custom Fields', 'wplivechat'), __('Custom Fields', 'edit_posts') . ' <span class="update-plugins"><span class="plugin-count">Pro</span></span>', $cap[0], 'wplc-basic-custom-fields', 'wplc_basic_custom_fields_page');
+    }
+
     /* only if user is both an agent and an admin that has the cap assigned, can they access these pages */
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) && current_user_can("wplc_ma_agent")){
 
@@ -987,6 +992,20 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
     wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
+
+    $wplc_error_messages = array(
+    	'valid_name' 	=> __( "Please enter your name", "wplivechat" ),
+    	'valid_email' 	=> __( "Please enter your email address", "wplivechat" ),
+    	'server_connection_lost' => __("Connection to server lost. Please reload this page. Error: ", "wplivechat"),
+    	'chat_ended_by_operator' => __("The chat has been ended by the operator", "wplivechat"),
+    	'empty_message' => __( "Please enter a message", "wplivechat" ),
+
+	);
+
+    $wplc_error_messages = apply_filters( "wplc_user_error_messages_filter", $wplc_error_messages );
+
+    wp_localize_script('wplc-user-script', 'wplc_error_messages', $wplc_error_messages);
+
     $wplc_run_override = "0";
     $wplc_run_override = apply_filters("wplc_filter_run_override",$wplc_run_override);
     wp_localize_script('wplc-user-script', 'wplc_filter_run_override', $wplc_run_override);
@@ -3176,7 +3195,7 @@ function wplc_hook_control_chat_history() {
             $trstyle = "style='height:30px;'";
 
             echo "<tr id=\"record_" . $result->id . "\" $trstyle>";
-            echo "<td class='chat_id column-chat_d'>" . $result->timestamp . "</td>";
+            echo "<td class='chat_id column-chat_d'>" . date("Y-m-d H:i:s", current_time( strtotime( $result->timestamp ) ) ) . "</td>";
             echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . esc_url($result->url) . "</td>";
@@ -3450,6 +3469,9 @@ function wplc_head_basic() {
 
             update_option('WPLC_BANNED_IP_ADDRESSES', $wplc_banned_ip_addresses);
         }
+
+        if( isset( $_POST['wplc_show_date'] ) ){ $wplc_data['wplc_show_date'] = '1'; } else { $wplc_data['wplc_show_date'] = '0'; }
+        if( isset( $_POST['wplc_show_time'] ) ){ $wplc_data['wplc_show_time'] = '1'; } else { $wplc_data['wplc_show_time'] = '0'; }
 
 
         update_option('WPLC_SETTINGS', $wplc_data);
@@ -4557,4 +4579,38 @@ function wplc_basic_triggers_page(){
     $content .= "</div>";
     echo $content;
 
+}
+
+function wplc_basic_custom_fields_page(){
+	$content = "<div class='wrap'>";
+    $content .= "<h2>".__('WP Live Chat Support Custom Fields', 'wplivechat')."</h2>";    
+	$content .= "<table class=\"wp-list-table widefat fixed form-table\" cellspacing=\"0\" style='width:98%'>";
+	$content .= 	"<tr>";
+	$content .= 		"<td style='width:35%; vertical-align:top;'>";
+	$content .= 			"<img class='trigger_img_main' style='width:99%; height:auto; padding:2px; border:1px lightgray solid;box-shadow: 3px 3px 2px -2px #999;-webkit-box-shadow: 3px 3px 2px -2px #999;-moz-box-shadow: 3px 3px 2px -2px #999;-o-box-shadow: 3px 3px 2px -2px #999;' src='".plugins_url('/images/trigger_sample.jpg', __FILE__)."'>";	
+	$content .= 		"</td>";
+	$content .= 		"<td style='vertical-align:top;'>";
+	$content .= 			"<h3>".__('WP Live Chat Support Custom Fields', 'wp-livechat')."</h3>";
+	$content .= 			"<p>".__('Create custom fields, allowing your visitors to enter the data you need before starting a chat.', 'wp-livechat')."</p>";	
+	$content .= 			"<br><p><strong>".__('Custom Field Types', 'wp-livechat').":</strong></p>";
+	$content .= 			"<ul style='list-style: inherit;margin-left: 22px;'>";
+	$content .= 				"<li>".__('Text Fields', 'wp-livechat')."</li>";
+	$content .= 				"<li>".__('Dropdown Fields', 'wp-livechat')."</li>";	
+	$content .= 			"</ul>";
+
+	if (function_exists("wplc_pro_activate")) {
+		global $wplc_pro_version;
+        if (intval(str_replace(".","",$wplc_pro_version)) < 7000) {
+	  		$content .= "<p>In order to use custom fields, please ensure you are using the latest Pro version (version 7.0.0 or newer).</p>";
+			$content .=  "<br><a title='Update Now' href='./update-core.php' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary'>".__("Update now" ,"wplivechat")."</a>";
+        }
+	} else {
+		$content .= 			"<p>".__('Get all this and more in the ', 'wp-livechat')."<a href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=custom_fields' target='_BLANK'>".__("Pro add-on", "wplivechat")."</a></p>";
+		$content .= 			"<br><a title='Upgrade Now' href='https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=custom_fields' style='width: 200px;height: 58px;text-align: center;line-height: 56px;font-size: 18px;' class='button button-primary' target='_BLANK'>".__("Upgrade Now" ,"wplivechat")."</a>";
+	}
+	$content .= 		"</td>";
+	$content .= 	"</tr>";
+	$content .= "</table>";
+    $content .= "</div>";
+    echo $content;
 }
