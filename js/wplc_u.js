@@ -337,7 +337,7 @@ jQuery(document).ready(function() {
     }
 
     function wplc_display_error(error) {
-        jQuery("#wplc_chatbox").append("Connection to server lost. Please reload this page. Error: "+error);
+        jQuery("#wplc_chatbox").append(wplc_error_messages.server_connection_lost+" "+error);
         var height = jQuery('#wplc_chatbox')[0].scrollHeight;
         jQuery('#wplc_chatbox').scrollTop(height);
     }
@@ -562,7 +562,7 @@ jQuery(document).ready(function() {
                 jQuery("#wplc_social_holder").show();
                 jQuery("#nifty_ratings_holder").show();
                 jQuery.event.trigger({type: "wplc_animation_done"});
-                jQuery("#wplc_chatbox").append("The chat has been ended by the operator.<br />");
+                jQuery("#wplc_chatbox").append(wplc_error_messages.chat_ended_by_operator+"<br />");
                 var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                 jQuery('#wplc_chatbox').scrollTop(height);
                 jQuery("#wp-live-chat-minimize").hide();
@@ -630,16 +630,16 @@ jQuery(document).ready(function() {
         jQuery("body").on("click", "#wplc_start_chat_btn", function() {
             var wplc_name = jQuery("#wplc_name").val();
             var wplc_email = jQuery("#wplc_email").val(); 
-
-            if (wplc_name.length <= 0) { alert("Please enter your name"); return false; }
-            if (wplc_email.length <= 0) { alert("Please enter your email address"); return false; }
+            
+            if (wplc_name.length <= 0) { alert(wplc_error_messages.valid_name); return false; }
+            if (wplc_email.length <= 0) { alert(wplc_error_messages.valid_email); return false; }
 
             if(jQuery("#wplc_email").attr('wplc_hide') !== "1"){
                 var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,12}$/i;
                 
                 //var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
                 if (!testEmail.test(wplc_email)){
-                    alert("Please Enter a Valid Email Address"); return false;
+                    alert(wplc_error_messages.valid_email); return false;
                 }
             }
 
@@ -709,13 +709,13 @@ jQuery(document).ready(function() {
             var wplc_domain = jQuery("#wplc_domain_offline").val();
             var ip_address = jQuery("#wplc_ip_address").val();
             
-            if (wplc_name.length <= 0) { alert("Please enter your name"); return false; }
-            if (wplc_email.length <= 0) { alert("Please enter your email address"); return false; }
+            if (wplc_name.length <= 0) { alert(wplc_error_messages.valid_name); return false; }
+            if (wplc_email.length <= 0) { alert(wplc_error_messages.valid_email); return false; }
             var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,12}$/i;
             if (!testEmail.test(wplc_email)){
-                alert("Please Enter a Valid Email Address"); return false;
+                alert(wplc_error_messages.valid_email); return false;
             }
-            if (wplc_msg.length <= 0) { alert("Please enter a message"); return false; }
+            if (wplc_msg.length <= 0) { alert(wplc_error_messages.empty_message); return false; }
             jQuery("#wp-live-chat-2-info").hide();
             jQuery("#wplc_message_div").html(wplc_offline_msg);
 
