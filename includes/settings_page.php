@@ -166,6 +166,14 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>
               <tr>
                   <td width='200' valign='top'>
+                      <?php _e("Hide Gravatar Images","wplivechat")?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This will hide the Gravatar image for all occurences", "wplivechat") ?>"></i>                      
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1" name="wplc_hide_gravatar" <?php if(isset($wplc_settings['wplc_hide_gravatar'])  && $wplc_settings['wplc_hide_gravatar'] == 1 ) { echo "checked"; } ?> />                    
+                  </td>
+              </tr>
+              <tr>
+                  <td width='200' valign='top'>
                       <?php _e("Enable On Mobile Devices","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disabling this will mean that the Chat Box will not be displayed on mobile devices. (Smartphones and Tablets)", "wplivechat") ?>"></i>                      
                   </td>
                   <td valign='top'>
