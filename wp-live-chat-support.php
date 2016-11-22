@@ -2779,6 +2779,7 @@ function wplc_activate() {
             "wplc_enabled_on_mobile" => '1',
             "wplc_display_name" => '1',
             "wplc_record_ip_address" => '1',
+	    "wplc_hide_gravatar" => "0",
 
             "wplc_pro_fst1" => __("Questions?", "wplivechat"),
             "wplc_pro_fst2" => __("Chat with us", "wplivechat"),
@@ -3399,6 +3400,7 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_enabled_on_mobile'])) { $wplc_data['wplc_enabled_on_mobile'] = esc_attr($_POST['wplc_enabled_on_mobile']); } else {  $wplc_data['wplc_enabled_on_mobile'] = "0"; }
         if (isset($_POST['wplc_display_name'])) { $wplc_data['wplc_display_name'] = esc_attr($_POST['wplc_display_name']); } 
         if (isset($_POST['wplc_display_to_loggedin_only'])) { $wplc_data['wplc_display_to_loggedin_only'] = esc_attr($_POST['wplc_display_to_loggedin_only']); }
+	if (isset($_POST['wplc_hide_gravatar'])) { $wplc_data['wplc_hide_gravatar'] = esc_attr($_POST['wplc_hide_gravatar']); } else { $wplc_data['wplc_hide_gravatar'] = "0";  }
         
         if(isset($_POST['wplc_record_ip_address'])){ $wplc_data['wplc_record_ip_address'] = esc_attr($_POST['wplc_record_ip_address']); } else { $wplc_data['wplc_record_ip_address'] = "0"; }
         if(isset($_POST['wplc_enable_msg_sound'])){ $wplc_data['wplc_enable_msg_sound'] = esc_attr($_POST['wplc_enable_msg_sound']); } else { $wplc_data['wplc_enable_msg_sound'] = "0"; }
