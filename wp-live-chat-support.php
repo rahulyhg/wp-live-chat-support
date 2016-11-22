@@ -2779,7 +2779,6 @@ function wplc_activate() {
             "wplc_enabled_on_mobile" => '1',
             "wplc_display_name" => '1',
             "wplc_record_ip_address" => '1',
-	    "wplc_hide_gravatar" => "0",
 
             "wplc_pro_fst1" => __("Questions?", "wplivechat"),
             "wplc_pro_fst2" => __("Chat with us", "wplivechat"),
@@ -3400,7 +3399,6 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_enabled_on_mobile'])) { $wplc_data['wplc_enabled_on_mobile'] = esc_attr($_POST['wplc_enabled_on_mobile']); } else {  $wplc_data['wplc_enabled_on_mobile'] = "0"; }
         if (isset($_POST['wplc_display_name'])) { $wplc_data['wplc_display_name'] = esc_attr($_POST['wplc_display_name']); } 
         if (isset($_POST['wplc_display_to_loggedin_only'])) { $wplc_data['wplc_display_to_loggedin_only'] = esc_attr($_POST['wplc_display_to_loggedin_only']); }
-	if (isset($_POST['wplc_hide_gravatar'])) { $wplc_data['wplc_hide_gravatar'] = esc_attr($_POST['wplc_hide_gravatar']); } else { $wplc_data['wplc_hide_gravatar'] = "0";  }
         
         if(isset($_POST['wplc_record_ip_address'])){ $wplc_data['wplc_record_ip_address'] = esc_attr($_POST['wplc_record_ip_address']); } else { $wplc_data['wplc_record_ip_address'] = "0"; }
         if(isset($_POST['wplc_enable_msg_sound'])){ $wplc_data['wplc_enable_msg_sound'] = esc_attr($_POST['wplc_enable_msg_sound']); } else { $wplc_data['wplc_enable_msg_sound'] = "0"; }
@@ -3499,7 +3497,7 @@ function wplc_head_basic() {
 
 
 
-        echo "<div class='updated'>";
+        echo "<div class='updated wplc_settings_save_notice' style='display: none;'>";
         _e("Your settings have been saved.", "wplivechat");
         echo "</div>";
     }
@@ -4430,12 +4428,9 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
 	<table class='wp-list-table widefat fixed striped pages' width='700'>
 
           <tr>
-          	<td width='400'>
+          	<td colspan='2'>
           		<p><em><small><?php _e("Only change these settings if you are experiencing performance issues.","wplivechat"); ?></small></em></p>
           	</td>
-          	<td valign='top'>
-                  &nbsp;
-              </td>
           </tr>
           </tr>
           <?php do_action("wplc_advanced_settings_settings"); ?>
@@ -4615,4 +4610,157 @@ function wplc_basic_custom_fields_page(){
 	$content .= "</table>";
     $content .= "</div>";
     echo $content;
+}
+
+add_action('wplc_hook_admin_settings_main_settings_after','wplc_powered_by_link_settings_page',2);
+
+function wplc_powered_by_link_settings_page() {
+    $wplc_powered_by = get_option("WPLC_POWERED_BY");
+  ?>     
+    <table class='form-table wp-list-table widefat fixed striped pages' width='700'>
+        <tr>
+            <td width='400' valign='top'>
+                <?php _e("Display a 'Powered by' link in the chat box", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Checking this will display a 'Powered by WP Live Chat Support' caption at the bottom of your chatbox.", 'wplivechat'); ?>"></i>                     
+            </td>  
+            <td>
+                <input type="checkbox" value="1" name="wplc_powered_by" <?php if ( $wplc_powered_by && $wplc_powered_by == 1 ) { echo "checked"; } ?> />                    
+            </td>
+        </tr>
+    </table>
+    <hr>
+  <?php
+}
+
+add_action( "wplc_hook_head", "wplc_powered_by_link_save_settings" );
+
+function wplc_powered_by_link_save_settings(){
+
+	if( isset( $_POST['wplc_save_settings'] ) ){
+
+			if( isset( $_POST['wplc_powered_by'] ) && $_POST['wplc_powered_by'] == '1' ){
+				update_option( "WPLC_POWERED_BY", 1 );
+			} else {
+				update_option( "WPLC_POWERED_BY", 0 );
+			}
+
+	}
+
+}
+
+add_filter( "wplc_start_chat_user_form_after_filter", "wplc_powered_by_link_in_chat", 12, 2 );
+
+function wplc_powered_by_link_in_chat( $string, $cid ){
+
+	$show_powered_by = get_option( "WPLC_POWERED_BY" );
+
+	if( $show_powered_by === 1 ){
+
+		$ret = "<i style='text-align: center; display: block; padding: 5px 0; font-size: 10px;'>".__("Powered by WP Live Chat Support", "wplivechat")."</i>";
+	
+	} else {
+
+		$ret = "";
+
+	}
+
+	return $string . $ret;
+
+}
+
+add_action( "admin_enqueue_scripts", "wplc_custom_scripts_scripts" );
+
+function wplc_custom_scripts_scripts(){
+
+	if( isset( $_GET['page'] ) && $_GET['page'] == 'wplivechat-menu-settings' ){
+
+		wp_enqueue_script( "wplc-custom-script-tab-ace", "https://cdn.jsdelivr.net/ace/1.2.4/min/ace.js" );
+		
+	}
+
+}
+
+add_filter( "wplc_filter_setting_tabs", "wplc_custom_scripts_tab" );
+
+function wplc_custom_scripts_tab( $array ){
+	
+	$array['custom-scripts'] = array(
+		'href' 	=> '#wplc-custom-scripts',
+		'icon' 	=> 'fa fa-pencil',
+		'label' => __("Custom Scripts", "wplivechat")
+	);
+
+	return $array;
+}
+
+add_action( "wplc_hook_settings_page_more_tabs", "wplc_custom_scripts_content" );
+
+function wplc_custom_scripts_content(){	
+
+	$wplc_custom_css = get_option( "WPLC_CUSTOM_CSS" );
+	$wplc_custom_js = get_option( "WPLC_CUSTOM_JS" );
+	
+	$content = "";
+
+	$content .= "<div id='wplc-custom-scripts'>";
+
+	$content .= "<h2>".__("Custom Scripts", "wplivechat")."</h2>";
+	$content .= "<table class='form-table'>";
+
+	$content .= "<tr>";
+	$content .= "<td width='300'>".__("Custom CSS", "wplivechat")."</td>";	
+	$content .= "<td><textarea name='wplc_custom_css' data-editor='css' rows='12'>".strip_tags( stripslashes( $wplc_custom_css ) )."</textarea></td>";
+	$content .= "</tr>";
+
+	$content .= "<tr>";
+	$content .= "<td width='300'>".__("Custom JS", "wplivechat")."</td>";	
+	$content .= "<td valign='middle'><textarea name='wplc_custom_js' data-editor='javascript' rows='12'>".strip_tags( stripslashes( $wplc_custom_js ) )."</textarea></td>";
+	$content .= "</tr>";
+
+	$content .= "</table>";
+
+	$content .= "</div>";
+
+	echo $content;
+
+}
+
+add_action( "wplc_hook_head", "wplc_custom_scripts_save" );
+
+function wplc_custom_scripts_save(){
+
+	if( isset( $_POST['wplc_save_settings'] ) ){
+		
+		if( isset( $_POST['wplc_custom_css'] ) ){
+			update_option( "WPLC_CUSTOM_CSS", nl2br( $_POST['wplc_custom_css'] ) );
+		}
+
+		if( isset( $_POST['wplc_custom_js'] ) ){
+			update_option( "WPLC_CUSTOM_JS", nl2br( $_POST['wplc_custom_js'] ) );
+		}
+
+	}
+
+}
+
+add_action( "wp_head", "wplc_custom_scripts_frontend" );
+
+function wplc_custom_scripts_frontend(){
+
+	$wplc_custom_css = get_option( "WPLC_CUSTOM_CSS" );
+	$wplc_custom_js = get_option( "WPLC_CUSTOM_JS" );
+
+	if( $wplc_custom_css ){
+		echo "<!-- WPLC Custom CSS -->";
+		echo "<style>";
+		echo strip_tags( stripslashes( $wplc_custom_css ) );
+		echo "</style>";
+	}
+	
+	if( $wplc_custom_js ){
+		echo "<!-- WPLC Custom JS -->";
+		echo "<script>";
+		echo strip_tags( stripslashes( $wplc_custom_js ) );
+		echo "</script>";
+	}
+
 }

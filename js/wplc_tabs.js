@@ -1,3 +1,4 @@
+
 jQuery("document").ready(function() {
 
     if(jQuery("input[type=radio][name='wplc_mail_type']:checked").val() === "php_mailer"){
@@ -14,8 +15,10 @@ jQuery("document").ready(function() {
             jQuery("#wplc_smtp_details").hide();
         }
     });
+
     
-   jQuery("#wplc_tabs").tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+    
+   jQuery("#wplc_tabs").tabs( { create: function(event, ui) { jQuery("#wplc_settings_page_loader").remove(); jQuery(".wrap").fadeIn(); jQuery(".wplc_settings_save_notice").fadeIn(); } } ).addClass( "ui-tabs-vertical ui-helper-clearfix" );
    jQuery( "#wplc_tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
 

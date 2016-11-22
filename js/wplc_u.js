@@ -845,7 +845,7 @@ jQuery(document).ready(function() {
         }); 
 
         function wplc_pre_open_check_status(status, callback) {
-            if (typeof wplc_chat_status.length !== 'undefined' && wplc_chat_status.length > 0) {
+            if (typeof wplc_chat_status !== 'undefined' && ( typeof wplc_chat_status.length !== 'undefined' && wplc_chat_status.length > 0 ) ) {
                 if (parseInt(wplc_chat_status) === 10 || parseInt(wplc_chat_status) === 7) {
                     /* it was minimized or timedout, now we need to open it - set status to 3 (back to open chat) */
                     Cookies.set('wplc_chat_status', 3, { expires: 1, path: '/' });

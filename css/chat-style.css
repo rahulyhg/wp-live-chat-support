@@ -615,7 +615,7 @@
     margin-bottom:2px;
 }
 .relevant_extension {
-    width: 28% !important;
+    width: 49% !important;
     height: 125px !important;
     opacity:0.5;
 }
@@ -708,7 +708,7 @@
 @media (min-width:1281px) { 
     /* hi-res laptops and desktops */
     .relevant_extension {
-        width: 28% !important;
+        width: 32% !important;
         height: 125px !important;
         opacity:0.5;
     }
