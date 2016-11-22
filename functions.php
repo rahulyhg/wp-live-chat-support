@@ -2047,7 +2047,7 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
     $elem_trig_id = isset($wplc_settings['wplc_elem_trigger_id']) ? $wplc_settings['wplc_elem_trigger_id'] : "";
 
     echo "<tr>
-            <td width='400'>
+            <td width='300'>
             ".__("Open chat window via", "wplivechat").":
             </td>
             <td>
