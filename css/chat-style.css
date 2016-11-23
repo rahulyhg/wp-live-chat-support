@@ -883,3 +883,6 @@ span.wplc_system_notification {
     font-style: italic;
     text-align: right;
 }
+.widefat th.sortable, .widefat th.sorted {
+    padding: 5px 10px !important;
+}

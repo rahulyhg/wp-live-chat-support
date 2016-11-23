@@ -906,14 +906,37 @@ function wplc_push_js_to_front_basic() {
         
     if ($wplc_settings["wplc_settings_enabled"] == 2) {
         return;
-    }
+    }    
 
-    if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
-        $wplc_display = 'display';
-        wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
-        wp_enqueue_script('wplc-md5');      
+    if( isset( $wplc_settings['wplc_show_name'] ) || isset( $wplc_settings['wplc_show_avatar'] ) ){
+    	/**
+    	 * Using the new options
+    	 */
+    	$wplc_display = false;
+    	if( $wplc_settings['wplc_show_name'] == '1' ){
+			$wplc_show_name = true;
+    	} else {
+			$wplc_show_name = false;
+    	}
+
+    	if( $wplc_settings['wplc_show_avatar'] ){
+			$wplc_show_avatar = true;
+    	} else {
+			$wplc_show_avatar = false;
+    	}
+    	$wplc_chat_detail = array( 'name' => $wplc_show_name, 'avatar' => $wplc_show_avatar );
     } else {
-        $wplc_display = 'hide';
+    	/**
+    	 * back to using the old options
+    	 */
+    	$wplc_chat_detail = array();
+    	if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
+	        $wplc_display = 'display';
+	        wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
+	        wp_enqueue_script('wplc-md5');      
+	    } else {
+	        $wplc_display = false;
+	    }
     }
     if (isset($wplc_settings['wplc_enable_msg_sound']) && intval($wplc_settings['wplc_enable_msg_sound']) == 1) {
         $wplc_ding = '1';
@@ -990,7 +1013,14 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_ajaxurl_site', admin_url('admin-ajax.php'));
     wp_localize_script('wplc-user-script', 'wplc_nonce', $ajax_nonce);
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
-    wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
+
+	if( $wplc_display !== FALSE ){    
+    	wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
+    } else {
+    	wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
+    }
+
+
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
 
     $wplc_error_messages = array(
@@ -2129,9 +2159,13 @@ function wplc_superadmin_javascript() {
         } // main page
         else if (isset($_GET['action'])) {
             if (function_exists("wplc_register_pro_version")) {
-                wplc_return_pro_admin_chat_javascript(sanitize_text_field($_GET['cid']));
+        		if( isset( $_GET['cid'] ) ){						
+	                wplc_return_pro_admin_chat_javascript(sanitize_text_field($_GET['cid']));
+	            }
             } else {
-                wplc_return_admin_chat_javascript(sanitize_text_field($_GET['cid']));
+				if( isset( $_GET['cid'] ) ){		
+	                wplc_return_admin_chat_javascript(sanitize_text_field($_GET['cid']));
+	            }
                 
 
             }
@@ -2801,12 +2835,12 @@ function wplc_activate() {
 
 
 
-
+            "wplc_pro_chat_email_address" => get_option('admin_email'),
 
 
     $admins = get_role('administrator');
     $admins->add_cap('wplc_ma_agent');
-            "wplc_pro_chat_email_address" => get_option('admin_email'),
+
     $uid = get_current_user_id();
     update_user_meta($uid, 'wplc_ma_agent', 1);
     update_user_meta($uid, "wplc_chat_agent_online", time());
@@ -3513,6 +3547,8 @@ function wplc_head_basic() {
         if( isset( $_POST['wplc_show_date'] ) ){ $wplc_data['wplc_show_date'] = '1'; } else { $wplc_data['wplc_show_date'] = '0'; }
         if( isset( $_POST['wplc_show_time'] ) ){ $wplc_data['wplc_show_time'] = '1'; } else { $wplc_data['wplc_show_time'] = '0'; }
 
+        if( isset( $_POST['wplc_show_name'] ) ){ $wplc_data['wplc_show_name'] = '1'; } else { $wplc_data['wplc_show_name'] = '0'; }
+        if( isset( $_POST['wplc_show_avatar'] ) ){ $wplc_data['wplc_show_avatar'] = '1'; } else { $wplc_data['wplc_show_avatar'] = '0'; }
 
         update_option('WPLC_SETTINGS', $wplc_data);
         if (isset($_POST['wplc_hide_chat'])) {
