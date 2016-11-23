@@ -2806,7 +2806,7 @@ function wplc_activate() {
 
     $admins = get_role('administrator');
     $admins->add_cap('wplc_ma_agent');
-
+            "wplc_pro_chat_email_address" => get_option('admin_email'),
     $uid = get_current_user_id();
     update_user_meta($uid, 'wplc_ma_agent', 1);
     update_user_meta($uid, "wplc_chat_agent_online", time());
@@ -3012,7 +3012,10 @@ function wplc_add_user_stylesheet() {
         }
     }
 }
-
+/**
+ * Loads the admin stylesheets for the chat dashboard and settings pages
+ * @return void
+ */
 function wplc_add_admin_stylesheet() {
     if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' ||  $_GET['page'] == 'wplivechat-menu-api-keys-page' ||  $_GET['page'] == 'wplivechat-menu-extensions-page' || $_GET['page'] == 'wplivechat-menu-settings' || $_GET['page'] == 'wplivechat-menu-offline-messages' || $_GET['page'] == 'wplivechat-menu-history')) {
         wp_register_style('wplc-admin-style', plugins_url('/css/jquery-ui.css', __FILE__));
@@ -3040,7 +3043,10 @@ function wplc_add_admin_stylesheet() {
 if (isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu-settings') {
     add_action('admin_print_scripts', 'wplc_admin_scripts_basic');
 }
-
+/**
+ * Loads the admin scripts for the chat dashboard and settings pages
+ * @return void
+ */
 function wplc_admin_scripts_basic() {
 
     if (isset($_GET['page']) && $_GET['page'] == "wplivechat-menu-settings") {
@@ -3054,12 +3060,13 @@ function wplc_admin_scripts_basic() {
         wp_enqueue_script('my-wplc-tabs');
     }
 }
-
+/**
+ * Loads basic version's settings page
+ * @return void
+ */
 function wplc_admin_settings_layout() {
     wplc_settings_page_basic();
 }
-
-
 
 add_action("wplc_hook_history_draw_area","wplc_hook_control_history_draw_area",10,1);
 /**
@@ -3083,8 +3090,6 @@ function wplc_hook_control_history_draw_area($cid) {
 function wplc_admin_view_chat_history($cid) {
   do_action("wplc_hook_history_draw_area",$cid);
 }
-
-
 
 
 add_action( 'wplc_hook_admin_menu_layout_display' , 'wplc_hook_control_history_get_control', 1, 3);
@@ -3113,6 +3118,10 @@ function wplc_hook_control_history_get_control($action,$cid,$aid) {
 
 
 add_action("wplc_hook_chat_history","wplc_hook_control_chat_history");
+/**
+ * Renders the chat history content
+ * @return string
+ */
 function wplc_hook_control_chat_history() {
 
 
@@ -3209,7 +3218,10 @@ function wplc_hook_control_chat_history() {
 
 }
 
-
+/**
+ * Loads the chat history layout to accommodate basic/pro versions
+ * @return string
+ */
 function wplc_admin_history_layout() {
     wplc_stats("history");
     echo"<div class=\"wrap\"><div id=\"icon-edit\" class=\"icon32 icon32-posts-post\"><br></div><h2>" . __("WP Live Chat History", "wplivechat") . "</h2>";
@@ -3226,21 +3238,29 @@ function wplc_admin_history_layout() {
 
 
 add_action("wplc_hook_chat_missed","wplc_hook_control_missed_chats",10);
+/**
+ * Loads missed chats contents 
+ * @return string
+ */
 function wplc_hook_control_missed_chats() {
   if (function_exists('wplc_admin_display_missed_chats')) { wplc_admin_display_missed_chats(); }
 }
 
+/**
+ * Loads the missed chats page wrapper
+ * @return string
+ */
 function wplc_admin_missed_chats() {
     wplc_stats("missed");
     echo "<div class=\"wrap\"><div id=\"icon-edit\" class=\"icon32 icon32-posts-post\"><br></div><h2>" . __("WP Live Chat Missed Chats", "wplivechat") . "</h2>";
-    do_action("wplc_hook_chat_missed");
-
-        
-        
-    
+    do_action("wplc_hook_chat_missed");               
 }
 
 add_action("wplc_hook_offline_messages_display","wplc_hook_control_offline_messages_display",10);
+/**
+ * Loads the offline messages page contents
+ * @return string
+ */
 function wplc_hook_control_offline_messages_display() {
     if (function_exists("wplc_admin_display_offline_messages_new")) { wplc_admin_display_offline_messages_new(); } else {
     if (function_exists("wplc_register_pro_version")) {
@@ -3311,12 +3331,11 @@ function wplc_admin_display_offline_messages_new() {
         </table>";
 }
 
+/**
+ * Loads the basic/pro version's settings pages
+ * @return string
+ */
 function wplc_settings_page_basic() {
-
-    
-
-
-
     if (function_exists("wplc_register_pro_version")) {
         wplc_settings_page_pro();
     } else {
@@ -3324,6 +3343,11 @@ function wplc_settings_page_basic() {
     }
 }
 
+/**
+ * Updates chat statistics
+ * @param  string $sec Specify which array key of the stats you'd like access to
+ * @return void
+ */
 function wplc_stats($sec) {
     $wplc_stats = get_option("wplc_stats");
     if ($wplc_stats) {
@@ -3351,12 +3375,20 @@ function wplc_stats($sec) {
 
 
 add_action("wplc_hook_head","wplc_hook_control_head");
+/**
+ * Deletes the chat history on submission of POST
+ * @return bool
+ */
 function wplc_hook_control_head() {
     if (isset($_POST['wplc-delete-chat-history'])) {
         wplc_del_history();
     }
 }
 
+/**
+ * Deletes all chat history
+ * @return bool
+ */
 function wplc_del_history(){
     global $wpdb;
     global $wplc_tblname_chats;
@@ -3364,6 +3396,11 @@ function wplc_del_history(){
 }
 
 add_filter("wplc_filter_chat_header_extra_attr","wplc_filter_control_chat_header_extra_attr",10,1);
+/**
+ * Controls if the chat window should popup or not
+ * @param  array $wplc_extra_attr Extra chat data passed
+ * @return string
+ */
 function wplc_filter_control_chat_header_extra_attr($wplc_extra_attr) {
     $wplc_acbc_data = get_option("WPLC_SETTINGS");
     if (isset($wplc_acbc_data['wplc_auto_pop_up'])) { $extr_string = $wplc_acbc_data['wplc_auto_pop_up']; $wplc_extra_attr .= " wplc-auto-pop-up=\"".$extr_string."\""; }
@@ -3371,7 +3408,10 @@ function wplc_filter_control_chat_header_extra_attr($wplc_extra_attr) {
     return $wplc_extra_attr;
 }
 
-
+/**
+ * Admin side headers used to save settings
+ * @return string
+ */
 function wplc_head_basic() {
     global $wpdb;
 
@@ -3540,12 +3580,19 @@ function wplc_head_basic() {
     }
 }
 
+add_action('wp_logout', 'wplc_logout');
+/**
+ * Deletes the chat transient when a user logs out
+ * @return bool
+ */
 function wplc_logout() {
     delete_transient('wplc_is_admin_logged_in');
 }
 
-add_action('wp_logout', 'wplc_logout');
-
+/**
+ * Returns the home page of the user's side
+ * @return string
+ */
 function wplc_get_home_path() {
     $home = get_option('home');
     $siteurl = get_option('siteurl');
@@ -3560,7 +3607,9 @@ function wplc_get_home_path() {
     return str_replace('\\', '/', $home_path);
 }
 
-/* Error Checks */
+/**
+ * Error checks used to ensure the user's resources meet the plugin's requirements
+ */
 if(isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu-settings'){
     if(is_admin()){
         $wplc_error_count = 0;
@@ -3583,6 +3632,11 @@ if(isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu-settings'){
         }
     }
 }
+
+/**
+ * Loads the contents of the extensions menu item
+ * @return string
+ */
 function wplc_extensions_menu() {
 
     if (isset($_GET['type']) && $_GET['type'] == "additional") {
@@ -3717,14 +3771,14 @@ function wplc_extensions_menu() {
 
     <?php } ?>
 
-
-
-
-
-
     </div>
     <?php
 }
+
+/**
+ * Loads the contents of the support menu item
+ * @return string
+ */
 function wplc_support_menu() {
         wplc_stats("support");
 ?>   
@@ -3774,6 +3828,11 @@ function wplc_support_menu() {
 if (!function_exists("wplc_ic_initiate_chat_button")) {
     add_action('admin_enqueue_scripts', 'wp_button_pointers_load_scripts');
 }
+/**
+ * Displays the pointers on teh live chat dashboard for the initiate chat functionality
+ * @param  string $hook returns the page name we're on
+ * @return string       contents ofthe pointers and their scripts
+ */
 function wp_button_pointers_load_scripts($hook) {
     
     if( $hook != 'toplevel_page_wplivechat-menu') {return;}   // stop if we are not on the right page
@@ -3794,6 +3853,12 @@ function wp_button_pointers_load_scripts($hook) {
     
 }
 
+add_filter( 'admin_footer_text', 'wplc_footer_mod' );
+/**
+ * Adds the WP Live Chat Support & CODECABIN_ footer contents to the relevant pages
+ * @param  string $footer_text current footer text available to us
+ * @return string              footer contents with our branding in it
+ */
 function wplc_footer_mod( $footer_text ) {
     if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' ||  $_GET['page'] == 'wplivechat-menu-extensions-page' || $_GET['page'] == 'wplivechat-menu-settings' || $_GET['page'] == 'wplivechat-menu-offline-messages' || $_GET['page'] == 'wplivechat-menu-history')) {
         $footer_text_mod = sprintf( __( 'Thank you for using <a href="%1$s" target="_blank">WP Live Chat Support</a>! Please <a href="%2$s" target="_blank">rate us</a> on <a href="%2$s" target="_blank">WordPress.org</a>', 'wplivechat' ),
@@ -3807,11 +3872,15 @@ function wplc_footer_mod( $footer_text ) {
     }
 
 }
-add_filter( 'admin_footer_text', 'wplc_footer_mod' );
-
 
 add_filter("wplc_filter_admin_long_poll_chat_loop_iteration","wplc_filter_control_wplc_admin_long_poll_chat_iteration", 1, 3);
-
+/**
+ * Alters the admin's long poll chat iteration
+ * @param  array $array     current chat data available to us
+ * @param  array $post_data current post data available to us
+ * @param  int 	 $i         count for each chat available
+ * @return array            additional contents added to the chat data
+ */
 function wplc_filter_control_wplc_admin_long_poll_chat_iteration($array,$post_data,$i) {
   if(isset($post_data['action_2']) && $post_data['action_2'] == "wplc_long_poll_check_user_opened_chat"){
       $chat_status = wplc_return_chat_status(sanitize_text_field($post_data['cid']));
@@ -3838,6 +3907,10 @@ function wplc_filter_control_wplc_admin_long_poll_chat_iteration($array,$post_da
 
 
 add_action("wplc_hook_agents_settings","wplc_hook_control_agents_settings", 10);
+/**
+ * Loads the contents of the chat agents in the settings page
+ * @return string
+ */
 function wplc_hook_control_agents_settings() {
   $user_array = get_users(array(
         'meta_key' => 'wplc_ma_agent',
@@ -3922,6 +3995,12 @@ function wplc_hook_control_agents_settings() {
 <?php
 }
 
+/**
+ * Returns chat data specific to a chat ID
+ * @param  int 		$cid  Chat ID
+ * @param  string 	$line Line number the function is called on
+ * @return array    	  Contents of the chat based on the ID provided
+ */
 function wplc_get_chat_data($cid,$line) {
   global $wpdb;  
   global $wplc_tblname_chats;
@@ -3932,6 +4011,12 @@ function wplc_get_chat_data($cid,$line) {
   $result = apply_filters("wplc_filter_get_chat_data",$result,$cid);
   return $result;
 }
+
+/**
+ * Returns chat messages specific to a chat ID
+ * @param  int 		$cid  Chat ID
+ * @return array 		  Chat messages based on the ID provided
+ */
 function wplc_get_chat_messages($cid) {
   global $wpdb;  
   global $wplc_tblname_msgs;
@@ -3956,6 +4041,12 @@ function wplc_get_chat_messages($cid) {
   }
 }
 
+/**
+ * Validates extension API keys
+ * @param  string 	$page_content Current page contents in the extensions page
+ * @param  array 	$data         Extension data such as name and slug
+ * @return string                 Updated extensions page contents
+ */
 function wplc_build_api_check($page_content, $data) {
         $link = "#";
         $image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
@@ -3998,10 +4089,6 @@ function wplc_build_api_check($page_content, $data) {
           $image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
         }
 
-        
-        
-        
-        
 
         $page_content .= '<div class="wplc-extension" style="height:480px;">';
         $page_content .= '<a href="'.$link.'" title="'.$data['string'].'" target="_BLANK" style=" text-decoration:none;"><h3 class="wplc-extension-title" style="text-decoration:none;">'.$data['string'].'</h3></a>';
@@ -4047,6 +4134,11 @@ function wplc_build_api_check($page_content, $data) {
 
 
 add_filter("wplc_filter_relevant_extensions_main","wplc_filter_control_relevant_extensions_main_proe");
+/**
+ * Loads additional extension data for the Pro version
+ * @param  string $text Current extensions page content
+ * @return string       Extensions page content with Pro version extension data
+ */
 function wplc_filter_control_relevant_extensions_main_proe($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
   
@@ -4069,6 +4161,11 @@ function wplc_filter_control_relevant_extensions_main_proe($text) {
 
 
 add_filter("wplc_filter_relevant_extensions_main","wplc_filter_control_relevant_extensions_main_mobile");
+/**
+ * Loads additional extension data for the Mobile & Desktop App Extension
+ * @param  string $text Current extensions page content
+ * @return string       Extensions page content with Mobile & Desktop App extension data
+ */
 function wplc_filter_control_relevant_extensions_main_mobile($text) {
   if (function_exists("wplc_mobile_check_if_logged_in")) { return $text; }
   
@@ -4090,6 +4187,11 @@ function wplc_filter_control_relevant_extensions_main_mobile($text) {
 }
 
 add_filter("wplc_filter_relevant_extensions_main","wplc_filter_control_relevant_extensions_main_cloud");
+/**
+ * Loads additional extension data for the Cloud Server Extension
+ * @param  string $text Current extensions page content
+ * @return string       Extensions page content with Cloud Server extension data
+ */
 function wplc_filter_control_relevant_extensions_main_cloud($text) {
   if (function_exists("wplc_cloud_filter_control_chat_messages")) { return $text; }
   
@@ -4110,11 +4212,12 @@ function wplc_filter_control_relevant_extensions_main_cloud($text) {
   return $text;
 }
 
-
-
-
-
 add_filter("wplc_filter_relevant_extensions_chatbox","wplc_filter_control_relevant_extensions_chatbox_proe");
+/**
+ * Loads additional extension data for the Pro version - alternative option
+ * @param  string $text Current extensions page content
+ * @return string       Extensions page content with Pro version extension data
+ */
 function wplc_filter_control_relevant_extensions_chatbox_proe($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
   
@@ -4134,9 +4237,6 @@ function wplc_filter_control_relevant_extensions_chatbox_proe($text) {
 
   return $text;
 }
-
-
-
 
 /**
  * Add to the chat box settings page
@@ -4183,6 +4283,12 @@ function wplc_hook_control_settings_page_relevant_extensions_main() {
 
 
 add_filter("wplc_filter_hovercard_bottom_before","wplc_filter_control_hovercard_bottom_before_pro",5,1);
+/**
+ * Adds a powered by link to the hovercard
+ * @param  string 	$content 	current chat content of the hover card
+ * @return string          		chat content with the powered by link
+ * @deprecated 7.0.0 			rebuilt unknowingly
+ */
 function wplc_filter_control_hovercard_bottom_before_pro($content) {
 	$wplc_settings = get_option("WPLC_SETTINGS");
 	if(isset($wplc_settings["wplc_powered_by_link"]) && $wplc_settings["wplc_powered_by_link"] == 0){
@@ -4198,7 +4304,10 @@ function wplc_filter_control_hovercard_bottom_before_pro($content) {
 
 
 add_action('init', 'wplc_admin_download_new_chat_history');
-
+/**
+ * Downloads the chat history and adds it to a CSV file
+ * @return file
+ */
 function wplc_admin_download_new_chat_history(){
 	if (isset($_GET['action']) && $_GET['action'] == "download_history") {
 
@@ -4263,7 +4372,12 @@ function wplc_admin_download_new_chat_history(){
         
     }
 }
-
+/**
+ * Retrieves the data to start downloadling the chat history 
+ * @param  string $type Chat history output type
+ * @param  string $cid  Chat ID
+ * @return void
+ */
 function wplc_admin_download_history($type, $cid){
   
     global $wpdb;
@@ -4310,6 +4424,13 @@ function wplc_admin_download_history($type, $cid){
     exit();
 }
 
+/**
+ * Converts contents into a CSV file
+ * @param  string $in  Contents of file
+ * @param  string $out Output of file
+ * @param  string $del Delimiter for content 
+ * @return void
+ */
 function wplc_convert_to_csv_new($in, $out, $del){
     
     $f = fopen('php://memory', 'w');
@@ -4326,6 +4447,14 @@ function wplc_convert_to_csv_new($in, $out, $del){
 
     fpassthru($f);
 }
+/**
+ * Parses content to add to a CSV file
+ * @param  string $fp    The open file
+ * @param  string $array The content to be added to the file
+ * @param  string $del   Delimiter to use in the file
+ * @param  string $eol   Content to be written to the file
+ * @return void
+ */
 function wplc_fputcsv_eol_new($fp, $array, $del, $eol) {
   fputcsv($fp, $array,$del);
   if("\n\r" != $eol && 0 === fseek($fp, -1, SEEK_CUR)) {
@@ -4333,13 +4462,20 @@ function wplc_fputcsv_eol_new($fp, $array, $del, $eol) {
   }
 }
 
-
+/**
+ * Adds an API key notice in the plugin's page
+ * @return string
+ */
 function wplc_plugin_row_invalid_api() {
   echo '<tr class="active"><td>&nbsp;</td><td colspan="2" style="color:red;">
     &nbsp; &nbsp; '.__('Your API Key is Invalid. You are not eligible for future updates. Please enter your API key <a href="admin.php?page=wplivechat-menu-api-keys-page">here</a>.','wplivechat').'
     </td></tr>';  
 }
 
+/**
+ * Hides the chat when offline
+ * @return int Incremented number if any agents have logged in
+ */
 function wplc_basic_hide_chat_when_offline(){
     $wplc_settings = get_option("WPLC_SETTINGS");
 
@@ -4356,7 +4492,10 @@ function wplc_basic_hide_chat_when_offline(){
     return $hide_chat;
 }
 
-
+/**
+ * Checks all strings that are added to the chat window
+ * @return void
+ */
 function wplc_string_check() {
   $wplc_settings = get_option("WPLC_SETTINGS");
 
@@ -4381,6 +4520,11 @@ function wplc_string_check() {
 }
 
 add_filter("wplc_filter_chat_text_editor_upsell","nifty_text_edit_upsell",1,1);
+/**
+ * Used to upsell the advanced text editor in the chat
+ * @param  string $msg Current text in the chat window
+ * @return string      Additional content added for upselling purposes
+ */
 function nifty_text_edit_upsell($msg){
 	if(!function_exists("nifty_text_edit_div")  && !function_exists("wplc_pro_activate")){
 		//Only show this if in admin area and is not PRO
@@ -4400,6 +4544,13 @@ function nifty_text_edit_upsell($msg){
 }
 
 add_filter("wplc_filter_advanced_info","nifty_rating_advanced_info_upsell",1,3);
+/**
+ * Chat experience ratings upselling page
+ * @param  string 	$msg  	current chat window contents
+ * @param  int 		$cid  	chat ID
+ * @param  string 	$name 	User's name
+ * @return string       	current chat window contents with the experience rating content appended
+ */
 function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 	if(!function_exists("nifty_rating_advanced_info_control") && is_admin() && !function_exists("wplc_pro_activate")){
 		$msg .= "<div class='admin_visitor_advanced_info admin_agent_rating wplc_faded_upsell'>
@@ -4413,6 +4564,9 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 
 
 add_action("wplc_hook_admin_settings_main_settings_after","wplc_hook_control_admin_settings_chat_box_settings_after",2);
+/**
+ * Adds the settings to allow the user to change their server environment variables
+ * @return sring */
 function wplc_hook_control_admin_settings_chat_box_settings_after() {
 
 	$wplc_settings = get_option("WPLC_SETTINGS");
@@ -4475,7 +4629,10 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
       </table>
   <?php
 }
-
+/**
+ * Basic version's reporting page
+ * @return string
+ */
 function wplc_basic_reporting_page(){
 
 	$content = "<div class='wrap'>";
@@ -4515,7 +4672,10 @@ function wplc_basic_reporting_page(){
     echo $content;
 
 }
-
+/**
+ * Basic version's triggers page - used to upsell the feature
+ * @return string
+ */
 function wplc_basic_triggers_page(){
 	$content = "<div class='wrap'>";
     $content .= "<h2>".__('WP Live Chat Support Triggers', 'wp-livechat')." (beta) </h2>";
@@ -4577,7 +4737,10 @@ function wplc_basic_triggers_page(){
     echo $content;
 
 }
-
+/**
+ * Basic version's custom fields page - used to upsell the feature
+ * @return string
+ */
 function wplc_basic_custom_fields_page(){
 	$content = "<div class='wrap'>";
     $content .= "<h2>".__('WP Live Chat Support Custom Fields', 'wplivechat')."</h2>";    
@@ -4613,7 +4776,10 @@ function wplc_basic_custom_fields_page(){
 }
 
 add_action('wplc_hook_admin_settings_main_settings_after','wplc_powered_by_link_settings_page',2);
-
+/**
+ * Adds the necessary checkbox to enable/disable the 'Powered by' link
+ * @return string
+ */
 function wplc_powered_by_link_settings_page() {
     $wplc_powered_by = get_option("WPLC_POWERED_BY");
   ?>     
@@ -4632,7 +4798,10 @@ function wplc_powered_by_link_settings_page() {
 }
 
 add_action( "wplc_hook_head", "wplc_powered_by_link_save_settings" );
-
+/**
+ * Saves the 'Powered by' link settings
+ * @return void
+ */
 function wplc_powered_by_link_save_settings(){
 
 	if( isset( $_POST['wplc_save_settings'] ) ){
@@ -4648,7 +4817,12 @@ function wplc_powered_by_link_save_settings(){
 }
 
 add_filter( "wplc_start_chat_user_form_after_filter", "wplc_powered_by_link_in_chat", 12, 2 );
-
+/**
+ * Appends the 'Powered by' link to the chat window
+ * @param  string 	$string the current contents of the chat box
+ * @param  int 		$cid    the current chat ID
+ * @return string         	the chat contents, with the 'Powered by' link appended to it
+ */
 function wplc_powered_by_link_in_chat( $string, $cid ){
 
 	$show_powered_by = get_option( "WPLC_POWERED_BY" );
@@ -4668,7 +4842,10 @@ function wplc_powered_by_link_in_chat( $string, $cid ){
 }
 
 add_action( "admin_enqueue_scripts", "wplc_custom_scripts_scripts" );
-
+/**
+ * Loads the Ace.js editor for the custom scripts
+ * @return void
+ */
 function wplc_custom_scripts_scripts(){
 
 	if( isset( $_GET['page'] ) && $_GET['page'] == 'wplivechat-menu-settings' ){
@@ -4680,7 +4857,11 @@ function wplc_custom_scripts_scripts(){
 }
 
 add_filter( "wplc_filter_setting_tabs", "wplc_custom_scripts_tab" );
-
+/**
+ * Adds a tab for the custom scripts 
+ * @param  array $array current array that is made available to us
+ * @return array        our tabs array has been added to the array
+ */
 function wplc_custom_scripts_tab( $array ){
 	
 	$array['custom-scripts'] = array(
@@ -4693,7 +4874,10 @@ function wplc_custom_scripts_tab( $array ){
 }
 
 add_action( "wplc_hook_settings_page_more_tabs", "wplc_custom_scripts_content" );
-
+/**
+ * Adds the tab content to the settings page to allow the user to add custom CSS & JS
+ * @return string
+ */
 function wplc_custom_scripts_content(){	
 
 	$wplc_custom_css = get_option( "WPLC_CUSTOM_CSS" );
@@ -4725,7 +4909,10 @@ function wplc_custom_scripts_content(){
 }
 
 add_action( "wplc_hook_head", "wplc_custom_scripts_save" );
-
+/**
+ * Saves the custom scripts into the options table
+ * @return void
+ */
 function wplc_custom_scripts_save(){
 
 	if( isset( $_POST['wplc_save_settings'] ) ){
@@ -4743,7 +4930,10 @@ function wplc_custom_scripts_save(){
 }
 
 add_action( "wp_head", "wplc_custom_scripts_frontend" );
-
+/**
+ * Display the custom scripts on the front end of the site
+ * @return string
+ */
 function wplc_custom_scripts_frontend(){
 
 	$wplc_custom_css = get_option( "WPLC_CUSTOM_CSS" );
@@ -4763,4 +4953,22 @@ function wplc_custom_scripts_frontend(){
 		echo "</script>";
 	}
 
+}
+
+add_filter( "wplc_offline_message_subject_filter", "wplc_change_offline_message", 10, 1 );
+/**
+ * Adds a filter to change the email address to the user's preference
+ * @param  string $subject The default subject
+ * @return string
+ */
+function wplc_change_offline_message( $subject ){
+
+	$wplc_settings = get_option( "WPLC_SETTINGS");
+
+	if( isset( $wplc_settings['wplc_pro_chat_email_offline_subject'] ) ){
+		$subject = stripslashes( $wplc_settings['wplc_pro_chat_email_offline_subject'] );
+	}
+
+	return $subject;
+	
 }
