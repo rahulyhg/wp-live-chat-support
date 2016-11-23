@@ -804,8 +804,7 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_s
 
         $time_diff = $timestamp - $previous_timestamp;
         if ($time_diff > 60) { $show_time = true; } else { $show_time = false; }
-//        $date = new DateTime($timestamp);
-        
+//        $date = new DateTime($timestamp);        
 
         if( ( isset( $wplc_settings['wplc_show_date'] ) && $wplc_settings['wplc_show_date'] == '1' ) || ( isset( $wplc_settings['wplc_show_time'] ) && $wplc_settings['wplc_show_time'] == '1' ) ){
             /**
@@ -821,6 +820,10 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_s
              * Show both
              */
             $timeshow = date('l, F d Y h:i A',$timestamp);
+        } else {
+
+            $timeshow = "";
+
         }
 
         if( !isset( $wplc_settings['wplc_show_date'] ) || !isset( $wplc_settings['wplc_show_time'] ) ){
