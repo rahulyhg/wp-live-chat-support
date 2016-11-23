@@ -169,14 +169,6 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>
               <tr>
                   <td width='200' valign='top'>
-                      <?php _e("Hide Gravatar Images","wplivechat")?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This will hide the Gravatar image for all occurences", "wplivechat") ?>"></i>                      
-                  </td>
-                  <td valign='top'>
-                      <input type="checkbox" value="1" name="wplc_hide_gravatar" <?php if(isset($wplc_settings['wplc_hide_gravatar'])  && $wplc_settings['wplc_hide_gravatar'] == 1 ) { echo "checked"; } ?> />                    
-                  </td>
-              </tr>
-              <tr>
-                  <td width='200' valign='top'>
                       <?php _e("Enable On Mobile Devices","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disabling this will mean that the Chat Box will not be displayed on mobile devices. (Smartphones and Tablets)", "wplivechat") ?>"></i>                      
                   </td>
                   <td valign='top'>
@@ -364,14 +356,25 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>
               <?php } ?>
             
-              <tr>
+              <!-- <tr>
                   <td>
-                      <?php _e("Display name and avatar in chat", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Display the agent and user name above each message in the chat window.", "wplivechat") ?>"></i>
+                      <?php //_e("Display name and avatar in chat", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php //_e("Display the agent and user name above each message in the chat window.", "wplivechat") ?>"></i>
                   </td>
                   <td>
-                      <input type="checkbox" name="wplc_display_name" value="1" <?php if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
-                          echo "checked";
-                      } ?>/>
+                      <input type="checkbox" name="wplc_display_name" value="1" <?php //if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
+                          //echo "checked";
+                      //} ?>/>
+                  </td>
+              </tr> -->
+              <tr>
+                  <td>
+                      <?php _e("Display details in chat message", "wplivechat") ?>
+                  </td>
+                  <td>  <!-- $wplc_settings['wplc_display_name'] Remember for backwards compat --> 
+                      <?php if (isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
+                      <input type="checkbox" name="wplc_show_name" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Name", "wplivechat"); ?></label><br/>
+                      <?php if (isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
+                      <input type="checkbox" name="wplc_show_avatar" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Avatar", "wplivechat"); ?></label>
                   </td>
               </tr>
               <tr>

@@ -796,16 +796,56 @@ jQuery(document).ready(function() {
             if(typeof niftyFormatParser !== "undefined"){
                 wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
             }
-                        
-            if(wplc_display_name == 'display'){
-                if (wplc_gravatar_image.length > 1) {
-                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+" <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+            if( typeof wplc_display_name !== 'undefined' ){
+                /**
+                 * We're still using the old options
+                 */
+                if(wplc_display_name == 'display'){
+                    if (wplc_gravatar_image.length > 1) {
+                        jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+" <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+                    } else {
+                        jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'><img src='//www.gravatar.com/avatar/"+md5(wplc_email)+"?s=30' class='wplc-user-message-avatar' \/> <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+                    }
                 } else {
-                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'><img src='//www.gravatar.com/avatar/"+md5(wplc_email)+"?s=30' class='wplc-user-message-avatar' \/> <strong>"+wplc_name+"</strong>: "+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");
                 }
             } else {
-                jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");
+                if( typeof wplc_show_chat_detail !== 'undefined' ){
+                    if( typeof wplc_show_chat_detail.name !== 'undefined' && wplc_show_chat_detail.name == '1' ){
+                        /**
+                         * Show the name
+                         */
+                        var the_name = "<strong>"+wplc_name+"</strong>: ";                        
+                    } else {
+                        /**
+                         * Don't show the name
+                         */
+                        var the_name = "";
+                    }
+                    if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                        /**
+                         * Show the avatar
+                         */
+                        if( wplc_gravatar_image.length > 1 ){
+                            wplc_gravatar_image = wplc_gravatar_image;
+                        } else {
+                            wplc_gravatar_image = "";
+                        }
+                    } else {
+                        /**
+                         * Don't show the avatar
+                         */
+                        wplc_gravatar_image = "";
+                    }
+
+                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+the_name+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+
+                } else {
+                    jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");   
+                }
             }
+ 
+            
             
             var height = jQuery('#wplc_chatbox')[0].scrollHeight;
             jQuery('#wplc_chatbox').scrollTop(height);
