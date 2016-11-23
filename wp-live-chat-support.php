@@ -763,6 +763,10 @@ function wplc_admin_menu() {
     	add_submenu_page('wplivechat-menu', __('Custom Fields', 'wplivechat'), __('Custom Fields', 'edit_posts') . ' <span class="update-plugins"><span class="plugin-count">Pro</span></span>', $cap[0], 'wplc-basic-custom-fields', 'wplc_basic_custom_fields_page');
     }
 
+    if(!function_exists("wplc_pro_department_menu")){
+    	add_submenu_page('wplivechat-menu', __('Departments', 'wplivechat'), __('Departments', 'edit_posts') . ' <span class="update-plugins"><span class="plugin-count">New</span></span>', $cap[0], 'wplc-basic-departments', 'wplc_basic_version_departments');
+    }
+
     /* only if user is both an agent and an admin that has the cap assigned, can they access these pages */
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) && current_user_can("wplc_ma_agent")){
 
@@ -2627,7 +2631,7 @@ function wplc_draw_chat_area($cid) {
       
       if (!$result->continue) { return; }
 
-      echo"<div class='admin_chat_box'><div class='admin_chat_box_inner' id='admin_chat_box_area_" . $result->id . "'>" . wplc_return_chat_messages($cid) . "</div><div class='admin_chat_box_inner_bottom'>" . wplc_return_chat_response_box($cid) . "</div>";
+      echo"<div class='admin_chat_box'><div class='admin_chat_box_inner' id='admin_chat_box_area_" . $result->id . "'>" . wplc_return_chat_messages($cid, __LINE__) . "</div><div class='admin_chat_box_inner_bottom'>" . wplc_return_chat_response_box($cid) . "</div>";
 
 
 
@@ -2835,8 +2839,8 @@ function wplc_activate() {
 
 
 
-            "wplc_pro_chat_email_address" => get_option('admin_email'),
 
+            "wplc_pro_chat_email_address" => get_option('admin_email'),
 
     $admins = get_role('administrator');
     $admins->add_cap('wplc_ma_agent');
@@ -3261,11 +3265,11 @@ function wplc_admin_history_layout() {
     echo"<div class=\"wrap\"><div id=\"icon-edit\" class=\"icon32 icon32-posts-post\"><br></div><h2>" . __("WP Live Chat History", "wplivechat") . "</h2>";
     
 
-    if(function_exists("wplc_ce_activate")){
+    if(function_exists("wplc_ce_activate")){    	
         wplc_ce_admin_display_history();
-    } else if (function_exists("wplc_register_pro_version")) {
+    } else if (function_exists("wplc_register_pro_version")) {    	
         wplc_pro_admin_display_history();
-    } else {
+    } else {    	
       do_action("wplc_hook_chat_history");
     }
 }
@@ -3330,7 +3334,7 @@ function wplc_admin_display_offline_messages_new() {
     global $wplc_tblname_offline_msgs;
 
     echo "
-        <table class=\"wp-list-table widefat fixed \" cellspacing=\"0\">
+        <table class=\"wp-list-table widefat \" cellspacing=\"0\">
             <thead>
                 <tr>
                     <th class='manage-column column-id'><span>" . __("Date", "wplivechat") . "</span></th>
@@ -5007,4 +5011,27 @@ function wplc_change_offline_message( $subject ){
 
 	return $subject;
 	
+}
+
+function wplc_basic_version_departments(){
+	echo "<div class='wrap'>";
+	echo sprintf( "<div class='error'><p>".__("WP Live Chat Support requires WP Live Chat Support Pro Version 7.0.0 or greater in order for departments to function as expected. Please update WP Live Chat Support %s", "wplivechat")."</p></div>", "<a href='".admin_url('update-core.php')."'>".__("here", "wplivechat")."</a>" );
+	echo "</div>";
+
+	$content = "";
+
+	$content .= "<table class=\"wp-list-table widefat fixed \" cellspacing=\"0\" style='width:98%'>";
+	$content .= 	"<thead>";
+  	$content .= 		"<tr>";
+    $content .= 			"<th scope='col'><span>" . __("ID", "wplivechat") . "</span></th>";
+    $content .= 			"<th scope='col'><span>" . __("Name", "wplivechat") . "</span></th>";
+    $content .= 			"<th scope='col'><span>" . __("Action", "wplivechat") . "</span></th>";
+    $content .= 		"</tr>";
+  	$content .= 	"</thead>";
+
+	$content .= "<tr><td>".__("Please update your Pro version to create a department", "wp-livechat")."</td><td></td><td></td></tr>";
+  	
+  	$content .= 	"</table>";
+
+  	echo $content;
 }
