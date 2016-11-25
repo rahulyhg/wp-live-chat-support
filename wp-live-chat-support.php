@@ -2799,6 +2799,7 @@ function wplc_activate() {
     wplc_handle_db();
     if (!get_option("WPLC_SETTINGS")) {
         $wplc_alt_text = __("Please click \'Start Chat\' to initiate a chat with an agent", "wplivechat");
+        $wplc_admin_email = get_option('admin_email');
         add_option('WPLC_SETTINGS', array(
             "wplc_settings_align" => "2",
             "wplc_settings_enabled" => "1",
@@ -2817,7 +2818,7 @@ function wplc_activate() {
             "wplc_enabled_on_mobile" => '1',
             "wplc_display_name" => '1',
             "wplc_record_ip_address" => '1',
-
+            "wplc_pro_chat_email_address" => $wplc_admin_email,
             "wplc_pro_fst1" => __("Questions?", "wplivechat"),
             "wplc_pro_fst2" => __("Chat with us", "wplivechat"),
             "wplc_pro_fst3" => __("Start live chat", "wplivechat"),
@@ -2840,7 +2841,7 @@ function wplc_activate() {
 
 
 
-            "wplc_pro_chat_email_address" => get_option('admin_email'),
+            
 
     $admins = get_role('administrator');
     $admins->add_cap('wplc_ma_agent');
