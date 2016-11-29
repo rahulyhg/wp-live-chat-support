@@ -77,9 +77,9 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
 	jQuery("#wp-live-chat-2").show();
 
     wplc_chat_status = Cookies.get('wplc_chat_status');
-    console.log("x1");
+    //console.log("x1");
     if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
-        console.log("x2");
+        //console.log("x2");
 	   jQuery("#wp-live-chat-4").show();
        jQuery("#wplc_social_holder").show();
        jQuery("#nifty_ratings_holder").show();
