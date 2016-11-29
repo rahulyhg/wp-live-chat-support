@@ -69,7 +69,7 @@ function wplc_api_settings_tab_content() {
 		$secret_token = get_option("wplc_api_secret_token"); //Checks for token
 		?>
 			<h3><?php _e("REST API", "wplivechat") ?></h3>
-			<table class="wp-list-table widefat fixed striped pages">
+			<table class=" form-table wp-list-table widefat fixed striped pages">
 				<thead>
 					<tr>
 						<th><?php _e("Option", "wplivechat") ?></th>
@@ -78,7 +78,7 @@ function wplc_api_settings_tab_content() {
 				</thead>
 				<tbody>
 					<tr>
-						<td>
+						<td width='300'>
 							<?php _e("Secret Token", "wplivechat") ?>
 						</td>
 						<td>
@@ -87,7 +87,7 @@ function wplc_api_settings_tab_content() {
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td width='300'>
 							<?php _e("Supported API Calls", "wplivechat") ?>:
 						</td>
 						<td>
@@ -96,7 +96,7 @@ function wplc_api_settings_tab_content() {
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td width='300'>
 						</td>
 						<td>
 							<code>/wp-json/wp_live_chat_support/v1/end_chat</code> <code>GET, POST</code> 

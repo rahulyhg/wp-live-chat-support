@@ -804,9 +804,35 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_s
 
         $time_diff = $timestamp - $previous_timestamp;
         if ($time_diff > 60) { $show_time = true; } else { $show_time = false; }
-//        $date = new DateTime($timestamp);
-        $timeshow = date('l, F d Y h:i A',$timestamp);
+//        $date = new DateTime($timestamp);        
 
+        if( ( isset( $wplc_settings['wplc_show_date'] ) && $wplc_settings['wplc_show_date'] == '1' ) || ( isset( $wplc_settings['wplc_show_time'] ) && $wplc_settings['wplc_show_time'] == '1' ) ){
+            /**
+             * Only show one or the other
+             */
+            if( isset( $wplc_settings['wplc_show_date'] ) ){
+                $timeshow = date('l, F d Y ',$timestamp);
+            } else {
+                $timeshow = date('h:i A',$timestamp);
+            }
+        } else if( ( isset( $wplc_settings['wplc_show_date'] ) && $wplc_settings['wplc_show_date'] == '1' ) && ( isset( $wplc_settings['wplc_show_time'] ) && $wplc_settings['wplc_show_time'] == '1' ) ){
+            /**
+             * Show both
+             */
+            $timeshow = date('l, F d Y h:i A',$timestamp);
+        } else {
+
+            $timeshow = "";
+
+        }
+
+        if( !isset( $wplc_settings['wplc_show_date'] ) || !isset( $wplc_settings['wplc_show_time'] ) ){
+            /**
+             * Doesnt exist yet, so default to being on always
+             */
+            $timeshow = date('l, F d Y h:i A',$timestamp);
+        }
+            
         if (!$transcript) { if ($previous_time == $timeshow || !$show_time) { $timeshow = ""; } }
         $previous_time = $timeshow;
         $previous_timestamp = $timestamp;
@@ -2024,7 +2050,7 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
     $elem_trig_id = isset($wplc_settings['wplc_elem_trigger_id']) ? $wplc_settings['wplc_elem_trigger_id'] : "";
 
     echo "<tr>
-            <td width='400'>
+            <td width='300'>
             ".__("Open chat window via", "wplivechat").":
             </td>
             <td>
