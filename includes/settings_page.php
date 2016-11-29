@@ -392,18 +392,23 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               <tr>
                   <td>
                       <?php _e("Display a timestamp in the chat window", "wplivechat") ?>
-                      <?php _e("Redirect user to thank you page when chat is ended", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("By checking this, users will be redirected to your thank you page when a chat is completed.", "wplivechat") ?>"></i>
                   </td>
                   <td>  
                       <?php if (isset($wplc_settings['wplc_show_date']) && $wplc_settings['wplc_show_date'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
                       <input type="checkbox" name="wplc_show_date" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Date", "wplivechat"); ?></label><br/>
                       <?php if (isset($wplc_settings['wplc_show_time']) && $wplc_settings['wplc_show_time'] == 1) { $checked = "checked"; } else { $checked = ''; } ?>
                       <input type="checkbox" name="wplc_show_time" value="1" <?php echo $checked; ?>/> <label><?php _e("Show Time", "wplivechat"); ?></label>
+                  </td>
+              </tr>  
+              <tr>
+                  <td>
+                     <?php _e("Redirect user to thank you page when chat is ended", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("By checking this, users will be redirected to your thank you page when a chat is completed.", "wplivechat") ?>"></i>
+                  </td>
                   <td>
                       <input type="checkbox" name="wplc_redirect_to_thank_you_page" value="1" <?php echo (isset($wplc_settings['wplc_redirect_to_thank_you_page']) && $wplc_settings['wplc_redirect_to_thank_you_page'] == 1 ? "checked" : "" ); ?> />
-                       <input type="text" name="wplc_redirect_thank_you_url" value="<?php echo (isset($wplc_settings['wplc_redirect_thank_you_url']) ?  urldecode($wplc_settings['wplc_redirect_thank_you_url']) : '' ); ?>" placeholder="<?php _e('Thank You Page URL', 'wplivechat'); ?>" />
+                      <input type="text" name="wplc_redirect_thank_you_url" value="<?php echo (isset($wplc_settings['wplc_redirect_thank_you_url']) ?  urldecode($wplc_settings['wplc_redirect_thank_you_url']) : '' ); ?>" placeholder="<?php _e('Thank You Page URL', 'wplivechat'); ?>" />
                   </td>
-              </tr>            
+              </tr> 
           </table>
 
           <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>
