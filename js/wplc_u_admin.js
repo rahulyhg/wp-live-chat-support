@@ -15,6 +15,8 @@ var orig_title = document.getElementsByTagName("title")[0].innerHTML;
 
 var wplc_notification_icon_url = wplc_notification_icon;
 
+var wplc_poll_delay = 1500;
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -23,12 +25,9 @@ Object.size = function(obj) {
     return size;
 };
 function wplc_notify_agent() {
-    console.log("trying");
- 
 
 
     if (typeof wplc_wav_file !== 'undefined') {
-        console.log("trying to play"+wplc_wav_file);
         new Audio(wplc_wav_file).play()                               
     }
 
@@ -60,19 +59,32 @@ function wplc_notify_agent() {
 
 }
 function wplc_call_to_server(data) {
-
+    if(typeof wplc_pro_admin_long_poll_data !== "undefined" && typeof wplc_pro_admin_long_poll_data === "function"){
+        data = wplc_pro_admin_long_poll_data(data);
+    }   
 
     jQuery.ajax({
         url: wplc_ajaxurl,
         data: data,
         type: "POST",
         success: function (response) {
-
+            wplc_poll_delay = 1500;
             //Update your dashboard gauge
             if (response) {
+                if (response === "0") { if (window.console) { console.log('WP Live Chat Support Return Error'); } wplc_run = false;  return; }
+
                 response = JSON.parse(response);
+                
+                if(response.hasOwnProperty("error")){
+                    /* stopping due to error */
+                    wplc_run = false;
+                    if (response['error'] === 1) {
+                     location.reload();
+                    }
+                    
+                }
+
                 data["wplc_update_admin_chat_table"] = response['wplc_update_admin_chat_table'];
-                console.log(response);
                 if (response['action'] === "wplc_update_chat_list") {
                     wplc_handle_chat_output(response['wplc_update_admin_chat_table']);
                     if (response['pending'] === true) {
@@ -83,7 +95,6 @@ function wplc_call_to_server(data) {
                             wplc_notify_agent();
                         }, 5000);
                     } else {
-                        //console.log("end");
                         clearInterval(wplc_pending_refresh);
                         ringer_cnt = 0;
                     }
@@ -95,7 +106,6 @@ function wplc_call_to_server(data) {
                         var orig_title = document.getElementsByTagName("title")[0].innerHTML;
                         var ringer_cnt = 0;
                         wplc_pending_refresh = setInterval(function () {
-                            //console.log("chat request");
 
                             if (ringer_cnt <= 0) {
                                 wplc_desktop_notification();
@@ -124,7 +134,6 @@ function wplc_call_to_server(data) {
 
                         }, 5000);
                     } else {
-                        //console.log("end");
                         clearInterval(wplc_pending_refresh);
                     }
                 }
@@ -132,21 +141,22 @@ function wplc_call_to_server(data) {
             }
         },
         error: function (jqXHR, exception) {
+            wplc_poll_delay = 5000;
             if (jqXHR.status == 404) {
-                if( window.console ) { console.log('Requested page not found. [404]'); }
+                wplc_display_error('Connection Error (404)', false);
                 wplc_run = false;
             } else if (jqXHR.status == 500) {
-                if( window.console ) { console.log('Internal Server Error [500].'); }
-                wplc_run = false;
+                wplc_display_error('Connection Error (500) - Retrying in 5 seconds...', true);
+                wplc_run = true;
             } else if (exception === 'parsererror') {
-                if( window.console ) { console.log('Requested JSON parse failed.'); }
+                wplc_display_error('Connection Error (JSON Error)', false);
                 wplc_run = false;
             } else if (exception === 'abort') {
-                if( window.console ) { console.log('Ajax request aborted.'); }
+                wplc_display_error('Connection Error (Ajax Abort)', false);
                 wplc_run = false;
             } else {
-                if( window.console ) { console.log('Uncaught Error.\n' + jqXHR.responseText); }
-                wplc_run = false;
+                wplc_display_error('Connection Error (Uncaught) - Retrying in 5 seconds...', true);
+                wplc_run = true;
             }
         },
         complete: function (response) {
@@ -154,13 +164,23 @@ function wplc_call_to_server(data) {
             if (wplc_run) {
                 setTimeout(function () {
                     wplc_call_to_server(data);
-                }, 1500);
+                }, wplc_poll_delay);
             }
         },
         timeout: 120000
     });
 };
 
+function wplc_display_error(error, dismiss) {
+    if (window.console) { console.log(error); }
+    jQuery(".wplc_network_issue").html("<span>" + error + "</span>");
+    jQuery(".wplc_network_issue").fadeIn();
+    if(dismiss){
+        setTimeout(function(){
+            jQuery(".wplc_network_issue").fadeOut();
+        }, 5000);
+    }
+}
 
 function wplc_handle_chat_output(response) {
 var obj = jQuery.parseJSON(response);
@@ -212,42 +232,26 @@ chat_count = qty;
 
 
 function wplc_get_status_name(status) {
-if (status === 1) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>complete</span>";
-}
-if (status === 2) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>pending</span>";
-}
-if (status === 3) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>active</span>";
-}
-if (status === 4) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>deleted</span>";
-}
-if (status === 5) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>browsing</span>";
-}
-if (status === 6) {
-    return "<span class='wplc_status_box wplc_status_"+status+"'>requesting chat</span>";
-}
-if (status === 8){
-    return "<span class='wplc_status_box wplc_status_"+status+"'>chat ended</span></span>";
-}
-if (status === 9){
-    return "<span class='wplc_status_box wplc_status_"+status+"'>chat closed</span>";
-}
-if (status === 10){
-    return "<span class='wplc_status_box wplc_status_8'>minimized</span>";
-}
+    if (status === 1) { return "<span class='wplc_status_box wplc_status_"+status+"'>complete</span>"; }
+    if (status === 2) { return "<span class='wplc_status_box wplc_status_"+status+"'>pending</span>"; }
+    if (status === 3) { return "<span class='wplc_status_box wplc_status_"+status+"'>active</span>"; }
+    if (status === 4) { return "<span class='wplc_status_box wplc_status_"+status+"'>deleted</span>"; }
+    if (status === 5) { return "<span class='wplc_status_box wplc_status_"+status+"'>browsing</span>"; }
+    if (status === 6) { return "<span class='wplc_status_box wplc_status_"+status+"'>requesting chat</span>"; }
+    if (status === 8){ return "<span class='wplc_status_box wplc_status_"+status+"'>chat ended</span></span>"; }
+    if (status === 9){ return "<span class='wplc_status_box wplc_status_"+status+"'>chat closed</span>"; }
+    if (status === 10){ return "<span class='wplc_status_box wplc_status_8'>minimized</span>"; }
+    if (status === 12) { return "<span class='wplc_status_box wplc_status_8'>missed chat</span>"; }
 }
 function wplc_get_type_box(type) {
-if (type === "New") {
-    return "<span class='wplc_status_box wplc_type_new'>New</span>";
+    if (type === "New") {
+        return "<span class='wplc_status_box wplc_type_new'>New</span>";
+    }
+    if (type === "Returning") {
+        return "<span class='wplc_status_box wplc_type_returning'>Returning</span>";
+    }
 }
-if (type === "Returning") {
-    return "<span class='wplc_status_box wplc_type_returning'>Returning</span>";
-}
-}
+
 
 function wplc_create_chat_ul_element_after_eating_vindaloo(obj,key) {
 
@@ -264,18 +268,46 @@ var v_action = obj[key]['action'];
 var v_status_string = wplc_get_status_name(parseInt(v_status));
 var v_ip_address = obj[key]['data']['ip'];
 
+if (typeof obj[key]['other'] !== "undefined" && typeof obj[key]['other']['user_is_mobile'] !== "undefined") { var v_is_mobile = obj[key]['other']['user_is_mobile']; } else { var v_is_mobile = false; }
+
 var v_vis_html = "<span class='wplc_headerspan_v'>"+v_name+"</span>";
-var v_nr_html = "<span class='wplc_headerspan_nr'><span class='browser-tag'>"+v_browser+"</span> "+wplc_get_type_box(v_type)+"</span>";
+var v_nr_html = "<span class='wplc_headerspan_nr'>"+wplc_get_type_box(v_type)+"</span>";
 var v_time_html = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+v_time+"</span></span>";
-var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>";
-var v_nr_status_html = "<span class='wplc_headerspan_s'>"+v_status_string+"</span>";
-var v_nr_action_html = "<span class='wplc_headerspan_a'>"+v_action+"</span>";
+var v_nr_device = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+(v_is_mobile ? "Mobile" : "PC")+"</span></span>";
+
+var additional_data = "";
+
+if(typeof obj[key]['other']['wplc_extra_data'] !== "undefined"){
+    additional_data = obj[key]['other']['wplc_extra_data'];
+}
+
+
+if( typeof additional_data !== 'undefined' && additional_data != "" ) {
+    additional_data = additional_data.replace(/\\/g, '');
+    additional_data = JSON.parse( additional_data );
+
+    var data_column_html = "";
+    jQuery.each( additional_data, function( key, val){        
+        var field_name = val[0];
+        var field_value = val[1];
+
+        data_column_html += "<span class='wplc-sub-item-header'>"+field_name+":</span> "+field_value+"<br/>";
+
+    });
+} else {
+    data_column_html = "";
+}
+
+var v_nr_data = "<span class='wplc_headerspan_d'><span class='wplc-sub-item-header'>Page:</span> <a href='"+v_browsing_url+"' target='_BLANK'>"+v_browsing+"</a><br /><span class='wplc-sub-item-header'>Email:</span> <a href='mailto:"+v_email+"' target='_BLANK' class='wplc-sub-item-email-string'>"+v_email+"</a><br/><span class='wplc-sub-item-header'>IP: </span>"+v_ip_address+"</span>"+data_column_html;
+var v_nr_status_html = "<span class='wplc_headerspan_s'><span class='browser-tag'>"+v_browser+"</span> "+v_status_string+"</span>";
+var v_nr_action_html = "<span class='wplc_headerspan_a 1'>"+v_action+"</span>";
 
 var wplc_v_html = "\
     <ul id='wplc_p_ul_"+key+"' class='wplc_p_cul' cid='"+key+"'>\n\
             <li>"+v_vis_html+"</li>\n\
             <li>"+v_time_html+"</li>\n\
             <li>"+v_nr_html+"</li>\n\
+            <li>"+v_nr_device+"</li>\n\
             <li>"+v_nr_data+"</li>\n\
             <li>"+v_nr_status_html+"</li>\n\
             <li>"+v_nr_action_html+"</li>\n\
@@ -380,7 +412,7 @@ jQuery(document).ready(function () {
             security: wplc_ajax_nonce,
         };
         jQuery.ajax({
-            url: wplc_ajaxurl,
+            url: wplc_ajaxurl_home,
             data: data,
             type: "POST",
             success: function (response) {
@@ -388,21 +420,114 @@ jQuery(document).ready(function () {
             }
         });
        
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
     });
 
-    wplc_call_to_server(data);
+    if (typeof wplc_choose_accept_chats !== "undefined" && wplc_choose_accept_chats === "0" ) {
+        /* do nothing as they do not want to accept chats - kill the whole system! */
+        jQuery("#wplc_admin_chat_area_new").html("<div class='wplc_chat_area_temp'>"+ " " + wplc_localized_quote_string+"</div>");
+        jQuery("#wplc_admin_chat_holder").append(wplc_localized_offline_string)
+    } else {
+        wplc_call_to_server(data);
+    }
+
+
+    jQuery("body").on("click", ".wplc_delete_message", function(e){
+
+        var message_id = jQuery(this).attr('mid');
+
+        var data = {
+            action: 'delete_offline_message',
+            security: wplc_ajax_nonce,
+            mid: message_id
+        }
+
+        jQuery.post( wplc_ajaxurl, data, function( response ){
+
+            if( response ){
+
+                jQuery('#record_'+message_id).fadeOut(700);
+
+            }
+
+
+        });
+
+    });
+
+
+    jQuery("body").on("change","#wplc_environment", function() {
+       
+        var selection = jQuery(this).val();
+        if (selection === '1') {
+            /* low grade host */
+            jQuery("#wplc_iterations").val(20);
+            jQuery("#wplc_delay_between_loops").val(1000000);
+        }
+        else if (selection === '2') {
+            /* low grade host */
+            jQuery("#wplc_iterations").val(55);
+            jQuery("#wplc_delay_between_loops").val(500000);
+        }
+        else if (selection === '3') {
+            /* low grade host */
+            jQuery("#wplc_iterations").val(60);
+            jQuery("#wplc_delay_between_loops").val(400000);
+        }
+        else if (selection === '4') {
+            /* low grade host */
+            jQuery("#wplc_iterations").val(200);
+            jQuery("#wplc_delay_between_loops").val(250000);
+        }
+    })
+
 });
+
+jQuery("body").on("change","#wplc_field_type", function() {
+
+    var selection = jQuery(this).val();
+    
+    if( selection == '1' ){
+        jQuery("#wplc_field_value_dropdown_row").show();
+        jQuery("#wplc_field_value_row").hide();
+    } else {
+        jQuery("#wplc_field_value_dropdown_row").hide();
+        jQuery("#wplc_field_value_row").show();
+    }
+
+});
+
+jQuery(window).ready(function(){
+
+    if( typeof ace !== 'undefined' ){
+
+        jQuery(function($) {
+
+            $('textarea[data-editor]').each(function() {
+
+                var textarea = $(this);
+                var mode = textarea.data('editor');                
+                var editDiv = $('<div>', {
+                    position: 'absolute',
+                    width: '100%',
+                    height: '250px',
+                    'class': textarea.attr('class')
+                }).insertBefore(textarea);
+                textarea.css('display', 'none');
+                var editor = ace.edit(editDiv[0]);            
+                editor.getSession().setValue(textarea.val());
+                editor.getSession().setMode("ace/mode/" + mode);
+                editor.setTheme("ace/theme/twilight");
+                textarea.closest('form').submit(function() {
+                    textarea.val(editor.getSession().getValue());
+                })
+
+            });
+
+        });
+
+    }
+
+});
+
+
+

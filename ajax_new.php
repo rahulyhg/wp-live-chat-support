@@ -20,23 +20,47 @@ add_action('wp_ajax_nopriv_wplc_user_send_msg', 'wplc_init_ajax_callback');
 
 add_action('wp_ajax_wplc_get_chat_box', 'wplc_init_ajax_callback');
 add_action('wp_ajax_nopriv_wplc_get_chat_box', 'wplc_init_ajax_callback');
-
-
-
+ 
 function wplc_init_ajax_callback() {
     @ob_start();
     $check = check_ajax_referer( 'wplc', 'security' );
 
     if ($check == 1) {
 
+        $wplc_advanced_settings = get_option("wplc_advanced_settings");
+        if (!$wplc_advanced_settings) {
+            $wplc_delay_between_updates = 500000;
+            $wplc_delay_between_loops = 500000;
+            $wplc_iterations = 55;
+        } else {
+            if (isset($wplc_advanced_settings['wplc_delay_between_updates'])) { $wplc_delay_between_updates = intval($wplc_advanced_settings['wplc_delay_between_updates']); } else { $wplc_delay_between_updates = 500000; }
+            if (isset($wplc_advanced_settings['wplc_delay_between_loops'])) { $wplc_delay_between_loops = intval($wplc_advanced_settings['wplc_delay_between_loops']); } else { $wplc_delay_between_loops = 500000; }
+            if (isset($wplc_advanced_settings['wplc_iterations'])) { $wplc_iterations = intval($wplc_advanced_settings['wplc_iterations']); } else { $wplc_iterations = 55; }
 
-        $iterations = 55; 
+            if ($wplc_iterations < 10) { $wplc_iterations = 10; }
+            if ($wplc_iterations > 200) { $wplc_iterations = 200; }
+
+            if ($wplc_delay_between_updates < 250000) { $wplc_delay_between_updates = 250000; }
+            if ($wplc_delay_between_updates > 1000000) { $wplc_delay_between_updates = 1000000; }
+
+            if ($wplc_delay_between_loops < 250000) { $wplc_delay_between_loops = 250000; }
+            if ($wplc_delay_between_loops > 1000000) { $wplc_delay_between_loops = 1000000; }
+
+        }
+
+
+        $iterations = $wplc_iterations;
+
+
+
         /* time in microseconds between updating the user on the page within the DB  (lower number = higher resource usage) */
-        define('WPLC_DELAY_BETWEEN_UPDATES',500000);
+        define('WPLC_DELAY_BETWEEN_UPDATES', $wplc_delay_between_updates);
         /* time in microseconds between long poll loop (lower number = higher resource usage) */
-        define('WPLC_DELAY_BETWEEN_LOOPS',500000);
+        define('WPLC_DELAY_BETWEEN_LOOPS', $wplc_delay_between_loops);
         /* this needs to take into account the previous constants so that we dont run out of time, which in turn returns a 503 error */
-        define('WPLC_TIMEOUT',(((WPLC_DELAY_BETWEEN_UPDATES + WPLC_DELAY_BETWEEN_LOOPS))*$iterations)/1000000);
+        define('WPLC_TIMEOUT', (((WPLC_DELAY_BETWEEN_UPDATES + WPLC_DELAY_BETWEEN_LOOPS)) * $iterations) / 1000000);
+
+
 
         global $wpdb;
         global $wplc_tblname_chats;
@@ -45,24 +69,35 @@ function wplc_init_ajax_callback() {
         session_write_close();
 
         if ($_POST['action'] == "wplc_get_chat_box") {
-            echo wplc_output_box_5100();
+            echo wplc_output_box_5100(sanitize_text_field($_POST['cid']));
         }
 
         if($_POST['action'] == 'wplc_admin_long_poll'){
+             // header("HTTP/1.0 500"); //Simulate 500 error
+             // header("HTTP/1.0 404"); //Simulate 404 error
+             // die();
+
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             //sleep(6);
             $i = 1;
+             $wplc_current_user = get_current_user_id();
+
+            /* If user is either an agent or an admin, access the page. */
+            if( !get_user_meta( $wplc_current_user, 'wplc_ma_agent', true )) {
+                $array['error'] = 1;
+                echo json_encode($array);
+                exit();
+            }
             while($i <= $iterations){
                 
-                // update chats if they have timed out every 15 iterations
-                if($i %15 == 0) {
+                
+                
+                if($i %round($iterations/2) == 0) {
                     wplc_update_chat_statuses();
                 }
                 
                
 
-     
-                
                 if($_POST['wplc_update_admin_chat_table'] == 'false'){
                     /* this is a new load of the page, return false so we can force a send of the new visitor data */
                     $old_chat_data = false;
@@ -98,9 +133,10 @@ function wplc_init_ajax_callback() {
         if($_POST['action'] == "wplc_admin_long_poll_chat"){
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             $i = 1;
+            $cdata = wplc_get_chat_data($_POST['cid']);
             $array = array();
             while($i <= $iterations){
-                $array = apply_filters("wplc_filter_admin_long_poll_chat_loop_iteration",$array,$_POST,$i);
+                $array = apply_filters("wplc_filter_admin_long_poll_chat_loop_iteration",$array,$_POST,$i,$cdata);
                 if($array){
                     echo json_encode($array);
                     break;
@@ -132,16 +168,57 @@ function wplc_init_ajax_callback() {
         //User Ajax
         
         if($_POST['action'] == 'wplc_call_to_server_visitor'){
+
+
+
+            $wplc_settings = get_option("WPLC_SETTINGS");
+
+            
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             $i = 1;
             $array = array("check" => false);
+            $array['debug'] = "";
+
+            $cdata = false;
+            if($_POST['cid'] == null || $_POST['cid'] == "" || $_POST['cid'] == "null" || $_POST['cid'] == 0){ } else {
+                /* get agent ID */
+
+
+                $cdata = wplc_get_chat_data(sanitize_text_field(intval($_POST['cid'])),__LINE__);
+                $from = __("Admin","wplivechat"); /* set default */
+
+                $array['aname'] = apply_filters("wplc_filter_admin_from", $from, $_POST['cid'],$cdata);
             
-            while($i <= $iterations){
+            }
+            
+            while($i <= $iterations) {
+                
+                if($i %round($iterations/2) == 0) {
+                    wplc_update_chat_statuses();
+                }
+
                 if($_POST['cid'] == null || $_POST['cid'] == "" || $_POST['cid'] == "null" || $_POST['cid'] == 0){
     //                echo 1;
-                    $user = "Guest";
-                    $email = "no email set";
-                    $cid = wplc_log_user_on_page($user,$email,sanitize_text_field($_POST['wplcsession']));
+                    
+                    if( isset( $_POST['wplc_name'] ) && $_POST['wplc_name'] !== '' ){
+                        $user = sanitize_text_field($_POST['wplc_name']);                        
+                    } else {
+                        $user = "Guest";    
+                    }
+                    
+                    if( isset( $_POST['wplc_email'] ) && $_POST['wplc_email'] !== '' ){
+                        $email = sanitize_text_field($_POST['wplc_email']);    
+                    } else {
+                        $email = "no email set";    
+                    }
+
+                    if(isset($_POST['wplc_is_mobile']) && ($_POST['wplc_is_mobile'] === 'true' || $_POST['wplc_is_mobile'] === true)){
+                        $is_mobile = true;
+                    } else {
+                        $is_mobile = false;
+                    }
+                     
+                    $cid = wplc_log_user_on_page($user,$email,sanitize_text_field($_POST['wplcsession']), $is_mobile);
                     $array['cid'] = $cid;
                     $array['status'] = wplc_return_chat_status($cid);
                     $array['wplc_name'] = $user;
@@ -150,10 +227,19 @@ function wplc_init_ajax_callback() {
 
                 } else {
     //                echo 2;
+                    
+
+
+
                     $new_status = wplc_return_chat_status(sanitize_text_field($_POST['cid']));
                     $array['wplc_name'] = sanitize_text_field($_POST['wplc_name']);
                     $array['wplc_email'] = sanitize_text_field($_POST['wplc_email']);
                     $array['cid'] = sanitize_text_field($_POST['cid']);
+                    $array['aid'] = sanitize_text_field($_POST['cid']);
+
+                    $array = apply_filters("wplc_filter_user_long_poll_chat_loop_iteration",$array,$_POST,$i,$cdata);
+                    
+
                     if($new_status == $_POST['status']){ // if status matches do the following
                         if($_POST['status'] != 2){
                             /* check if session_variable is different? if yes then stop this script completely. */
@@ -173,15 +259,17 @@ function wplc_init_ajax_callback() {
                                 wplc_update_user_on_page(sanitize_text_field($_POST['cid']), sanitize_text_field($_POST['status']), sanitize_text_field($_POST['wplcsession']));
                             }
                         }
-                        if ($_POST['status'] == 0){ // browsing - user tried to chat but admin didn't answer so turn back to browsing
-                            wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 5, sanitize_text_field($_POST['wplcsession']));
-                            $array['status'] = 5;
-                            $array['check'] = true;
-
+                        if (intval($_POST['status']) == 0 || intval($_POST['status']) == 12){ // browsing - user tried to chat but admin didn't answer so turn back to browsing
+                            //wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 0, sanitize_text_field($_POST['wplcsession']));
+                            //$array['status'] = 5;
+                            wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 12, sanitize_text_field($_POST['wplcsession']));
+                            $array['status'] = 12;
+                            //$array['check'] = true;
                             
-                        } else if($_POST['status'] == 3){
+                        } 
+                        else if($_POST['status'] == 3){
                             //wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 3);
-                            $messages = wplc_return_user_chat_messages(sanitize_text_field($_POST['cid']));
+                            $messages = wplc_return_user_chat_messages(sanitize_text_field($_POST['cid']),$wplc_settings,$cdata);
                             if ($messages){
                                 wplc_mark_as_read_user_chat_messages(sanitize_text_field($_POST['cid']));
                                 $array['status'] = 3;
@@ -189,8 +277,31 @@ function wplc_init_ajax_callback() {
                                 $array['check'] = true;
                             }
                         } 
+                        else if(intval($_POST['status']) == 2){
+                            //wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 3);
+                            $messages = wplc_return_user_chat_messages(sanitize_text_field($_POST['cid']),$wplc_settings,$cdata);
+                            $array['debug'] = "we are here ".__LINE__;
+                            if ($messages){
+                                wplc_mark_as_read_user_chat_messages(sanitize_text_field($_POST['cid']));
+                                $array['status'] = 2;
+                                $array['data'] = $messages;
+                                $array['check'] = true;
+                            }
+                        } 
 
+                        /* check if this is part of the first run */
+                        if (isset($_POST['first_run']) && sanitize_text_field($_POST['first_run']) == 1) {
+                            /* if yes, then send data now and dont wait for all iterations to complete */
+                            if (!isset($array['status'])) { $array['status'] = $new_status; }
+                            $array['check'] = true;
+                        } 
+                        else if (isset($_POST['short_poll']) && sanitize_text_field($_POST['short_poll']) == "true") {
+                            /* if yes, then send data now and dont wait for all iterations to complete */
+                            if (!isset($array['status'])) { $array['status'] = $new_status; }
+                            $array['check'] = true;
+                        }
                     } else { // statuses do not match
+                        $array['debug'] = $array['debug']. " ". "Doesnt match $new_status ".$_POST['status'];
                         $array['status'] = $new_status;
                         if($new_status == 1){ // completed
                             wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 8, sanitize_text_field($_POST['wplcsession']));
@@ -198,16 +309,21 @@ function wplc_init_ajax_callback() {
                             $array['status'] = 8;
                             $array['data'] =  __("Admin has closed and ended the chat","wplivechat");
                         }
-                        else if($new_status == 2){ // pending
+                        else if(intval($new_status == 2)) { // pending
+                            $array['debug'] = "we are here ".__LINE__;
                             $array['check'] = true;
                             $array['wplc_name'] = wplc_return_chat_name(sanitize_text_field($_POST['cid']));
                             $array['wplc_email'] = wplc_return_chat_email(sanitize_text_field($_POST['cid']));
+                            $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
+                            if ($messages){
+                                $array['data'] = $messages;
+                            }
                         }
                         else if($new_status == 3){ // active
                             $array['data'] = null;
                             $array['check'] = true;
                             if($_POST['status'] == 5){
-                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']));
+                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
                                 if ($messages){
                                     $array['data'] = $messages;
                                 }
@@ -219,20 +335,31 @@ function wplc_init_ajax_callback() {
                         else if($new_status == 9){ // user closed chat without inputting or starting a chat
                             $array['check'] = true;
                         } 
-                        else if($new_status == 0){ // no answer from admin
-                            $array['data'] = __('There is No Answer. Please Try Again Later', 'wplivechat');
+                        else if($new_status == 12){ // no answer from admin
+                            $array['data'] = wplc_return_no_answer_string(sanitize_text_field($_POST['cid']));
                             $array['check'] = true;
                             @do_action("wplc_hook_missed_chat",array("cid" => $_POST['cid'],"name" => $_POST['wplc_name'],"email" => $_POST['wplc_email']));
                         } 
                         else if($new_status == 10){ // minimized active chat
                             $array['check'] = true;
                             if($_POST['status'] == 5){
-                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']));
+                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
                                 if ($messages){
                                     $array['data'] = $messages;
                                 }
                             }
                         }
+                        /* check if this is part of the first run */
+                        if (isset($_POST['first_run']) && sanitize_text_field($_POST['first_run']) == "1") {
+                            /* if yes, then send data now and dont wait for all iterations to complete */
+                            if (!isset($array['status'])) { $array['status'] = $new_status; }
+                            $array['check'] = true;
+                        } 
+                        else if (isset($_POST['short_poll']) && sanitize_text_field($_POST['short_poll']) == "true") {
+                            /* if yes, then send data now and dont wait for all iterations to complete */
+                            if (!isset($array['status'])) { $array['status'] = $new_status; }
+                            $array['check'] = true;
+                        }                         
                         $array = apply_filters("wplc_filter_wplc_call_to_server_visitor_new_status_check",$array);  
                         
                     }
@@ -242,8 +369,10 @@ function wplc_init_ajax_callback() {
                     break;
                 }
                 $i++;
-                @ob_end_flush();
+                
                 if (defined('WPLC_DELAY_BETWEEN_LOOPS')) { usleep(WPLC_DELAY_BETWEEN_LOOPS); } else { usleep(500000); }
+
+                @ob_end_flush();
             }
         }
         
@@ -261,8 +390,9 @@ function wplc_init_ajax_callback() {
             wplc_change_chat_status(sanitize_text_field($_POST['cid']),10);
         }
         if ($_POST['action'] == "wplc_user_maximize_chat") {
-            $chat_id = sanitize_text_field($_POST['cid']);
-            wplc_change_chat_status(sanitize_text_field($_POST['cid']),3);
+            $chat_id = sanitize_text_field($_POST['cid']); 
+            $chat_status = intval(sanitize_text_field($_POST['chat_status'])); 
+            wplc_change_chat_status(sanitize_text_field($_POST['cid']),$chat_status);
         }
 
         if ($_POST['action'] == "wplc_user_send_msg") {
@@ -291,6 +421,7 @@ function wplc_init_ajax_callback() {
                 }
             }
         }
+        
     }
 
     die();
