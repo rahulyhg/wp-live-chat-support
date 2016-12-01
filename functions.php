@@ -44,8 +44,9 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
      } else {
         $other['user_is_mobile'] = false;
      }
-    
 
+    $other = apply_filters("wplc_log_user_on_page_insert_other_data_filter", $other);
+    
     $wplc_chat_session_data = array( 
             'status' => '5', 
             'timestamp' => current_time('mysql'),
@@ -76,7 +77,6 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
 
     $wpdb->insert($wplc_tblname_chats, $wplc_chat_session_data);
     $lastid = $wpdb->insert_id;
-
 
     return $lastid;
 
@@ -134,11 +134,11 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
 }
 
 
-function wplc_record_chat_msg($from,$cid,$msg) {
+function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
     global $wpdb;
     global $wplc_tblname_msgs;
 
-    if ($from == "2") {
+    if ($from == "2" && $rest_check == false) {
         $wplc_current_user = get_current_user_id();
 
         if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
@@ -701,9 +701,6 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
     global $wpdb;
     global $wplc_tblname_chats;
 
-
-
-
     if ($aid > 0) {
         /* only run when accepting a chat */
         $results = $wpdb->get_results("SELECT * FROM ".$wplc_tblname_chats." WHERE `id` = '".$id."' LIMIT 1");
@@ -767,6 +764,9 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
             array('%d') 
         );
     }
+
+    do_action("wplc_change_chat_status_hook", $id, $status);
+    
     return true;
 
 }
