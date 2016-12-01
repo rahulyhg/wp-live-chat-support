@@ -273,7 +273,14 @@ if (typeof obj[key]['other'] !== "undefined" && typeof obj[key]['other']['user_i
 var v_vis_html = "<span class='wplc_headerspan_v'>"+v_name+"</span>";
 var v_nr_html = "<span class='wplc_headerspan_nr'>"+wplc_get_type_box(v_type)+"</span>";
 var v_time_html = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+v_time+"</span></span>";
-var v_nr_device = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+(v_is_mobile ? "Mobile" : "PC")+"</span></span>"
+var v_nr_device = "<span class='wplc_headerspan_t'><span class='wplc_status_box wplc_status_1'>"+(v_is_mobile ? "Mobile" : "PC")+"</span></span>";
+
+var additional_data = "";
+
+if(typeof obj[key]['other']['wplc_extra_data'] !== "undefined"){
+    additional_data = obj[key]['other']['wplc_extra_data'];
+}
+
 
 if( typeof additional_data !== 'undefined' && additional_data != "" ) {
     additional_data = additional_data.replace(/\\/g, '');
