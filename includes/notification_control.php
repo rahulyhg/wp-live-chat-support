@@ -14,34 +14,41 @@ function wplc_record_chat_notification($type,$cid,$data) {
 
 add_action("wplc_hook_chat_notification","wplc_filter_control_chat_notification_user_loaded",10,3);
 function wplc_filter_control_chat_notification_user_loaded($type,$cid,$data) {
-
     if ($type == "user_loaded") {
 
-        global $wpdb;
-        global $wplc_tblname_msgs;
+        /**
+         * Only run if the chat status is not 1 or 5 (complete or browsing)
+         * 1 is questionable here, we may have to remove it at a later stage.
+         *  - Nick
+         */
+        if (isset($data['chat_data']) && isset($data['chat_data']->status) && (intval($data['chat_data']->status) != 5 || intval($data['chat_data']->status) != 5)) {
+
+            global $wpdb;
+            global $wplc_tblname_msgs;
 
 
-        $msg = sprintf(__("User is browsing <small><a href='%s' target='_BLANK'>%s</a></small>","wplivechat"),$data['uri'],wplc_shortenurl($data['uri']));
+            $msg = sprintf(__("User is browsing <small><a href='%s' target='_BLANK'>%s</a></small>","wplivechat"),$data['uri'],wplc_shortenurl($data['uri']));
 
-        $wpdb->insert( 
-            $wplc_tblname_msgs, 
-            array( 
-                    'chat_sess_id' => $cid, 
-                    'timestamp' => current_time('mysql'),
-                    'msgfrom' => __('System notification',"wplivechat"),
-                    'msg' => $msg,
-                    'status' => 0,
-                    'originates' => 3
-            ), 
-            array( 
-                    '%s', 
-                    '%s',
-                    '%s',
-                    '%s',
-                    '%d',
-                    '%d'
-            ) 
-        );
+            $wpdb->insert( 
+                $wplc_tblname_msgs, 
+                array( 
+                        'chat_sess_id' => $cid, 
+                        'timestamp' => current_time('mysql'),
+                        'msgfrom' => __('System notification',"wplivechat"),
+                        'msg' => $msg,
+                        'status' => 0,
+                        'originates' => 3
+                ), 
+                array( 
+                        '%s', 
+                        '%s',
+                        '%s',
+                        '%s',
+                        '%d',
+                        '%d'
+                ) 
+            );
+        }
     }
     return $type;
 } 

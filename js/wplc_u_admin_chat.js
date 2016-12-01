@@ -58,7 +58,6 @@ var wplc_user_email_address = wplc_user_email;
 });
 
 function wplc_call_to_server_admin_chat(data) {
-
     if(typeof wplc_admin_agent_name !== "undefined"){
         data.msg_from_print = wplc_admin_agent_name;
     }
