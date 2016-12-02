@@ -13,11 +13,19 @@
 /* 
  * 7.0.00 - 2016-11-xx
  * Major performance improvements - 300% reduction in DB calls
+ * Documentation Suggestions introduced
  * Users no longer have to wait for an agent to answer a chat, they can start typing immediately
  * Users can send a request a new chat if a chat times out or an agent doesnt answer
  * Changed tabs in the settings page to be vertical
  * Removed deprecated functions
- * 
+ * JavaScript errors fixed when using IE
+ * Ability to enable a powered by link on the chat
+ * Ability to enable/disable the visitor name and/or gravatar
+ * Chat history page columns styling fixes
+ * Ability to show the date and/or time in the chat window
+ * Styling improvements made to the settings page
+ * Ability to redirect to a thank you page after the chat has ended
+ * You can now start a new chat after refreshing the page instead of waiting 24 hours
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -268,7 +276,7 @@
  * 4.3.1 2015-05-22 - Low Priority
  * New Translations:
  *  Finnish (Thank you Arttu Piipponen)
-3 * 
+ * 
  * Translations Updated:
  *  French (Thank you Marcello Cavalucci)
  *  Dutch (Thank you Niek Groot Bleumink) 
@@ -590,7 +598,6 @@ function wplc_version_control() {
         if (!isset($wplc_settings['wplc_pro_sst2']) || (isset($wplc_settings['wplc_pro_sst2']) && $wplc_settings['wplc_pro_sst2'] == "")) { $wplc_settings["wplc_pro_sst2"] = __("Connecting. Please be patient...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_pro_tst1']) || (isset($wplc_settings['wplc_pro_tst1']) && $wplc_settings['wplc_pro_tst1'] == "")) { $wplc_settings["wplc_pro_tst1"] = __("Reactivating your previous chat...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_user_welcome_chat']) || (isset($wplc_settings['wplc_user_welcome_chat']) && $wplc_settings['wplc_user_welcome_chat'] == "")) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
-        if (!isset($wplc_settings['wplc_welcome_msg']) || (isset($wplc_settings['wplc_welcome_msg']) && $wplc_settings['wplc_welcome_msg'] == "")) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
         if (!isset($wplc_settings['wplc_user_enter']) || (isset($wplc_settings['wplc_user_enter']) && $wplc_settings['wplc_user_enter'] == "")) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
 
 
@@ -1005,7 +1012,25 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_ajaxurl_site', admin_url('admin-ajax.php'));
     wp_localize_script('wplc-user-script', 'wplc_nonce', $ajax_nonce);
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
-    wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
+    
+    $wplc_display = false;
+ 	if( $wplc_settings['wplc_show_name'] == '1' ){
+			$wplc_show_name = true;
+ 	} else {
+			$wplc_show_name = false;
+ 	}
+    if( $wplc_settings['wplc_show_avatar'] ){
+			$wplc_show_avatar = true;
+ 	} else {
+			$wplc_show_avatar = false;
+ 	}
+ 	$wplc_chat_detail = array( 'name' => $wplc_show_name, 'avatar' => $wplc_show_avatar );
+	if( $wplc_display !== FALSE && $wplc_display !== 'hide'  ){    
+		wp_localize_script('wplc-user-script', 'wplc_display_name', $wplc_display);
+	} else {
+		wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
+	}
+
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
     $wplc_run_override = "0";
     $wplc_run_override = apply_filters("wplc_filter_run_override",$wplc_run_override);
@@ -4887,10 +4912,10 @@ add_filter( "wplc_start_chat_user_form_after_filter", "wplc_powered_by_link_in_c
 function wplc_powered_by_link_in_chat( $string, $cid ){
 
 	$show_powered_by = get_option( "WPLC_POWERED_BY" );
+	
+	if( $show_powered_by == 1){
 
-	if( $show_powered_by === 1 ){
-
-		$ret = "<i style='text-align: center; display: block; padding: 5px 0; font-size: 10px;'>".__("Powered by WP Live Chat Support", "wplivechat")."</i>";
+		$ret = "<i style='text-align: center; display: block; padding: 5px 0; font-size: 10px;'><a href='https://wp-livechat.com' target='_BLANK' rel='nofollow'>".__("Powered by WP Live Chat Support", "wplivechat")."</a></i>";
 	
 	} else {
 
