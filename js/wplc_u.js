@@ -980,7 +980,7 @@ jQuery(document).ready(function() {
                 if(typeof niftyFormatParser !== "undefined"){
                     wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
                 }
-            
+                
                 if( typeof wplc_display_name !== 'undefined' ){
                     /**
                      * We're still using the old options
@@ -1006,7 +1006,9 @@ jQuery(document).ready(function() {
                              * Don't show the name
                              */
                             var the_name = "";
-                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                            
+                        }
+                        if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
                                 /**
                                  * Show the avatar
                                  */
