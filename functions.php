@@ -1398,7 +1398,7 @@ function wplc_store_offline_message($name, $email, $message){
 */
 function wplc_send_welcome($cid,$wplc_settings) {
 
-    if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. You may type a message so long","wplivechat"); } 
+    if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); } 
     $mdata = array(
         'msg' => $wplc_settings['wplc_welcome_msg']
     );

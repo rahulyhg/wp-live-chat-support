@@ -340,8 +340,10 @@ jQuery(document).ready(function() {
                 Cookies.set('wplc_chat_status', wplc_chat_status, { expires: 1, path: '/' });
                 if(response['status'] == 0 || response['status'] == 12){ // no answer from admin
                     jQuery("#wp-live-chat-3").hide();
-                    jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes()+"<hr />");
-                    //jQuery("#wp-live-chat-react").show().empty().append("<center>"+response['data']+"</center>");
+                    if (typeof response['data'] !== "undefined") {
+                        jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes()+"<hr />");
+                    }
+                    
                 }
                 else if(response['status'] == 8){ // chat has been ended by admin
                     wplc_run = false;
@@ -711,8 +713,9 @@ jQuery(document).ready(function() {
             else if (wplc_chat_status == 5 || wplc_chat_status == 9 || wplc_chat_status == 8){
                 if(jQuery("#wp-live-chat-2").is(":visible") === false && jQuery("#wp-live-chat-4").is(":visible") === false){
                     jQuery("#wp-live-chat-2").show();         
-                    var wplc_visitor_name = Cookies.get('wplc_name');            
-                    if(Cookies.get('wplc_email') !== "no email set" && wplc_visitor_name.indexOf("user") >= 0){
+                    var wplc_visitor_name = Cookies.get('wplc_name');
+                    console.log(wplc_visitor_name);           
+                    if(Cookies.get('wplc_email') !== "no email set" && typeof wplc_visitor_name !== "undefined"){
                         jQuery("#wplc_name").val(Cookies.get('wplc_name'));
                         jQuery("#wplc_email").val(Cookies.get('wplc_email'));
                     }

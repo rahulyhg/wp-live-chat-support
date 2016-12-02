@@ -18,6 +18,7 @@
  * Changed tabs in the settings page to be vertical
  * Removed deprecated functions
  * 
+ * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
  * Fixed a bug that caused the 'Congratulations' message to never clear when using the Cloud Server
@@ -267,7 +268,7 @@
  * 4.3.1 2015-05-22 - Low Priority
  * New Translations:
  *  Finnish (Thank you Arttu Piipponen)
- * 
+3 * 
  * Translations Updated:
  *  French (Thank you Marcello Cavalucci)
  *  Dutch (Thank you Niek Groot Bleumink) 
@@ -589,6 +590,7 @@ function wplc_version_control() {
         if (!isset($wplc_settings['wplc_pro_sst2']) || (isset($wplc_settings['wplc_pro_sst2']) && $wplc_settings['wplc_pro_sst2'] == "")) { $wplc_settings["wplc_pro_sst2"] = __("Connecting. Please be patient...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_pro_tst1']) || (isset($wplc_settings['wplc_pro_tst1']) && $wplc_settings['wplc_pro_tst1'] == "")) { $wplc_settings["wplc_pro_tst1"] = __("Reactivating your previous chat...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_user_welcome_chat']) || (isset($wplc_settings['wplc_user_welcome_chat']) && $wplc_settings['wplc_user_welcome_chat'] == "")) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
+        if (!isset($wplc_settings['wplc_welcome_msg']) || (isset($wplc_settings['wplc_welcome_msg']) && $wplc_settings['wplc_welcome_msg'] == "")) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
         if (!isset($wplc_settings['wplc_user_enter']) || (isset($wplc_settings['wplc_user_enter']) && $wplc_settings['wplc_user_enter'] == "")) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
 
 
@@ -1823,7 +1825,8 @@ function wplc_output_box_ajax_new($cid = null) {
         $checker = intval($wplc_ver); 
 
         if ($cid !== null) {
-        	wplc_record_chat_notification('user_loaded',$cid,array('uri' => $_SERVER['HTTP_REFERER']));
+        	$chat_data = wplc_get_chat_data( $cid );
+        	wplc_record_chat_notification('user_loaded',$cid,array('uri' => $_SERVER['HTTP_REFERER'], 'chat_data' => $chat_data ));
         }
         
         if (function_exists("wplc_pro_version_control")) {
@@ -2696,14 +2699,24 @@ function wplc_return_admin_chat_javascript($cid) {
 		} 
     }
 
+    /**
+     * We could probably skip this check for the AID all the time as AID is actually the current user's ID we just use this for the cloud server actually.
+     */
     if(isset($_GET['aid'])){
     	$agent_data = get_user_by('ID', intval($_GET['aid']));
     	wp_localize_script('wplc-admin-chat-server', 'wplc_admin_agent_name', $agent_data->display_name);
+ 	} else {
+ 		$agent_data = get_user_by('ID', intval(get_current_user_id()));
+    	wp_localize_script('wplc-admin-chat-server', 'wplc_admin_agent_name', $agent_data->display_name);
  	}
+
 
     wp_register_script('wplc-admin-chat-js', plugins_url('js/wplc_u_admin_chat.js', __FILE__), array('wplc-admin-chat-server'), $wplc_version, false);
     wp_enqueue_script('wplc-admin-chat-js');
 
+
+    wp_localize_script('wplc-admin-chat-js', 'wplc_chat_name', $cdata->name);
+    
     if(class_exists("WP_REST_Request")) {
 	    wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_enabled', '1');
 		wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_endpoint', get_option('siteurl').'/wp-json/wp_live_chat_support/v1');
@@ -2820,6 +2833,7 @@ function wplc_activate() {
             "wplc_pro_offline3" => __("Thank you for your message. We will be in contact soon.", "wplivechat"),
             "wplc_user_enter" => __("Press ENTER to send your message", "wplivechat"),
             "wplc_user_welcome_chat" => __("Welcome. How may I help you?", "wplivechat"),
+            'wplc_welcome_msg' => __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat")
 
         ));
     }
@@ -3494,6 +3508,7 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_pro_intro'])) { $wplc_data['wplc_pro_intro'] = esc_attr($_POST['wplc_pro_intro']); }
         if (isset($_POST['wplc_user_enter'])) { $wplc_data['wplc_user_enter'] = esc_attr($_POST['wplc_user_enter']); }
         if (isset($_POST['wplc_user_welcome_chat'])) { $wplc_data['wplc_user_welcome_chat'] = esc_attr($_POST['wplc_user_welcome_chat']); }
+        if (isset($_POST['wplc_welcome_msg'])) { $wplc_data['wplc_welcome_msg'] = esc_attr($_POST['wplc_welcome_msg']); }
 
 
         if(isset($_POST['wplc_animation'])){ $wplc_data['wplc_animation'] = esc_attr($_POST['wplc_animation']); } 
@@ -4544,6 +4559,7 @@ function wplc_string_check() {
   if (!isset($wplc_settings['wplc_pro_sst2']) || (isset($wplc_settings['wplc_pro_sst2']) && $wplc_settings['wplc_pro_sst2'] == "")) { $wplc_settings["wplc_pro_sst2"] = __("Connecting. Please be patient...", "wplivechat"); }
   if (!isset($wplc_settings['wplc_pro_tst1']) || (isset($wplc_settings['wplc_pro_tst1']) && $wplc_settings['wplc_pro_tst1'] == "")) { $wplc_settings["wplc_pro_tst1"] = __("Reactivating your previous chat...", "wplivechat"); }
   if (!isset($wplc_settings['wplc_user_welcome_chat']) || (isset($wplc_settings['wplc_user_welcome_chat']) && $wplc_settings['wplc_user_welcome_chat'] == "")) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
+  if (!isset($wplc_settings['wplc_welcome_msg']) || (isset($wplc_settings['wplc_welcome_msg']) && $wplc_settings['wplc_welcome_msg'] == "")) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
   if (!isset($wplc_settings['wplc_user_enter']) || (isset($wplc_settings['wplc_user_enter']) && $wplc_settings['wplc_user_enter'] == "")) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
 
   update_option("WPLC_SETTINGS",$wplc_settings);

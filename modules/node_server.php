@@ -98,7 +98,10 @@ function wplc_filter_notification_hook_node($type,$cid,$data){
 			$msg_admin = sprintf( __("User is browsing <small><a href='%s' target='_BLANK'>%s</a></small>","wplivechat") , $data['uri'] , wplc_shortenurl($data['uri']) );
 			break;
 		case "await_agent":
-			$msg = $data['msg'];
+			/**
+			 * Removed this as it is duplicated on the second loop to the server
+			 */
+			//$msg = $data['msg'];
 			break;
 		case "joined":
 			$user_info = get_userdata(intval($data['aid']));
