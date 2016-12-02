@@ -598,6 +598,7 @@ function wplc_version_control() {
         if (!isset($wplc_settings['wplc_pro_sst2']) || (isset($wplc_settings['wplc_pro_sst2']) && $wplc_settings['wplc_pro_sst2'] == "")) { $wplc_settings["wplc_pro_sst2"] = __("Connecting. Please be patient...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_pro_tst1']) || (isset($wplc_settings['wplc_pro_tst1']) && $wplc_settings['wplc_pro_tst1'] == "")) { $wplc_settings["wplc_pro_tst1"] = __("Reactivating your previous chat...", "wplivechat"); }
         if (!isset($wplc_settings['wplc_user_welcome_chat']) || (isset($wplc_settings['wplc_user_welcome_chat']) && $wplc_settings['wplc_user_welcome_chat'] == "")) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
+        if (!isset($wplc_settings['wplc_welcome_msg']) || (isset($wplc_settings['wplc_welcome_msg']) && $wplc_settings['wplc_welcome_msg'] == "")) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
         if (!isset($wplc_settings['wplc_user_enter']) || (isset($wplc_settings['wplc_user_enter']) && $wplc_settings['wplc_user_enter'] == "")) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
 
 
