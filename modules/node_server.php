@@ -48,7 +48,7 @@ function wplc_node_server_token_regenerate(){
 */
 function wplc_node_server_post($route, $form_data){
 	//$url = "http://wp-livechat.us-2.evennode.com" . "/" . $route;
-	$url = "http://" . "ec2-54-163-104-197.compute-1.amazonaws.com:6086" . "/" . $route;
+	$url = "http://" . "34.193.164.98:6086" . "/" . $route;
 	if(!isset($form_data['server_token'])){
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
     	if(!$wplc_node_token){
@@ -262,7 +262,8 @@ function wplc_node_async_storage_rest(WP_REST_Request $request){
 									foreach ($message_data as $message) {
 										$message = sanitize_text_field($message);
 										wplc_record_chat_msg("1", $chat_id, $message);
-										wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										//wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										wplc_update_active_timestamp($chat_id);
 									}
 
 									$return_array['request_status'] = true;
@@ -271,7 +272,8 @@ function wplc_node_async_storage_rest(WP_REST_Request $request){
 									foreach ($message_data as $message) {
 										$message = sanitize_text_field($message);
 										wplc_record_chat_msg("2", $chat_id, $message, true);
-										wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										//wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										wplc_update_active_timestamp($chat_id);
 									}
 
 									$return_array['request_status'] = true;
@@ -331,7 +333,9 @@ function wplc_node_async_storage_ajax(){
 									foreach ($message_data as $message) {
 										$message = sanitize_text_field($message);
 										wplc_record_chat_msg("1", $chat_id, $message);
-										wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										//wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										wplc_update_active_timestamp($chat_id);
+
 									}
 
 									$return_array['request_status'] = true;
@@ -340,7 +344,8 @@ function wplc_node_async_storage_ajax(){
 									foreach ($message_data as $message) {
 										$message = sanitize_text_field($message);
 										wplc_record_chat_msg("2", $chat_id, $message);
-										wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										//wplc_update_user_on_page($chat_id, "3", $chat_session); //Keep timestamp active
+										wplc_update_active_timestamp($chat_id);
 									}
 
 									$return_array['request_status'] = true;

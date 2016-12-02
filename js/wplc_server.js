@@ -6,6 +6,8 @@ var wplc_supress_server_logs = false;
 var wplc_node_socket = null; //Will not be set unless
 var wplc_node_send_queue = new Array(); 
 var wplc_node_message_receiver = null;
+var wplc_node_message_restart_handler = null;
+var wplc_node_client_event_logger = null;
 var wplc_node_sockets_ready = false;
 var wplc_transport_prepared = false;
 
@@ -17,6 +19,9 @@ var wplc_node_port_open = true; //This can be set to false to prevent any future
 var wplc_node_is_client_typing = false;
 var wplc_node_is_pair_typing_indicator_visible = false;
 var wplc_node_pair_name = "";
+
+var wplc_node_switch_ajax_complete = false;
+var wplc_node_retry_count = 0;
 
 function WPLCServer(){
 	var wplc_server_ref = this;
@@ -32,7 +37,7 @@ function WPLCServer(){
 	wplc_server_ref.sendMessage = wplc_server_method.sendMessage;
 
 
-	wplc_server_ref.prepareTransport = function(callback, messageHandler){
+	wplc_server_ref.prepareTransport = function(callback, messageHandler, restartHandler, clientEventLog){
 		wplc_server_log("-------------------");
 		wplc_server_log("Preparing Transport");
 		if(typeof wplc_use_node_server !== "undefined" && wplc_use_node_server === "true"){
@@ -98,7 +103,7 @@ function WPLCServer(){
 					}
 				});
 			}
-		});
+		}, restartHandler, clientEventLog);
 
 		wplc_server_log("Transport Prepared");
 		wplc_server_log("-------------------");
@@ -119,12 +124,13 @@ function WPLCServer(){
 }
 
 WPLCServer.Socket = {
-	init : function(callback, messageHandler, failOver){
+	init : function(callback, messageHandler, failOver, restartHandler, clientEventLog){
 		wplc_node_message_receiver = (typeof messageHandler !== "undefined" && typeof messageHandler === "function") ? messageHandler : false;
+		wplc_node_message_restart_handler = (typeof restartHandler !== "undefined" && typeof restartHandler === "function") ? restartHandler : false;
+		wplc_node_client_event_logger = (typeof clientEventLog !== "undefined" && typeof clientEventLog === "function") ? clientEventLog : false;
 
 		wplc_server_log("Socket Init");
-		//wplc_node_socket = new WebSocket('ws://wp-livechat.us-2.evennode.com');
-		wplc_node_socket = new WebSocket('ws://ec2-54-163-104-197.compute-1.amazonaws.com:6086');
+		wplc_node_socket = new WebSocket('ws://34.193.164.98:6086');
 
 		if(wplc_node_async_cookie_check_complete !== true){
 			//Check if there are any messages we forgot to send via async
@@ -141,8 +147,12 @@ WPLCServer.Socket = {
 
 		wplc_node_socket.onerror = function(event){
 			wplc_server_error("Could not connect to server. Changing transport method.");
-			if(typeof failOver === "function"){
+			if(typeof failOver === "function" && wplc_node_sockets_ready !== true){
 				failOver();
+				wplc_node_switch_ajax_complete = true;
+				if(typeof wplc_node_client_event_logger !== "undefined" && typeof wplc_node_client_event_logger === "function"){
+					wplc_node_client_event_logger("Connection Error - Switching methods");
+				}
 			}
 		}
 
@@ -167,6 +177,23 @@ WPLCServer.Socket = {
 
 		wplc_node_socket.onclose = function(event) {
 			wplc_server_log("This socket is closed");
+			if (typeof wplc_node_message_restart_handler === "function") {
+				if (wplc_node_retry_count < 5 && wplc_node_switch_ajax_complete !== true) {
+					setTimeout(function(){
+						wplc_node_message_restart_handler(event.data);
+						wplc_node_retry_count++;
+						if(typeof wplc_node_client_event_logger !== "undefined" && typeof wplc_node_client_event_logger === "function"){
+							wplc_node_client_event_logger("Connection Error - Retrying in 5 seconds...");
+						}
+					}, 5000);
+				} else {
+					if(wplc_node_retry_count >= 5){
+						if(typeof wplc_node_client_event_logger !== "undefined" && typeof wplc_node_client_event_logger === "function"){
+							wplc_node_client_event_logger("Connection Error - Please refresh your browser");
+						}
+					}
+				}
+			}
 		}
 
 		
@@ -220,7 +247,7 @@ WPLCServer.Socket = {
 };
 
 WPLCServer.Ajax = {
-	init : function(callback, messageHandler, failOver){
+	init : function(callback, messageHandler, failOver, restartHandler, clientEventLog){
 		wplc_server_log("Ajax Init");
 		if(typeof callback === "function"){
 			callback();
