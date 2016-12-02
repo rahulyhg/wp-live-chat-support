@@ -22,6 +22,14 @@ function wplc_admin_message_receiver(data){
     }
 }
 
+function wplc_admin_retry_handler(data){
+    wplc_retry_interval = setTimeout(function(){
+        wplc_server.prepareTransport(function(){
+            wplc_call_to_server_admin_chat(wplc_server_last_loop_data);
+        }, wplc_admin_message_receiver, wplc_admin_retry_handler, wplc_display_error);
+    },500);
+}
+
 if (typeof wplc_action2 !== "undefined" && wplc_action2 !== "") { 
 
     var data = {
@@ -253,7 +261,7 @@ jQuery(document).ready(function () {
 
     wplc_server.prepareTransport(function(){
         wplc_call_to_server_admin_chat(data);
-    }, wplc_admin_message_receiver);
+    }, wplc_admin_message_receiver, wplc_admin_retry_handler, wplc_display_error);
     
     if (typeof wplc_action2 !== "undefined" && wplc_action2 !== "") { return; }
 

@@ -20,6 +20,8 @@ var wplc_online = false;
 var wplc_agent_name = "";
 var msg_history = new Array();
 
+var wplc_retry_interval = null;
+
 var wplc_run = true;
 
 var wplc_server = null;
@@ -152,7 +154,29 @@ jQuery(document).ready(function() {
         }
     }
     
+    function wplc_user_retry_handler(data){
+        var tstatus = Cookies.get("wplc_chat_status");
+
+        if (tstatus !== "undefined") {
+            if(tstatus !== 8 || tstatus !== 1){
+                wplc_retry_interval = setTimeout(function(){
+                    
+                    wplc_server.prepareTransport(function(){
+                        //Transport ready...
+                        wplc_server_last_loop_data.status = parseInt(tstatus); //Set to existing status
+                        wplc_call_to_server_chat(wplc_server_last_loop_data);
+                    }, wplc_user_message_receiver, wplc_user_retry_handler, wplc_log_connection_error);
+
+
+                },500);
+            }
+
+        }
+    }
+
     function wplc_call_to_server_chat(data,first_run,short_poll) {
+
+
         if (typeof first_run === "undefined") { first_run = false; };
         if (typeof short_poll === "undefined") { short_poll = false; };
         data.first_run = first_run;
@@ -205,7 +229,7 @@ jQuery(document).ready(function() {
                                 //Transport is unprepared and the user has returned to the page with a status 3/2
                                 wplc_server.prepareTransport(function(){
                                     wplc_call_to_server_chat(data,false,false); 
-                                }, wplc_user_message_receiver);
+                                }, wplc_user_message_receiver, wplc_user_retry_handler, wplc_log_connection_error);
                             }
                         }
                     }
@@ -228,7 +252,7 @@ jQuery(document).ready(function() {
             if(typeof response['cid'] !== "undefined"){ data['cid'] = response['cid']; Cookies.set('wplc_cid', response['cid'], { expires: 1, path: '/' }); }
             if(typeof response['aname'] !== "undefined") { wplc_agent_name = response['aname']; }
             if(typeof response['cid'] !== "undefined" && wplc_cid !== jQuery.trim(response['cid'])){ wplc_cid = jQuery.trim(response['cid']); }
-            if(typeof response['status'] !== "undefined" && wplc_chat_status !== response['status']){ 
+            if(typeof response['status'] !== "undefined" && parseInt(wplc_chat_status) !== parseInt(response['status'])){ 
                 wplc_chat_status = response['status']; 
                 Cookies.set('wplc_chat_status', null, { path: '/' }); 
                 Cookies.set('wplc_chat_status', wplc_chat_status, { expires: 1, path: '/' }); 
@@ -713,8 +737,7 @@ jQuery(document).ready(function() {
             else if (wplc_chat_status == 5 || wplc_chat_status == 9 || wplc_chat_status == 8){
                 if(jQuery("#wp-live-chat-2").is(":visible") === false && jQuery("#wp-live-chat-4").is(":visible") === false){
                     jQuery("#wp-live-chat-2").show();         
-                    var wplc_visitor_name = Cookies.get('wplc_name');
-                    console.log(wplc_visitor_name);           
+                    var wplc_visitor_name = Cookies.get('wplc_name');           
                     if(Cookies.get('wplc_email') !== "no email set" && typeof wplc_visitor_name !== "undefined"){
                         jQuery("#wplc_name").val(Cookies.get('wplc_name'));
                         jQuery("#wplc_email").val(Cookies.get('wplc_email'));
@@ -873,7 +896,7 @@ jQuery(document).ready(function() {
                         //Transport ready...
                         wplc_server_last_loop_data.status = 2; //Set to waiting
                         wplc_call_to_server_chat(wplc_server_last_loop_data);
-                    }, wplc_user_message_receiver);
+                    }, wplc_user_message_receiver, wplc_user_retry_handler, wplc_log_connection_error);
                 },
                 function(){
                     //Fails
@@ -980,7 +1003,7 @@ jQuery(document).ready(function() {
                 if(typeof niftyFormatParser !== "undefined"){
                     wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
                 }
-                
+            
                 if( typeof wplc_display_name !== 'undefined' ){
                     /**
                      * We're still using the old options
@@ -1006,9 +1029,7 @@ jQuery(document).ready(function() {
                              * Don't show the name
                              */
                             var the_name = "";
-                            
-                        }
-                        if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
                                 /**
                                  * Show the avatar
                                  */

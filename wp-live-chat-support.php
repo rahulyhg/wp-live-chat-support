@@ -1014,12 +1014,12 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
     
     $wplc_display = false;
- 	if( $wplc_settings['wplc_show_name'] == '1' ){
+ 	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){
 			$wplc_show_name = true;
  	} else {
 			$wplc_show_name = false;
  	}
-    if( $wplc_settings['wplc_show_avatar'] ){
+    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){
 			$wplc_show_avatar = true;
  	} else {
 			$wplc_show_avatar = false;
