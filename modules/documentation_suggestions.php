@@ -2,8 +2,8 @@
 /*
  * Adds 'Rest API' tab to settings area
 */
-add_filter("wplc_filter_setting_tabs","wplc_api_settings_tab_heading_doc_suggestions");
-function wplc_api_settings_tab_heading_doc_suggestions($tab_array) {
+add_filter("wplc_filter_setting_tabs","wplc_api_settings_tab_heading_doc_suggestions_basic");
+function wplc_api_settings_tab_heading_doc_suggestions_basic($tab_array) {
     $tab_array['doc'] = array(
       "href" => "#tabs-doc-suggest",
       "icon" => 'fa fa-lightbulb-o',
