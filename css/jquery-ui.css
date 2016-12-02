@@ -1232,3 +1232,10 @@ body .ui-tooltip {
 	filter: Alpha(Opacity=30); /* support: IE8 */
 	border-radius: 8px;
 }
+
+
+
+.ui-tabs-panel a {
+    color: #0073aa;
+    text-decoration: underline;
+}

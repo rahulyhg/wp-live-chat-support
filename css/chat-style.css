@@ -879,6 +879,7 @@
 
 span.wplc_system_notification {
     display: block;
+    clear:both;
     padding: 8px;
     font-style: italic;
     text-align: right;
