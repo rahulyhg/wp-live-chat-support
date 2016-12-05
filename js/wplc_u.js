@@ -1018,23 +1018,20 @@ jQuery(document).ready(function() {
                     } else {
                         jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");
                     }
-                } else {
+                } else {                    
                     if( typeof wplc_show_chat_detail !== 'undefined' ){
                         if( typeof wplc_show_chat_detail.name !== 'undefined' && wplc_show_chat_detail.name == '1' ){
                             /**
                              * Show the name
-                             */
-                            var the_name = "<strong>"+wplc_name+"</strong>: ";         
-                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                             */                            
+                            var the_name = "<strong>"+jQuery("#wplc_name").val()+"</strong>: ";         
+                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar != '' ){
                                 /**
                                  * Show the avatar
                                  */
-                                if( wplc_gravatar_image.length > 1 ){
-                                    wplc_gravatar_image = wplc_gravatar_image;
-                                } else {
-                                    wplc_gravatar_image = "";
-                                }
-                            } else {
+                                wplc_gravatar_image = "<img src='https://www.gravatar.com/avatar/"+md5( jQuery("#wplc_email").val() )+"?s=30&d=mm' class='wplc-user-message-avatar'/>";
+                                
+                            } else {                                
                                 /**
                                  * Don't show the avatar
                                  */
@@ -1045,15 +1042,11 @@ jQuery(document).ready(function() {
                              * Don't show the name
                              */
                             var the_name = "";
-                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar != '' ){
                                 /**
                                  * Show the avatar
-                                 */
-                                if( wplc_gravatar_image.length > 1 ){
-                                    wplc_gravatar_image = wplc_gravatar_image;
-                                } else {
-                                    wplc_gravatar_image = "";
-                                }
+                                 */                                
+                                wplc_gravatar_image = wplc_show_chat_detail.avatar;                                
                             } else {
                                 /**
                                  * Don't show the avatar
@@ -1061,7 +1054,7 @@ jQuery(document).ready(function() {
                                 wplc_gravatar_image = "";
                             }
                         }
-                        
+                                                
                         wplc_chat = wplc_gravatar_image+the_name+wplc_chat_parsed;
 
                         jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat+"</span><br /><div class='wplc-clear-float-message'></div>");

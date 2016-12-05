@@ -930,11 +930,10 @@ function wplc_push_js_to_front_basic() {
     if ($wplc_settings["wplc_settings_enabled"] == 2) {
         return;
     }
-
+    wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
+    wp_enqueue_script('wplc-md5');
     if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
-        $wplc_display = 'display';
-        wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
-        wp_enqueue_script('wplc-md5');      
+        $wplc_display = 'display';             
     } else {
         $wplc_display = 'hide';
     }
@@ -1030,13 +1029,17 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
     
     $wplc_display = false;
- 	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){
+
+ 	$wplc_settings = get_option("WPLC_SETTINGS");
+
+	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){						
 			$wplc_show_name = true;
+			
  	} else {
 			$wplc_show_name = false;
  	}
-    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){
-			$wplc_show_avatar = true;
+    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){    		
+		$wplc_show_avatar = true;    		
  	} else {
 			$wplc_show_avatar = false;
  	}
