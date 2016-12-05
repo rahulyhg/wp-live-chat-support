@@ -350,9 +350,9 @@ jQuery(document).ready(function () {
             }
 
             if (wplc_display_name == 'display') {
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_image + " <strong>" + wplc_name + "</strong>:<hr/ style='margin-bottom: 0px;'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_image + " <strong>" + wplc_name + "</strong>:<hr/ style='margin-bottom: 0px;'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
             } else {
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
             }
             var height = jQuery('#admin_chat_box_area_' + wplc_cid)[0].scrollHeight;
             jQuery('#admin_chat_box_area_' + wplc_cid).scrollTop(height);

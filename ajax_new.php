@@ -271,7 +271,7 @@ function wplc_init_ajax_callback() {
                             //wplc_update_user_on_page(sanitize_text_field($_POST['cid']), 3);
                             $messages = wplc_return_user_chat_messages(sanitize_text_field($_POST['cid']),$wplc_settings,$cdata);
                             if ($messages){
-                                wplc_mark_as_read_user_chat_messages(sanitize_text_field($_POST['cid']));
+                                wplc_mark_as_read_user_chat_messages(sanitize_text_field($_POST['cid'])); 
                                 $array['status'] = 3;
                                 $array['data'] = $messages;
                                 $array['check'] = true;
@@ -314,7 +314,7 @@ function wplc_init_ajax_callback() {
                             $array['check'] = true;
                             $array['wplc_name'] = wplc_return_chat_name(sanitize_text_field($_POST['cid']));
                             $array['wplc_email'] = wplc_return_chat_email(sanitize_text_field($_POST['cid']));
-                            $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
+                            $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array',false);
                             if ($messages){
                                 $array['data'] = $messages;
                             }
@@ -323,7 +323,7 @@ function wplc_init_ajax_callback() {
                             $array['data'] = null;
                             $array['check'] = true;
                             if($_POST['status'] == 5){
-                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
+                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array',false);
                                 if ($messages){
                                     $array['data'] = $messages;
                                 }
@@ -343,7 +343,7 @@ function wplc_init_ajax_callback() {
                         else if($new_status == 10){ // minimized active chat
                             $array['check'] = true;
                             if($_POST['status'] == 5){
-                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array');
+                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array',false);
                                 if ($messages){
                                     $array['data'] = $messages;
                                 }
