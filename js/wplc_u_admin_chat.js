@@ -342,6 +342,8 @@ jQuery(document).ready(function () {
 
         if(wplc_chat !== ""){
             var wplc_chat_contents = "";
+            var wplc_gravatar_image = "";
+            var the_name = "";
             /*Nifty Format Parser*/
             var wplc_chat_parsed = wplc_chat;
             if(typeof niftyFormatParser !== "undefined"){
@@ -354,6 +356,17 @@ jQuery(document).ready(function () {
                      * Show the name
                      */
                     var the_name = "<strong>"+wplc_show_chat_detail.name +"</strong>: ";
+                    if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar != '' ){
+                        /**
+                         * Show the avatar
+                         */                        
+                        wplc_gravatar_image = wplc_show_chat_detail.avatar;                        
+                    } else {
+                        /**
+                         * Don't show the avatar
+                         */
+                        
+                    }
                 } else {
                     /**
                      * Don't show the name
@@ -368,7 +381,7 @@ jQuery(document).ready(function () {
                         /**
                          * Don't show the avatar
                          */
-                        wplc_gravatar_image = "";
+                        
                     }
                 }
                 
