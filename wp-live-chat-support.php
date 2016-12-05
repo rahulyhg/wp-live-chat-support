@@ -477,28 +477,24 @@ require_once (plugin_dir_path(__FILE__) . "includes/deprecated.php");
 require_once (plugin_dir_path(__FILE__) . "includes/surveys.php");
 require_once (plugin_dir_path(__FILE__) . "includes/notification_control.php");
 require_once (plugin_dir_path(__FILE__) . "includes/modal_control.php");
-
 require_once (plugin_dir_path(__FILE__) . "modules/documentation_suggestions.php");
 require_once (plugin_dir_path(__FILE__) . "modules/google_analytics.php");
 require_once (plugin_dir_path(__FILE__) . "modules/api/wplc-api.php");
-
 require_once (plugin_dir_path(__FILE__) . "modules/beta_features.php");
 require_once (plugin_dir_path(__FILE__) . "modules/node_server.php");
-
-add_action('wp_ajax_wplc_admin_set_transient', 'wplc_action_callback');
-add_action('wp_ajax_wplc_admin_remove_transient', 'wplc_action_callback');
-add_action('wp_ajax_wplc_hide_ftt','wplc_action_callback');
-add_action('wp_ajax_nopriv_wplc_user_send_offline_message', 'wplc_action_callback');
-add_action('wp_ajax_wplc_user_send_offline_message', 'wplc_action_callback');
-add_action('wp_ajax_delete_offline_message', 'wplc_action_callback');
-add_action('init', 'wplc_version_control');
-
-
-add_action('wp_footer', 'wplc_display_box');
-
-add_action('init', 'wplc_init');
-
 require_once (plugin_dir_path(__FILE__) . 'includes/update_control.class.php');
+
+add_action( 'wp_ajax_wplc_admin_set_transient', 'wplc_action_callback' );
+add_action( 'wp_ajax_wplc_admin_remove_transient', 'wplc_action_callback' );
+add_action( 'wp_ajax_wplc_hide_ftt', 'wplc_action_callback' );
+add_action( 'wp_ajax_nopriv_wplc_user_send_offline_message', 'wplc_action_callback' );
+add_action( 'wp_ajax_wplc_user_send_offline_message', 'wplc_action_callback' );
+add_action( 'wp_ajax_delete_offline_message', 'wplc_action_callback' );
+add_action( 'init', 'wplc_version_control' );
+add_action( "activated_plugin", "wplc_redirect_on_activate" );
+add_action( 'wp_footer', 'wplc_display_box' );
+add_action( 'init', 'wplc_init' );
+
 
 
 if (function_exists('wplc_head_pro')) {
@@ -528,6 +524,25 @@ function wplc_init() {
     load_plugin_textdomain('wplivechat', false, $plugin_dir);        
     
 
+}
+
+
+/**
+ * Redirect the user to the welcome page on plugin activate
+ * @param  string $plugin
+ * @return void
+ */
+function wplc_redirect_on_activate( $plugin ) {
+	if( $plugin == plugin_basename( __FILE__ ) ) {
+		if (get_option("WPLC_FIRST_TIME") == true) {
+	    	update_option("WPLC_FIRST_TIME",false);
+	    	// clean the output header and redirect the user
+	    	@ob_flush();
+			@ob_end_flush();
+			@ob_end_clean();
+	    	exit( wp_redirect( admin_url( 'admin.php?page=wplivechat-menu&action=welcome' ) ) );
+	    }
+	}
 }
 
 function wplc_version_control() {
@@ -2623,9 +2638,8 @@ function wplc_draw_chat_area($cid) {
       
       if (!$result->continue) { return; }
 
-      echo"<div class='admin_chat_box'><div class='admin_chat_box_inner' id='admin_chat_box_area_" . $result->id . "'>" . wplc_return_chat_messages($cid, __LINE__) . "</div><div class='admin_chat_box_inner_bottom'>" . wplc_return_chat_response_box($cid) . "</div>";
-
-
+      echo"<div class='admin_chat_box'><div class='admin_chat_box_inner' id='admin_chat_box_area_" . $result->id . "'>" . wplc_return_chat_messages($cid, false, true, false, false, 'string', true) . "</div><div class='admin_chat_box_inner_bottom'>" . wplc_return_chat_response_box($cid) . "</div>";
+	  
 
       echo "</div>";
       echo "<div class='admin_visitor_info'>";
@@ -2738,6 +2752,51 @@ function wplc_return_admin_chat_javascript($cid) {
 
     wp_register_script('wplc-admin-chat-js', plugins_url('js/wplc_u_admin_chat.js', __FILE__), array('wplc-admin-chat-server'), $wplc_version, false);
     wp_enqueue_script('wplc-admin-chat-js');
+
+    global $wplc_pro_version;
+    $wplc_ver = str_replace('.', '', $wplc_pro_version);
+    $checker = intval($wplc_ver); 
+    if (isset($wplc_settings['wplc_theme'])) { $wplc_theme = $wplc_settings['wplc_theme']; } else { $wplc_theme = "theme-default"; }
+
+    if ( (isset($wplc_theme) && $checker >= 6000 ) || (! function_exists("wplc_pro_version_control") ) )  {
+      if($wplc_theme == 'theme-default') {
+        wp_register_style('wplc-theme-palette-default', plugins_url('/css/themes/theme-default.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-default');
+
+      }
+      else if($wplc_theme == 'theme-1') {
+        wp_register_style('wplc-theme-palette-1', plugins_url('/css/themes/theme-1.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-1');
+
+      }
+      else if($wplc_theme == 'theme-2') {
+        wp_register_style('wplc-theme-palette-2', plugins_url('/css/themes/theme-2.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-2');
+
+      }
+      else if($wplc_theme == 'theme-3') {
+        wp_register_style('wplc-theme-palette-3', plugins_url('/css/themes/theme-3.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-3');
+
+      }
+      else if($wplc_theme == 'theme-4') {
+        wp_register_style('wplc-theme-palette-4', plugins_url('/css/themes/theme-4.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-4');
+
+      }
+      else if($wplc_theme == 'theme-5') {
+        wp_register_style('wplc-theme-palette-5', plugins_url('/css/themes/theme-5.css', __FILE__));
+        wp_enqueue_style('wplc-theme-palette-5');
+
+      }
+      else if($wplc_theme == 'theme-6') {
+        /* custom */
+        /* handled elsewhere */
+
+       
+
+      }
+  	}
 
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_chat_name', $cdata->name);
@@ -4092,19 +4151,33 @@ function wplc_get_chat_data($cid,$line) {
  * @param  int 		$cid  Chat ID
  * @return array 		  Chat messages based on the ID provided
  */
-function wplc_get_chat_messages($cid) {
+function wplc_get_chat_messages($cid, $only_read_messages = false) {
   global $wpdb;  
   global $wplc_tblname_msgs;
 
-  $results = $wpdb->get_results(
-        "
-        SELECT *
-        FROM $wplc_tblname_msgs
-        WHERE `chat_sess_id` = '$cid'
-        ORDER BY `timestamp` ASC
-        LIMIT 0, 100
-        "
-    );
+
+  if ($only_read_messages) {
+  	// only show read messages
+	  $results = $wpdb->get_results(
+	        "
+	        SELECT *
+	        FROM $wplc_tblname_msgs
+	        WHERE `chat_sess_id` = '$cid' AND `status` = 1
+	        ORDER BY `timestamp` ASC
+	        LIMIT 0, 100
+	        "
+	    );
+	} else {
+	  $results = $wpdb->get_results(
+	        "
+	        SELECT *
+	        FROM $wplc_tblname_msgs
+	        WHERE `chat_sess_id` = '$cid'
+	        ORDER BY `timestamp` ASC
+	        LIMIT 0, 100
+	        "
+	    );
+	}
     
   if (isset($results[0])) {  } else {  $results = null; }
   $results = apply_filters("wplc_filter_get_chat_messages",$results,$cid);
@@ -4640,7 +4713,7 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 add_filter("wplc_filter_typing_control_div","wplc_basic_filter_control_return_chat_response_box_before",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before($string) {
     remove_filter("wplc_filter_typing_control_div","wplc_pro_filter_control_return_chat_response_box_before");
-    $string = $string. "<div class='typing_indicator wplc-color-bg-1 wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
 
     return $string;
 }
