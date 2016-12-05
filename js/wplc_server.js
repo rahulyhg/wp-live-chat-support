@@ -261,7 +261,9 @@ WPLCServer.Ajax = {
 			timeout : wplc_send_timeout,
 			success : function(response){
 				if(typeof wplc_send_success_callback === "function"){
-					wplc_send_success_callback(response);
+					if(typeof wplc_send_data['action'] !== "undefined" && wplc_send_data['action'] !== "wplc_start_chat"){ //Dont return ajax dats if we are starting a chat
+						wplc_send_success_callback(response);
+					}
 				}
 			},
 			error : function(error, exception){
