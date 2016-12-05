@@ -714,6 +714,7 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
 
 
                 /* send welcome note */
+
                 /*
                 removed in version 7. added "chat notification events" instead, i.e. Agent has joined the chat.
                 $wplc_settings = get_option("WPLC_SETTINGS");
@@ -940,7 +941,6 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_s
         }
 
     }
-    
     if ($display == 'string') { return $msg_hist; } else { return $msg_array; }
 
 
