@@ -2158,7 +2158,7 @@ function wplc_superadmin_javascript() {
             }
             do_action("wplc_hook_admin_javascript");
         } // main page
-        else if (isset($_GET['action'])) {
+        else if ( isset($_GET['action']) && ( $_GET['action'] != 'welcome' && $_GET['action'] != 'credits'  ) ) {
             if (function_exists("wplc_register_pro_version")) {
                 wplc_return_pro_admin_chat_javascript(sanitize_text_field($_GET['cid']));
             } else {
@@ -2279,12 +2279,11 @@ function wplc_admin_menu_layout() {
             </div>
             <?php
         }
-    }
-    if (get_option("WPLC_FIRST_TIME") == true && !class_exists("APC_Object_Cache")) {
-
-        update_option('WPLC_FIRST_TIME', false);
+    }        
+    if ( ( get_option("WPLC_FIRST_TIME") == true && !class_exists("APC_Object_Cache") ) || ( isset( $_GET['action'] ) && ( $_GET['action'] == 'welcome' || $_GET['action'] == 'credits' ) ) ){            	
         include 'includes/welcome_page.php';
-    } else {
+        update_option('WPLC_FIRST_TIME', false);
+    } else {    	
         update_option('WPLC_FIRST_TIME', false);
         if (function_exists("wplc_register_pro_version")) {
             wplc_pro_admin_menu_layout_display();
@@ -2707,10 +2706,10 @@ function wplc_return_admin_chat_javascript($cid) {
     wp_register_script('wplc-admin-chat-server', plugins_url('js/wplc_server.js', __FILE__), false, $wplc_version, false);
     wp_enqueue_script('wplc-admin-chat-server');
 
+    $cdata = wplc_get_chat_data($cid, __LINE__);
+	$other = maybe_unserialize($cdata->other);
+    
     if(isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == 1){
-    	$cdata = wplc_get_chat_data($cid, __LINE__);
-    	$other = maybe_unserialize($cdata->other);
-
 		if (isset($other['socket']) && ($other['socket'] == true || $other['socket'] == "true")) {
 			wp_localize_script('wplc-admin-chat-server', 'wplc_use_node_server', "true");
     	
@@ -3626,6 +3625,10 @@ function wplc_head_basic() {
             curl_close($ch);
         }
         echo "<div class=\"updated\"><p>" . __("Thank You for your feedback!", "wplivechat") . "</p></div>";
+        wp_redirect( admin_url("/admin.php?page=wplivechat-menu&override=1") );
+    }
+    if( isset( $_GET['override'] ) && $_GET['override'] == '1' ){
+    	update_option( "WPLC_FIRST_TIME", false);
     }
     if (isset($_POST['wplc_nl_send_feedback'])) {
         if (wp_mail("nick@wp-livechat.com", "Plugin feedback", "Name: " . $_POST['wplc_nl_feedback_name'] . "\n\r" . "Email: " . $_POST['wplc_nl_feedback_email'] . "\n\r" . "Website: " . $_POST['wplc_nl_feedback_website'] . "\n\r" . "Feedback:" . $_POST['wplc_nl_feedback_feedback'])) {
