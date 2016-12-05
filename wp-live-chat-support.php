@@ -2797,7 +2797,25 @@ function wplc_return_admin_chat_javascript($cid) {
 
       }
   	}
+	$wplc_settings = get_option("WPLC_SETTINGS");
+	$wplc_user_data = get_user_by( 'id', get_current_user_id() );
 
+	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){
+			$wplc_show_name = $wplc_user_data->data->display_name;
+ 	} else {
+			$wplc_show_name = false;
+ 	}
+    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){
+    		$args = array('class' => array('wplc-admin-message-avatar' ) );
+			$wplc_show_avatar = get_avatar( get_current_user_id(), 30, '', false,  $args);
+ 	} else {
+			$wplc_show_avatar = false;
+ 	}
+ 	$wplc_chat_detail = array( 'name' => $wplc_show_name, 'avatar' => $wplc_show_avatar );
+	
+	wp_localize_script( 'wplc-admin-chat-js', 'wplc_show_chat_detail', $wplc_chat_detail );
+	
+	wp_enqueue_script('wplc-admin-chat-js');
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_chat_name', $cdata->name);
     

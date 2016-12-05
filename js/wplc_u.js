@@ -458,6 +458,7 @@ jQuery(document).ready(function() {
                                     var message_grav = "";
                                     var message_from = "";
                                     var message_content = "";
+
                                     if(parseInt(the_message.originates) === 1){
                                         //From Admin
                                         message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
@@ -1045,11 +1046,16 @@ jQuery(document).ready(function() {
                                 wplc_gravatar_image = "";
                             }
                         }
+                        
+                        wplc_chat = wplc_gravatar_image+the_name+wplc_chat_parsed;
 
-                        jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_gravatar_image+the_name+wplc_chat_parsed+"</span><br /><div class='wplc-clear-float-message'></div>");
+                        jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat+"</span><br /><div class='wplc-clear-float-message'></div>");
 
                     } else {
+                        wplc_chat = wplc_chat_parsed;
+
                         jQuery("#wplc_chatbox").append("<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>"+wplc_chat_parsed+"</span><div class='wplc-clear-float-message'></div>");   
+                        
                     }
                 }
  

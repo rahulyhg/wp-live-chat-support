@@ -335,34 +335,63 @@ jQuery(document).ready(function () {
         var wplc_name = "a" + "d" + "m" + "i" + "n";
 
         if(typeof wplc_name_override  !== "undefined"){
-            wplc_name = wplc_name_override ;
+            wplc_name = "<strong>"+wplc_name_override+": </strong>";
         }
         
         jQuery("#wplc_admin_chatmsg").val('');
 
         if(wplc_chat !== ""){
-
+            var wplc_chat_contents = "";
             /*Nifty Format Parser*/
             var wplc_chat_parsed = wplc_chat;
             if(typeof niftyFormatParser !== "undefined"){
                 //PRO
                 wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
-            }
+            }            
+            if( typeof wplc_show_chat_detail !== 'undefined' ){                
+                if( typeof wplc_show_chat_detail.name !== 'undefined' && wplc_show_chat_detail.name != '' ){
+                    /**
+                     * Show the name
+                     */
+                    var the_name = "<strong>"+wplc_show_chat_detail.name +"</strong>: ";
+                } else {
+                    /**
+                     * Don't show the name
+                     */                    
+                    var the_name = "";
+                    if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar != '' ){
+                        /**
+                         * Show the avatar
+                         */                        
+                        wplc_gravatar_image = wplc_show_chat_detail.avatar;                        
+                    } else {
+                        /**
+                         * Don't show the avatar
+                         */
+                        wplc_gravatar_image = "";
+                    }
+                }
+                
+                wplc_chat_contents = wplc_gravatar_image + the_name + wplc_chat_parsed
 
-            if (wplc_display_name == 'display') {
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_image + " <strong>" + wplc_name + "</strong>:<hr/ style='margin-bottom: 0px;'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_contents + "</span><br /><div class='wplc-clear-float-message'></div>");
+                
             } else {
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
-            }
-            var height = jQuery('#admin_chat_box_area_' + wplc_cid)[0].scrollHeight;
-            jQuery('#admin_chat_box_area_' + wplc_cid).scrollTop(height);
+                
+                wplc_chat_contents = wplc_chat_parsed;
 
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
+            }           
+
+            var height = jQuery('#admin_chat_box_area_' + wplc_cid)[0].scrollHeight;
+
+            jQuery('#admin_chat_box_area_' + wplc_cid).scrollTop(height);
 
             var data = {
                 action: 'wplc_admin_send_msg',
                 security: wplc_ajax_nonce,
                 cid: wplc_cid,
-                msg: wplc_chat,
+                msg: wplc_chat_contents,
                 wplc_extra_data:wplc_extra_data
             };
             
