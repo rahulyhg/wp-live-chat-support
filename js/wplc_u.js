@@ -1024,7 +1024,22 @@ jQuery(document).ready(function() {
                             /**
                              * Show the name
                              */
-                            var the_name = "<strong>"+wplc_name+"</strong>: ";                        
+                            var the_name = "<strong>"+wplc_name+"</strong>: ";         
+                            if( typeof wplc_show_chat_detail.avatar !== 'undefined' && wplc_show_chat_detail.avatar == '1' ){
+                                /**
+                                 * Show the avatar
+                                 */
+                                if( wplc_gravatar_image.length > 1 ){
+                                    wplc_gravatar_image = wplc_gravatar_image;
+                                } else {
+                                    wplc_gravatar_image = "";
+                                }
+                            } else {
+                                /**
+                                 * Don't show the avatar
+                                 */
+                                wplc_gravatar_image = "";
+                            }               
                         } else {
                             /**
                              * Don't show the name
