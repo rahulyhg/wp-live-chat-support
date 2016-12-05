@@ -261,8 +261,15 @@ WPLCServer.Ajax = {
 			timeout : wplc_send_timeout,
 			success : function(response){
 				if(typeof wplc_send_success_callback === "function"){
-					if(typeof wplc_send_data['action'] !== "undefined" && wplc_send_data['action'] !== "wplc_start_chat"){ //Dont return ajax dats if we are starting a chat
+					if(typeof wplc_send_data['action'] !== "undefined" && wplc_send_data['action'] !== "wplc_start_chat"){ //Is this the start?
 						wplc_send_success_callback(response);
+					} else {
+						//Check if we are going to go into socket mode after this? 
+						if(typeof wplc_use_node_server !== "undefined" && wplc_use_node_server === "true"){
+							if(window.WebSocket){
+								wplc_send_success_callback(response); //Send the data if we are going to sockets after this
+							}
+						}
 					}
 				}
 			},
