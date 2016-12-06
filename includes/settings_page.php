@@ -415,7 +415,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
               <hr>
-              <table class='form-table' >
+              <table class='wp-list-table widefat fixed striped pages' >
                   <tbody>
                       <tr>
                           <td width='300' valign='top'><?php _e("Facebook URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Facebook page here. Leave blank to hide", "wplivechat") ?>"></i></td> 

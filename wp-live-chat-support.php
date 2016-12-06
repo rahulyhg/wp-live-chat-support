@@ -26,6 +26,10 @@
  * Styling improvements made to the settings page
  * Ability to redirect to a thank you page after the chat has ended
  * You can now start a new chat after refreshing the page instead of waiting 24 hours
+ * New Translation Files: 
+ *  - Albanian ( Thank you Teuta Koraqi )
+ * Updated Translation Files: 
+ *  - Turkish ( Thank you Salih Kunduz )
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -4156,7 +4160,7 @@ function wplc_hook_control_agents_settings() {
  * @param  string 	$line Line number the function is called on
  * @return array    	  Contents of the chat based on the ID provided
  */
-function wplc_get_chat_data($cid,$line) {
+function wplc_get_chat_data($cid,$line = false) {
   global $wpdb;  
   global $wplc_tblname_chats;
 
@@ -4734,7 +4738,7 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 add_filter("wplc_filter_typing_control_div","wplc_basic_filter_control_return_chat_response_box_before",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before($string) {
     remove_filter("wplc_filter_typing_control_div","wplc_pro_filter_control_return_chat_response_box_before");
-    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator'></div>";
 
     return $string;
 }

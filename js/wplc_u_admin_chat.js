@@ -139,7 +139,7 @@ function wplc_loop_response_handler(response){
             new_length = jQuery("#admin_chat_box_area_" + cid).html().length;
             if (current_len < new_length) {
                 if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
-                    new Audio(wplc_ding_file).play();                             
+                    new Audio(wplc_ding_file).play()                               
                 }
             }
             var height = jQuery('#admin_chat_box_area_' + cid)[0].scrollHeight;
@@ -175,12 +175,11 @@ function wplc_loop_response_handler(response){
                         } else {
                             message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
                           //  message_grav = md5(wplc_email);
-                            message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
-                            message_from = (typeof wplc_chat_name !== "undefined" ? wplc_chat_name : "Unknown") + ": ";
+                            // message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
+                            message_grav = "";
+                            // message_from = (typeof wplc_chat_name !== "undefined" ? wplc_chat_name : "Unknown") + ": ";
+                            message_grav = "";
                             message_content = the_message.msg;
-                            if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
-                                new Audio(wplc_ding_file).play();                              
-                            }
                         }
 
                         if(message_content !== ""){
