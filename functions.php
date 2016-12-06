@@ -772,7 +772,7 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
 }
 
 //come back here
-function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_settings = false, $cdata = false,$display = 'string') {
+function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_settings = false, $cdata = false,$display = 'string',$only_read_message = false) {
     global $wpdb;
     global $wplc_tblname_msgs;
     
@@ -783,7 +783,7 @@ function wplc_return_chat_messages($cid,$transcript = false,$html = true,$wplc_s
 
     if(isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1){ $display_name = 1; } else { $display_name = 0; }
            
-    $results = wplc_get_chat_messages($cid);
+    $results = wplc_get_chat_messages($cid, $only_read_message);
     if (!$results) { return; }
    
     if (!$cdata) {

@@ -887,3 +887,11 @@ span.wplc_system_notification {
 .widefat th.sortable, .widefat th.sorted {
     padding: 5px 10px !important;
 }
+
+@media (max-width: 1145px) {
+    .wplc-badge {  
+        max-width: 35% !important;      
+        float: none !important;
+        margin: 0 auto !important;
+    }
+}
