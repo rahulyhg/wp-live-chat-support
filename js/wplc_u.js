@@ -1058,7 +1058,7 @@ jQuery(document).ready(function() {
                                 /**
                                  * Show the avatar
                                  */                                
-                                wplc_gravatar_image = wplc_show_chat_detail.avatar;                                
+                                wplc_gravatar_image = "<img src='https://www.gravatar.com/avatar/"+md5( jQuery("#wplc_email").val() )+"?s=30&d=mm' class='wplc-user-message-avatar'/>";
                             } else {
                                 /**
                                  * Don't show the avatar
