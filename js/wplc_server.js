@@ -2,7 +2,7 @@
  * Hanldes Message transportation within WPLC
 */
 var wplc_server_method = null;
-var wplc_supress_server_logs = false;
+var wplc_supress_server_logs = true; //We are now surpressing server logs
 var wplc_node_socket = null; //Will not be set unless
 var wplc_node_send_queue = new Array(); 
 var wplc_node_message_receiver = null;
