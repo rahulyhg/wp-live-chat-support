@@ -350,11 +350,12 @@ jQuery(document).ready(function() {
                         }
                         wplc_new_message_sound = true;
                     }
+                    
                     if(wplc_new_message_sound){
                         var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                         jQuery('#wplc_chatbox').scrollTop(height);
                         if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
-                            new Audio(wplc_plugin_url+'/wp-live-chat-support/ding.mp3').play()                               
+                            new Audio(wplc_plugin_url+'/wp-live-chat-support/ding.mp3').play();                            
                         }
                     } 
                 }
@@ -434,6 +435,7 @@ jQuery(document).ready(function() {
                     if(response['data'] != null){ // append messages to chat area
                         if (typeof response['data'] === "object") {
                             for (var index in response['data']) {
+                                wplc_new_message_sound = false;
                                 if(typeof response['data'][index] !== "object"){
                                     if (typeof msg_history[index] === "undefined") {
                                         /* we dont have this message */
@@ -445,57 +447,67 @@ jQuery(document).ready(function() {
                                         } else{
                                             jQuery("#wplc_chatbox").append(response['data'][index].wplcStripSlashes());
                                         }
+
+                                        wplc_new_message_sound = true;
                                     } else {
                                             /* we already have this message */
                                            // console.log("we already have "+response['data'][index]);
                                     }
                                 } else {
-                                var the_message = response['data'][index];
+                                    var the_message = response['data'][index];
 
-                                if(typeof the_message.originates !== "undefined" && the_message.originates !== null && the_message.originates !== "null"){
-                                    var message_class = "";
-                                    var grav_hash = "";
-                                    var message_grav = "";
-                                    var message_from = "";
-                                    var message_content = "";
+                                    if(typeof the_message.originates !== "undefined" && the_message.originates !== null && the_message.originates !== "null"){
+                                        var message_class = "";
+                                        var grav_hash = "";
+                                        var message_grav = "";
+                                        var message_from = "";
+                                        var message_content = "";
 
-                                    if(parseInt(the_message.originates) === 1){
-                                        //From Admin
-                                        message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
-                                        message_grav = "<img src='//www.gravatar.com/avatar/MD5_this_section_with_email?s=30'  class='wplc-admin-message-avatar' />";
-                                        message_from = (typeof the_message.msgfrom !== "undefined" ? the_message.msgfrom : "") + ": ";
-                                        message_content = the_message.msg.wplcStripSlashes();
+                                        if(parseInt(the_message.originates) === 1){
+                                            //From Admin
+                                            message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
+                                            message_grav = "<img src='//www.gravatar.com/avatar/MD5_this_section_with_email?s=30'  class='wplc-admin-message-avatar' />";
+                                            message_from = (typeof the_message.msgfrom !== "undefined" ? the_message.msgfrom : "") + ": ";
+                                            message_content = the_message.msg.wplcStripSlashes();
 
-                                        wplc_new_message_sound = true;
-                                    } else if (parseInt(the_message.originates) === 0){
-                                        //System Notification
-                                        message_class = "wplc_system_notification wplc-color-4";
-                                        message_content = the_message.msg;
-                                    } else {
-                                        message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
-                                        message_grav = md5(wplc_email);
-                                        message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
-                                         message_from = Cookies.get("wplc_name") + ": ";
-                                        message_content = the_message.msg.wplcStripSlashes();
-                                    }
-
-                                    if(message_content !== ""){
-                                        var concatenated_message = "<span class='" + message_class + "'>";
-                                        concatenated_message += message_grav;
-                                        concatenated_message += message_from;
-                                        concatenated_message += message_content;
-                                        concatenated_message += "</span>";
-
-                                        if(typeof niftyFormatParser !== "undefined"){
-                                            jQuery("#wplc_chatbox").append(niftyFormatParser(concatenated_message));
-                                        } else{
-                                            jQuery("#wplc_chatbox").append(concatenated_message);
+                                            wplc_new_message_sound = true;
+                                        } else if (parseInt(the_message.originates) === 0){
+                                            //System Notification
+                                            message_class = "wplc_system_notification wplc-color-4";
+                                            message_content = the_message.msg;
+                                        } else {
+                                            message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
+                                            message_grav = md5(wplc_email);
+                                            message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
+                                             message_from = Cookies.get("wplc_name") + ": ";
+                                            message_content = the_message.msg.wplcStripSlashes();
                                         }
-                                        var height = jQuery('#wplc_chatbox')[0].scrollHeight;
-                                        jQuery('#wplc_chatbox').scrollTop(height);
-                                    } 
-                                }         
-                            }
+
+                                        if(message_content !== ""){
+                                            var concatenated_message = "<span class='" + message_class + "'>";
+                                            concatenated_message += message_grav;
+                                            concatenated_message += message_from;
+                                            concatenated_message += message_content;
+                                            concatenated_message += "</span>";
+
+                                            if(typeof niftyFormatParser !== "undefined"){
+                                                jQuery("#wplc_chatbox").append(niftyFormatParser(concatenated_message));
+                                            } else{
+                                                jQuery("#wplc_chatbox").append(concatenated_message);
+                                            }
+                                            // var height = jQuery('#wplc_chatbox')[0].scrollHeight;
+                                            // jQuery('#wplc_chatbox').scrollTop(height);
+                                        } 
+                                    }         
+                                }
+
+                                if(wplc_new_message_sound){
+                                    var height = jQuery('#wplc_chatbox')[0].scrollHeight;
+                                    jQuery('#wplc_chatbox').scrollTop(height);
+                                    if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
+                                        new Audio(wplc_plugin_url+'/wp-live-chat-support/ding.mp3').play();                            
+                                    }
+                                }
                             }
                         }   
                         else {
