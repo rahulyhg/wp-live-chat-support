@@ -175,10 +175,8 @@ function wplc_loop_response_handler(response){
                         } else {
                             message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
                           //  message_grav = md5(wplc_email);
-                            // message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
-                            message_grav = "";
-                            // message_from = (typeof wplc_chat_name !== "undefined" ? wplc_chat_name : "Unknown") + ": ";
-                            message_grav = "";
+                            message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
+                            message_from = (typeof wplc_chat_name !== "undefined" ? wplc_chat_name : "Unknown") + ": ";
                             message_content = the_message.msg;
                         }
 
@@ -389,13 +387,13 @@ jQuery(document).ready(function () {
                 
                 wplc_chat_contents = wplc_gravatar_image + the_name + wplc_chat_parsed
 
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_contents + "</span><br /><div class='wplc-clear-float-message'></div>");
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message  wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_chat_contents + "</span><br /><div class='wplc-clear-float-message'></div>");
                 
             } else {
                 
                 wplc_chat_contents = wplc_chat_parsed;
 
-                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
+                jQuery("#admin_chat_box_area_" + wplc_cid).append("<span class='wplc-admin-message  wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>" + wplc_chat_parsed + "</span><br /><div class='wplc-clear-float-message'></div>");
             }           
 
             var height = jQuery('#admin_chat_box_area_' + wplc_cid)[0].scrollHeight;

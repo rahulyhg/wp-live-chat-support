@@ -408,6 +408,7 @@ function wplc_socket_async_storage_handler(wplc_send_url, wplc_send_data, wplc_s
 		chat_id : wplc_send_data.cid,
 		security : wplc_send_data.security,
 		messages : JSON.stringify(wplc_node_async_array)
+        wplc_extra_data:document.wplc_extra_data
 	};
 
 	if(typeof wplc_node_token !== "undefined"){
