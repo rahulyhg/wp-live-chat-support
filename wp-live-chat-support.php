@@ -26,6 +26,9 @@
  * Styling improvements made to the settings page
  * Ability to redirect to a thank you page after the chat has ended
  * You can now start a new chat after refreshing the page instead of waiting 24 hours
+ * Fixed a bug that caused an error in the dashboard when using the PHP cloud server
+ * Fixed the styling within the admin chat window to suit the theme chosen
+ * Fixed a bug that caused duplicate loading of messages when the user started typing before the admin chat screen was open
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -1492,6 +1495,7 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
       if ($wplc_loggedin_user_email != '' && $wplc_loggedin_user_email != null) { $wplc_lie = $wplc_loggedin_user_email; } else { $wplc_lie = $wplc_random_user_number . '@' . $wplc_random_user_number . '.com'; }
       $ret_msg .= "<input type=\"hidden\" name=\"wplc_name\" id=\"wplc_name\" value=\"".$wplc_lin."\" />";
       $ret_msg .= "<input type=\"hidden\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"1\" value=\"".$wplc_lie."\" />";
+      $ret_msg .= apply_filters("wplc_start_chat_user_form_after_filter", "");
   }
   return $ret_msg;
 }
@@ -4156,7 +4160,7 @@ function wplc_hook_control_agents_settings() {
  * @param  string 	$line Line number the function is called on
  * @return array    	  Contents of the chat based on the ID provided
  */
-function wplc_get_chat_data($cid,$line) {
+function wplc_get_chat_data($cid,$line = false) {
   global $wpdb;  
   global $wplc_tblname_chats;
 
@@ -4172,33 +4176,50 @@ function wplc_get_chat_data($cid,$line) {
  * @param  int 		$cid  Chat ID
  * @return array 		  Chat messages based on the ID provided
  */
-function wplc_get_chat_messages($cid, $only_read_messages = false) {
+function wplc_get_chat_messages($cid, $only_read_messages = false, $wplc_settings = false) {
   global $wpdb;  
   global $wplc_tblname_msgs;
 
+  if (!$wplc_settings) {
+  	$wplc_settings = get_option("WPLC_SETTINGS");
+  }
 
-  if ($only_read_messages) {
-  	// only show read messages
-	  $results = $wpdb->get_results(
-	        "
-	        SELECT *
-	        FROM $wplc_tblname_msgs
-	        WHERE `chat_sess_id` = '$cid' AND `status` = 1
-	        ORDER BY `timestamp` ASC
-	        LIMIT 0, 100
-	        "
-	    );
-	} else {
-	  $results = $wpdb->get_results(
-	        "
+  /**
+   * Identify if the user is using the node server and if they are, display all messages. Otherwise display read only messages (non-node users)
+   */
+  if (isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == '1') {
+  	
+  		$sql = "
 	        SELECT *
 	        FROM $wplc_tblname_msgs
 	        WHERE `chat_sess_id` = '$cid'
 	        ORDER BY `timestamp` ASC
 	        LIMIT 0, 100
-	        "
-	    );
+	        ";
+	} else {
+		if ($only_read_messages) { 
+		// only show read messages
+	  		$sql =
+		        "
+		        SELECT *
+		        FROM $wplc_tblname_msgs
+		        WHERE `chat_sess_id` = '$cid' AND `status` = 1
+		        ORDER BY `timestamp` ASC
+		        LIMIT 0, 100
+		        ";
+	    } else {
+	    	$sql =
+		        "
+		        SELECT *
+		        FROM $wplc_tblname_msgs
+		        WHERE `chat_sess_id` = '$cid'
+		        ORDER BY `timestamp` ASC
+		        LIMIT 0, 100
+		        ";
+	    }
+	    
 	}
+	$results = $wpdb->get_results($sql);
     
   if (isset($results[0])) {  } else {  $results = null; }
   $results = apply_filters("wplc_filter_get_chat_messages",$results,$cid);
@@ -4734,14 +4755,14 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 add_filter("wplc_filter_typing_control_div","wplc_basic_filter_control_return_chat_response_box_before",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before($string) {
     remove_filter("wplc_filter_typing_control_div","wplc_pro_filter_control_return_chat_response_box_before");
-    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator'></div>";
 
     return $string;
 }
 add_filter("wplc_filter_typing_control_div_theme_2","wplc_basic_filter_control_return_chat_response_box_before_theme2",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before_theme2($string) {
     remove_filter("wplc_filter_typing_control_div_theme_2","wplc_pro_filter_control_return_chat_response_box_before_theme2");
-    $string = $string. "<div class='typing_indicator'></div>";
+    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
 
     return $string;
 }

@@ -32,12 +32,12 @@ function wplc_hook_settings_page_more_doc_suggestions() {
   						</td>
 	              	</tr>
 					<tr>
-						<td width="300" valign="top">
+						<td valign="top">
+						   <p class='description'><?php echo sprintf(__("Upgrade to the <a href='%s' taget='_BLANK'>pro version</a> to automatically suggest relevant documentation pages on your own site while users are waiting for the agent to join the chat. As soon as the user sends a message, the system will locate relevant documents on your website and provide links to the user.","wplivechat"),"https://wp-livechat.com/purchase-pro/"); ?></p>
+  						</td>
+						<td valign="top">
 						  
 						</td>
-						<td valign="top">
-						   <p class='description'><?php echo sprintf(__("Upgrade to the <a href='%s' taget='_BLANK'>pro version</a> to automatically suggest relevant documentations why users are waiting for the agent to join the chat. As soon as the user send their message, the system will locate relevant documents on your website and provide links to the user.","wplivechat"),"https://wp-livechat.com/purchase-pro/"); ?></p>
-  						</td>
 	              	</tr>
 				</tbody>
 			</table>

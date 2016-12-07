@@ -415,7 +415,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
               <hr>
-              <table class='form-table' >
+              <table class='wp-list-table widefat fixed striped pages' >
                   <tbody>
                       <tr>
                           <td width='300' valign='top'><?php _e("Facebook URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Facebook page here. Leave blank to hide", "wplivechat") ?>"></i></td> 
@@ -630,7 +630,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
               
 
               <tr style='margin-bottom: 10px;'>
-                <td width='300'><label for=""><?php _e('Choose a theme', 'wplivechat'); ?></label></td>
+                <td width='200'><label for=""><?php _e('Choose a theme', 'wplivechat'); ?></label></td>
                 <td>    
                     <div class='wplc_theme_block'>
                         <div class='wplc_theme_image' id=''>
@@ -736,32 +736,32 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                   <td>&nbsp;</td>
               </tr>                
               <tr>
-                  <td width='300' valign='top'><?php _e("Palette Color 1","wplivechat")?>:</td>
+                  <td width='200' valign='top'><?php _e("Palette Color 1","wplivechat")?>:</td>
                   <td>
                       <input id="wplc_settings_color1" name="wplc_settings_color1" type="text" class="color" value="<?php if (isset($wplc_settings_color1)) { echo $wplc_settings_color1; } else { echo 'ED832F'; } ?>" />
                   </td>
               </tr>
               <tr>
-                  <td width='300' valign='top'><?php _e("Palette Color 2","wplivechat")?>:</td>
+                  <td width='200' valign='top'><?php _e("Palette Color 2","wplivechat")?>:</td>
                   <td>
                       <input id="wplc_settings_color2" name="wplc_settings_color2" type="text" class="color" value="<?php if (isset($wplc_settings_color2)) { echo $wplc_settings_color2; } else { echo 'FFFFFF'; } ?>" />
                   </td>
               </tr>
               <tr>
-                  <td width='300' valign='top'><?php _e("Palette Color 3","wplivechat")?>:</td>
+                  <td width='200' valign='top'><?php _e("Palette Color 3","wplivechat")?>:</td>
                   <td>
                       <input id="wplc_settings_color3" name="wplc_settings_color3" type="text" class="color" value="<?php if (isset($wplc_settings_color3)) { echo $wplc_settings_color3; } else { echo 'EEEEEE'; } ?>" />
                   </td>
               </tr>
               <tr>
-                  <td width='300' valign='top'><?php _e("Palette Color 4","wplivechat")?>:</td>
+                  <td width='200' valign='top'><?php _e("Palette Color 4","wplivechat")?>:</td>
                   <td>
                       <input id="wplc_settings_color4" name="wplc_settings_color4" type="text" class="color" value="<?php if (isset($wplc_settings_color4)) { echo $wplc_settings_color4; } else { echo '666666'; } ?>" />
                   </td>
               </tr>
 
                     <tr>
-                        <td width="300" valign="top"><?php _e("I'm using a localization plugin", "wplivechat") ?></td>
+                        <td width="200" valign="top"><?php _e("I'm using a localization plugin", "wplivechat") ?></td>
                         <td>
                             <input type="checkbox" name="wplc_using_localization_plugin" id="wplc_using_localization_plugin" value="1" <?php if (isset($wplc_settings['wplc_using_localization_plugin']) && $wplc_settings['wplc_using_localization_plugin'] == 1) { echo 'checked'; } ?>/>
                             <br/><small><?php echo sprintf( __("Enable this if you are using a localization plugin. Should you wish to change the below strings with this option enabled, please visit the documentation %s", "wplivechat"), "<a href='https://wp-livechat.com/documentation/changing-strings-in-the-chat-window-when-using-a-localization-plugin/' target='_BLANK'>".__("here", "wplivechat") ); ?></small>
@@ -770,49 +770,57 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
 
                   <tr style='height:30px;'><td></td><td></td></tr>
                                 <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("First Section Text", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("First Section Text", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_pro_fst1" name="wplc_pro_fst1" type="text" size="50" maxlength="50" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_fst1']) ?>" /> <br />
                             <input id="wplc_pro_fst2" name="wplc_pro_fst2" type="text" size="50" maxlength="50" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_fst2']) ?>" /> <br />
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("Intro Text", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("Intro Text", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_pro_intro" name="wplc_pro_intro" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_intro']) ?>" /> <br />
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("Second Section Text", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("Second Section Text", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_pro_sst1" name="wplc_pro_sst1" type="text" size="50" maxlength="30" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_sst1']) ?>" /> <br />
                             <input id="wplc_pro_sst2" name="wplc_pro_sst2" type="text" size="50" maxlength="70" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_sst2']) ?>" /> <br />
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("Reactivate Chat Section Text", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("Reactivate Chat Section Text", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_pro_tst1" name="wplc_pro_tst1" type="text" size="50" maxlength="50" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_pro_tst1']) ?>" /> <br />
 
 
                         </td>
                     </tr>
+                    <?php /* removed as this has been replaced with the "welcome_msg" below
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("User chat welcome", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("User chat welcome", "wplivechat") ?>:</td>
                         <td>
                             <input id="wplc_user_welcome_chat" name="wplc_user_welcome_chat" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_welcome_chat']) ?>" /> <br />
                         </td>
                     </tr>
+                    */ ?>
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("No answer", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("Welcome message", "wplivechat") ?>:</td>
                         <td>
-                            <input id="wplc_user_no_answer" name="wplc_user_no_answer" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo (isset($wplc_settings['wplc_user_no_answer']) ? stripslashes($wplc_settings['wplc_user_no_answer']) : __("There is No Answer. Please Try Again Later.","wplivechat")); ?>" /> <?php _e('This text is shown to the user when an agent has failed to answer a chat ', 'wplivechat'); ?><br />
+                            <input id="wplc_welcome_msg" name="wplc_welcome_msg" type="text" size="50" maxlength="350" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_welcome_msg']) ?>" /> <span class='description'><?php _e('This text is shown as soon as a user starts a chat and waits for an agent to join', 'wplivechat'); ?></span><br />
                         </td>
                     </tr>
                     <tr class="wplc_localization_strings">
-                        <td width="300" valign="top"><?php _e("Other text", "wplivechat") ?>:</td>
+                        <td width="200" valign="top"><?php _e("No answer", "wplivechat") ?>:</td>
                         <td>
-                            <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /> <?php _e('This text is shown above the user chat input field', 'wplivechat'); ?><br />
+                            <input id="wplc_user_no_answer" name="wplc_user_no_answer" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo (isset($wplc_settings['wplc_user_no_answer']) ? stripslashes($wplc_settings['wplc_user_no_answer']) : __("There is No Answer. Please Try Again Later.","wplivechat")); ?>" /> <span class='description'><?php _e('This text is shown to the user when an agent has failed to answer a chat ', 'wplivechat'); ?></span><br />
+                        </td>
+                    </tr>
+                    <tr class="wplc_localization_strings">
+                        <td width="200" valign="top"><?php _e("Other text", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /> <span class='description'><?php _e('This text is shown above the user chat input field', 'wplivechat'); ?></span><br />
                         </td>
                     </tr>
                         

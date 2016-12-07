@@ -304,8 +304,10 @@ jQuery(document).ready(function() {
                                     if(parseInt(the_message.originates) === 1){
                                         //From Admin
                                         message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
-                                        message_grav = "<img src='//www.gravatar.com/avatar/MD5_this_section_with_email?s=30'  class='wplc-admin-message-avatar' />";
-                                        message_from = (typeof the_message.msgfrom !== "undefined" ? the_message.msgfrom : "") + ": ";
+                                        // message_grav = "<img src='//www.gravatar.com/avatar/MD5_this_section_with_email?s=30'  class='wplc-admin-message-avatar' />";
+                                        message_grav = "";
+                                        // message_from = (typeof the_message.msgfrom !== "undefined" ? the_message.msgfrom : "") + ": ";
+                                        message_from = "";
                                         message_content = the_message.msg.wplcStripSlashes();
 
                                         wplc_new_message_sound = true;
@@ -315,9 +317,11 @@ jQuery(document).ready(function() {
                                         message_content = the_message.msg;
                                     } else {
                                         message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
-                                        message_grav = md5(wplc_cookie_email);
-                                        message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
+                                        // message_grav = md5(wplc_cookie_email);
+                                        // message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-admin-message-avatar' />";
+                                        message_grav = "";
                                         message_from = Cookies.get("wplc_name") + ": ";
+                                        message_from = "";
                                         message_content = the_message.msg.wplcStripSlashes();
                                     }
 
@@ -1058,7 +1062,7 @@ jQuery(document).ready(function() {
                                 /**
                                  * Show the avatar
                                  */                                
-                                wplc_gravatar_image = wplc_show_chat_detail.avatar;                                
+                                wplc_gravatar_image = "<img src='https://www.gravatar.com/avatar/"+md5( jQuery("#wplc_email").val() )+"?s=30&d=mm' class='wplc-user-message-avatar'/>";
                             } else {
                                 /**
                                  * Don't show the avatar
