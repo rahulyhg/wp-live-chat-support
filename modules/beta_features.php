@@ -39,19 +39,20 @@ function wplc_beta_settings_tab_content() {
   ?>
     <div id="tabs-beta">
       <h4><?php _e("Node Server", "wplivechat") ?></h4>
+      <?php if (function_exists("wplc_cloud_load_updates")) { echo "<p><span class='update-nag'>".__('The node server cannot be activated while using the Cloud extension as they are not compatible. Please deactivate the cloud extension to make use of the new Node server.','wplivechat')."</span></p>"; } ?>
       <table class="wp-list-table widefat fixed striped pages">
         <tbody>
           <tr>
-            <td width="400" valign="top">
+            <td width="250" valign="top">
               <label for="wplc_use_node_server"><?php _e("Use our Node Server (beta)","wplivechat"); ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Opt-in to our Node Server (beta) program, and experience realtime chats with minimal impact on your site resources. Please note this is experimental.', 'wplivechat'); ?>"></i></label>
             </td>
             <td valign="top">
-              <input type="checkbox" value="1" name="wplc_use_node_server" <?php if (isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == '1') { echo "checked"; } ?>> 
+              <input type="checkbox" value="1" name="wplc_use_node_server" <?php if (function_exists("wplc_cloud_load_updates")) { echo 'disabled="disabled" readonly="readonly"'; } ?> <?php if (isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == '1') { echo "checked"; } ?>> 
             </td>
           </tr>
 
           <tr>
-            <td width="400" valign="top">
+            <td width="250" valign="top">
               <label for="wplc_use_node_server"><?php _e("Node Server Token (beta)","wplivechat"); ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Security token for accessing chats on the node server. Changing this will remove current chats', 'wplivechat'); ?>"></i></label>
             </td>
             <td valign="top">
