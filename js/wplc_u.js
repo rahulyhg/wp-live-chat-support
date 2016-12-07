@@ -867,6 +867,10 @@ jQuery(document).ready(function() {
             date.setTime(date.getTime() + (2 * 60 * 1000));
             
             wplc_cid = Cookies.get('wplc_cid');
+
+            if(typeof wplc_start_chat_pro_custom_fields_filter !== "undefined" && typeof wplc_start_chat_pro_custom_fields_filter === "function"){
+                wplc_extra_data = wplc_start_chat_pro_custom_fields_filter(wplc_extra_data);
+            }
             
             if (typeof wplc_cid !== "undefined" && wplc_cid !== null) { 
                 /* we've already recorded a cookie for this person */

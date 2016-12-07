@@ -316,7 +316,7 @@ function wplc_admin_survey_layout() {
         echo "          <ol>";
         echo "              <li>".$link1."</li>";
         echo "              <li>".$link2."</li>";
-        echo "              <li>".__("Enable surveys in your live chat <a href='admin.php?page=wplivechat-menu-settings'>settings page</a>.","wplivechat")."</li>";
+        echo "              <li>".__("Enable surveys in your live chat <a href='admin.php?page=wplivechat-menu-settings#tabs-survey'>settings page</a>.","wplivechat")."</li>";
         echo "          </ol>";
         echo "";
         echo "";
