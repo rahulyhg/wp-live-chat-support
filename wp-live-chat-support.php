@@ -1078,7 +1078,7 @@ function wplc_push_js_to_front_basic() {
     	wp_localize_script('wplc-user-script', 'wplc_elem_trigger_id',stripslashes($wplc_settings['wplc_elem_trigger_id']));
     }
 
-    $extra_data_array = array();
+    $extra_data_array = array("object_switch" => true);
     $extra_data_array = apply_filters("wplc_filter_front_js_extra_data",$extra_data_array);
     wp_localize_script('wplc-user-script', 'wplc_extra_data',$extra_data_array);
 
