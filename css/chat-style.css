@@ -141,9 +141,78 @@
     margin-bottom: 3px;
     word-wrap: break-word;
     max-width:96%;
-
+    position: relative;
+    right: 35px;
+    max-width: 71%;
 
 }
+
+.wplc-admin-message {
+    padding: 10px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    border: 1px solid #666;
+    margin-top: 2px;
+    background-color: #666;
+    display: inline-block;
+    float: left;
+    clear: both;
+    margin-bottom: 3px;
+    position: relative;
+    left: 32px;
+    color: #FFF;
+    max-width: 82%;
+    word-wrap: break-word;
+    max-width: 71%;
+}
+
+.wplc-admin-message img{
+
+    border-radius: 25px;
+    position: absolute;
+    left: -37px;
+    top: 3px;
+
+}
+
+.wplc-user-message:before {
+    display: block;
+    width: 0;
+    top: 15px;
+    bottom: auto;
+    left: auto;
+    right: -7px;
+    border-width: 6px 0 6px 7px;
+    border-color: transparent #ffdb99;
+    content: "";
+    position: absolute;
+    border-style: solid;
+}
+
+.wplc-admin-message:before {
+    display: block;
+    width: 0;
+    top: 15px;
+    bottom: auto;
+    left: auto;
+    left: -7px;
+    border-width: 6px 7px 6px 0;
+    border-color: transparent #666;
+    content: "";
+    position: absolute;
+    border-style: solid;
+}
+
+.wplc-user-message img{
+
+    border-radius: 25px;
+    position: absolute;
+    right: -37px;
+    top: 3px;
+
+}
+
 .wplc-user-message hr, .wplc-admin-message hr{
     margin-bottom: 0px !important;
 }
@@ -886,4 +955,16 @@ span.wplc_system_notification {
 }
 .widefat th.sortable, .widefat th.sorted {
     padding: 5px 10px !important;
+}
+
+@media (max-width: 1145px) {
+    .wplc-badge {  
+        max-width: 35% !important;      
+        float: none !important;
+        margin: 0 auto !important;
+    }
+}
+
+#wplc_tabs .ui-tabs-anchor {
+    width: 100%;
 }

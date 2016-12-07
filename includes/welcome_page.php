@@ -1,11 +1,9 @@
 <?php //global $wpgmza_global_array; ?>
 <div class="wrap about-wrap">
 <p>&nbsp;</p>
-<h1><?php _e("Welcome to WP Live Chat Version 7","wplivechat"); ?></h1>
+<h1 style='margin-right: 0;'><?php _e("Welcome to WP Live Chat Version 7","wplivechat"); ?> <div class="wplc-badge" style=' float: right; display: block; max-width: 20%; margin-left: 15%;'><img src='<?php echo plugins_url( "/wp-live-chat-support/images/wplc-logo.png" ); ?>' /></div></h1>
 
 <div class="about-text"><?php _e("Chat to your visitors with the most comprehensive, cost effective Live Chat plugin.","wplivechat"); ?></div>
-
-<div class="wplc-badge" style=''></div>
 
 <a class="button-primary" style='padding:5px; padding-right:15px; padding-left:15px; height:inherit;' href="admin.php?page=wplivechat-menu&override=1"><?php echo __("Skip intro and start accepting chats","wplivechat"); ?></a>
 <p>&nbsp;</p>
@@ -32,55 +30,38 @@
 
 </h2>
 <?php if( !isset( $_GET['action'] ) || ( isset( $_GET['action'] ) && $_GET['action'] == 'welcome' ) ){ ?>
+<h2>What's new in Version 7?</h2>
 <div class="feature-section three-col">
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-university" aria-hidden="true"></i><br/><h4><?php _e("Departments","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-server" aria-hidden="true"></i><br/><h4><?php _e("Light Weight Message Delivery","wplivechat"); ?></h4></div>
         
-        <p><?php _e("Allow visitors to select a department they'd like to speak to. Assign agents to a department with ease.","wplivechat"); ?></p>        
-    </div>
+        <p><?php _e("Use our server to handle the load and you're going to save almost 300% on resources!","wplivechat"); ?></p>        
+    </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-pencil" aria-hidden="true"></i><br/><h4><?php _e("Custom Fields","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Get as much information from your visitor as you need, before they even start a chat!","wplivechat"); ?></p>        
-    </div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent wihout waiting","wplivechat"); ?></h4></div>        
+        <p><?php _e("Visitors can now send messages before an agent has accepted a chat, allowing them to give detailed information to the agent in while they wait. ","wplivechat"); ?></p>        
+    </div>   
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-clock-o" aria-hidden="true"></i><br/><h4><?php _e("Business Hours","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Display the chat between specific times, only when you're available.","wplivechat"); ?></p>        
-    </div>
-</div>
-<div class="feature-section three-col">
-    <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-envelope" aria-hidden="true"></i><br/><h4><?php _e("Light Weight Message Delivery","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Messages are now send using some of the newest, greatest technology on the internet!","wplivechat"); ?></p>        
-    </div>
-    <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-info-circle" aria-hidden="true"></i><br/><h4><?php _e("Documentation Suggestions","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Allow our plugin to help your visitors before your agent accepts a chat. Give your visitors documentation suggestions based on their request","wplivechat"); ?></p>        
-    </div>
-    <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-code" aria-hidden="true"></i><br/><h4><?php _e("Custom Scripts","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Add custom JavaScript and CSS to the plugin without losing any changes after an update.","wplivechat"); ?></p>        
-    </div>
-</div>
-<div class="feature-section three-col">
-    <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-random" aria-hidden="true"></i><br/><h4><?php _e("Chat Transfers","wplivechat"); ?></h4></div>
-        
-        <p><?php _e("Transfer your chat between and agent or department with the click of a button. ","wplivechat"); ?></p>        
-    </div>
-    <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-reply" aria-hidden="true"></i><br/><h4><?php _e("Chat Redirects","wplivechat"); ?></h4></div>
-        
+        <div style='text-align: center;' ><i class="fa-4x fa fa-mail-forward" aria-hidden="true"></i><br/><h4><?php _e("Redirect to a page when the chat has ended","wplivechat"); ?></h4></div>        
         <p><?php _e("Redirect your visitors to a new page after the chat has ended. ","wplivechat"); ?></p>        
     </div>
+</div>
+
+<div class="feature-section three-col">
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-pie-chart" aria-hidden="true"></i><br/><h4><?php _e("Google Analytics Integration","wplivechat"); ?></h4></div>
         
         <p><?php _e("Keep track of your visitors events with our new Google Analytics Integration","wplivechat"); ?></p>        
+    </div>
+    <div class="col">
+        <div style='text-align: center;' ><i class="fa-4x fa fa-keyboard-o" aria-hidden="true"></i><br/><h4><?php _e("Typing Indicator","wplivechat"); ?></h4></div>
+        
+        <p><?php _e("See as and when both parties are typing when using our Beta Node Server!","wplivechat"); ?></p>        
+    </div>    
+    <div class="col">
+        <div style='text-align: center;' ><i class="fa-4x fa fa-envelope" aria-hidden="true"></i><br/><h4><?php _e("Customizable Offline Message Emails","wplivechat"); ?></h4></div>
+        
+        <p><?php _e("Change the subject of your offline message to your preference.","wplivechat"); ?></p>        
     </div>
 </div>
 
@@ -128,49 +109,10 @@
                 <button name='action' value='wplc_submit_find_us' class="button-primary" style=""><?php _e('Submit', 'wplivechat'); ?></button> <a href='<?php echo admin_url("/admin.php?page=wplivechat-menu&override=1"); ?>'class="button"><?php _e('Skip', 'wplivechat'); ?></a>
             </div>
         </form> 
-        <?php //if ($wpgmza_global_array['code'] != "100") { ?>
-                    
-<!--         <h3 style='margin-top:20px;'><?php _e("How did you find out about us?","wp-google-maps"); ?></h3>
-
-        <div class="feature-section normal">
-            <form action='' method='POST' name='wpgmaps_feedback'>                                            
-            <p><ul class="wpgmza_welcome_poll" style="list-style: none outside none;">
-                <li style="list-style: none outside none;">
-                    <input type="radio" id="wpgmaps_findus_repository" value="repository" name="wpgmaps_findus">
-                    <label for="wpgmaps_search_term"><?php _e("WordPress.org plugin repository","wp-google-maps"); ?></label>
-                    <br /><input type="text" id="wpgmaps_search_term" class="regular-text" style='margin-top:5px; margin-left:40px;'  name="wpgmaps_search_term" placeholder="<?php _e("What search term did you use?","wp-google-maps"); ?>">
-                </li>
-                <li style="list-style: none outside none;">
-                    <input type="radio" id="wpgmaps_findus_searchengine" value="search_engine" name="wpgmaps_findus">
-                    <label for="wpgmaps_findus_searchengine"><?php _e("Google or other search engine","wp-google-maps"); ?></label>
-                </li>
-                <li style="list-style: none outside none;">
-                    <input type="radio" id="wpgmaps_findus_friend" value="friend" name="wpgmaps_findus">
-                    <label for="wpgmaps_findus_friend"><?php _e("Friend recommendation","wp-google-maps"); ?></label>
-                </li>
-                <li style="list-style: none outside none;">
-                    <input type="radio" id="wpgmaps_findus_other" value="other" name="wpgmaps_findus">
-                    <label for="wpgmaps_findus_other"><?php _e("Other","wp-google-maps"); ?></label>
-                    <br /><input type="text" id="wpgmaps_findus_other_url" class="regular-text"  style='margin-top:5px; margin-left:40px;'  name="wpgmaps_findus_other_url" placeholder="<?php _e("Please explain","wp-google-maps"); ?>">
-
-                </li>
-                
-                
-            </ul></p>
-            <input class='button-primary' type='submit' name='wpgmza_save_feedback' value='<?php _e("Submit and start accepting chats","wp-google-maps"); ?>'> 
-            
-        </form>
-        </div> -->
-        <?php //} else { ?>
-        <!-- <div class="wpgm_notice_message">
-            <ul>
-                <li>
-                    <?php //echo $wpgmza_global_array['message']; ?>
-                </li>
-            </ul>
-        </div> -->
-        <?php //} ?>
-
+        <br/><br/>
+        
+        <hr />
+        
         <div class="feature-section three-col">
             <div class='col'>
                 <h4><?php _e("New to WP Live Chat Support?","wplivechat"); ?></h4>

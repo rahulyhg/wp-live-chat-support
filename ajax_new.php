@@ -155,8 +155,8 @@ function wplc_init_ajax_callback() {
             echo 'done';        
         }
         if ($_POST['action'] == "wplc_admin_send_msg") {
-            $chat_id = sanitize_text_field($_POST['cid']);
-            $chat_msg = sanitize_text_field($_POST['msg']);
+            $chat_id = sanitize_text_field($_POST['cid']);           
+            $chat_msg = strip_tags($_POST['msg'], '<a><p><img><hr>');            
             $wplc_rec_msg = wplc_record_chat_msg("2",$chat_id,$chat_msg);
             if ($wplc_rec_msg) {
                 echo 'sent';
@@ -397,7 +397,7 @@ function wplc_init_ajax_callback() {
 
         if ($_POST['action'] == "wplc_user_send_msg") {
             $chat_id = sanitize_text_field($_POST['cid']);
-            $chat_msg = sanitize_text_field($_POST['msg']);
+            $chat_msg = strip_tags($_POST['msg'], '<p><a><img><hr>');
             $wplc_rec_msg = wplc_record_chat_msg("1",$chat_id,$chat_msg);
             if ($wplc_rec_msg) {
                 echo 'sent';

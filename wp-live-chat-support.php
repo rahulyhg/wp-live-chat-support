@@ -26,6 +26,10 @@
  * Styling improvements made to the settings page
  * Ability to redirect to a thank you page after the chat has ended
  * You can now start a new chat after refreshing the page instead of waiting 24 hours
+ * New Translation Files: 
+ *  - Albanian ( Thank you Teuta Koraqi )
+ * Updated Translation Files: 
+ *  - Turkish ( Thank you Salih Kunduz )
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -930,11 +934,10 @@ function wplc_push_js_to_front_basic() {
     if ($wplc_settings["wplc_settings_enabled"] == 2) {
         return;
     }
-
+    wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
+    wp_enqueue_script('wplc-md5');
     if (isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1) {
-        $wplc_display = 'display';
-        wp_register_script('wplc-md5', plugins_url('/js/md5.js', __FILE__),array('wplc-user-script'),$wplc_version);
-        wp_enqueue_script('wplc-md5');      
+        $wplc_display = 'display';             
     } else {
         $wplc_display = 'hide';
     }
@@ -1030,13 +1033,17 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_plugin_url', plugins_url());
     
     $wplc_display = false;
- 	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){
+
+ 	$wplc_settings = get_option("WPLC_SETTINGS");
+
+	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){						
 			$wplc_show_name = true;
+			
  	} else {
 			$wplc_show_name = false;
  	}
-    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){
-			$wplc_show_avatar = true;
+    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){    		
+		$wplc_show_avatar = true;    		
  	} else {
 			$wplc_show_avatar = false;
  	}
@@ -2797,7 +2804,25 @@ function wplc_return_admin_chat_javascript($cid) {
 
       }
   	}
+	$wplc_settings = get_option("WPLC_SETTINGS");
+	$wplc_user_data = get_user_by( 'id', get_current_user_id() );
 
+	if( isset($wplc_settings['wplc_show_name']) && $wplc_settings['wplc_show_name'] == '1' ){
+			$wplc_show_name = $wplc_user_data->data->display_name;
+ 	} else {
+			$wplc_show_name = false;
+ 	}
+    if( isset($wplc_settings['wplc_show_avatar']) && $wplc_settings['wplc_show_avatar'] ){
+    		$args = array('class' => array('wplc-admin-message-avatar' ) );
+			$wplc_show_avatar = get_avatar( get_current_user_id(), 30, '', false,  $args);
+ 	} else {
+			$wplc_show_avatar = false;
+ 	}
+ 	$wplc_chat_detail = array( 'name' => $wplc_show_name, 'avatar' => $wplc_show_avatar );
+	
+	wp_localize_script( 'wplc-admin-chat-js', 'wplc_show_chat_detail', $wplc_chat_detail );
+	
+	wp_enqueue_script('wplc-admin-chat-js');
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_chat_name', $cdata->name);
     
@@ -4135,7 +4160,7 @@ function wplc_hook_control_agents_settings() {
  * @param  string 	$line Line number the function is called on
  * @return array    	  Contents of the chat based on the ID provided
  */
-function wplc_get_chat_data($cid,$line) {
+function wplc_get_chat_data($cid,$line = false) {
   global $wpdb;  
   global $wplc_tblname_chats;
 
@@ -4713,7 +4738,7 @@ function nifty_rating_advanced_info_upsell($msg, $cid, $name){
 add_filter("wplc_filter_typing_control_div","wplc_basic_filter_control_return_chat_response_box_before",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before($string) {
     remove_filter("wplc_filter_typing_control_div","wplc_pro_filter_control_return_chat_response_box_before");
-    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator'></div>";
 
     return $string;
 }

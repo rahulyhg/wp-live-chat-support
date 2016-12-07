@@ -32,6 +32,7 @@ span.wplc_system_notification {
     clear:both;
     font-style: italic;
     text-align: left;
+    color: grey !important;
 }
 
 .wplc_doc_suggestion {
