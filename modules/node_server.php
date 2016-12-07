@@ -101,7 +101,7 @@ function wplc_filter_notification_hook_node($type,$cid,$data){
 			/**
 			 * Removed this as it is duplicated on the second loop to the server
 			 */
-			//$msg = $data['msg'];
+			$msg = $data['msg'];
 			break;
 		case "joined":
 			$user_info = get_userdata(intval($data['aid']));

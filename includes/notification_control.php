@@ -56,33 +56,32 @@ function wplc_filter_control_chat_notification_user_loaded($type,$cid,$data) {
 
 add_action("wplc_hook_chat_notification","wplc_filter_control_chat_notification_await_agent",10,3);
 function wplc_filter_control_chat_notification_await_agent($type,$cid,$data) {
+    $wplc_settings = get_option("WPLC_SETTINGS");
+    if(isset($wplc_settings['wplc_use_node_server']) && intval($wplc_settings['wplc_use_node_server']) == 1){ } else {
 
-
-    if ($type == "await_agent") {
-
-        global $wpdb;
-        global $wplc_tblname_msgs;
-
-
-        $wpdb->insert( 
-            $wplc_tblname_msgs, 
-            array( 
-                    'chat_sess_id' => $cid, 
-                    'timestamp' => current_time('mysql'),
-                    'msgfrom' => __('System notification',"wplivechat"),
-                    'msg' => $data['msg'],
-                    'status' => 0,
-                    'originates' => 0
-            ), 
-            array( 
-                    '%s', 
-                    '%s',
-                    '%s',
-                    '%s',
-                    '%d',
-                    '%d'
-            ) 
-        );
+        if ($type == "await_agent") {
+            global $wpdb;
+            global $wplc_tblname_msgs;
+            $wpdb->insert( 
+                $wplc_tblname_msgs, 
+                array( 
+                        'chat_sess_id' => $cid, 
+                        'timestamp' => current_time('mysql'),
+                        'msgfrom' => __('System notification',"wplivechat"),
+                        'msg' => $data['msg'],
+                        'status' => 0,
+                        'originates' => 0
+                ), 
+                array( 
+                        '%s', 
+                        '%s',
+                        '%s',
+                        '%s',
+                        '%d',
+                        '%d'
+                ) 
+            );
+        }
     }
     return $type;
 } 
