@@ -1010,6 +1010,7 @@ function wplc_push_js_to_front_basic() {
 
     if(class_exists("WP_REST_Request")) {
 	    wp_localize_script('wplc-user-script', 'wplc_restapi_enabled', '1');
+	    wp_localize_script('wplc-user-script', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
 		wp_localize_script('wplc-user-script', 'wplc_restapi_endpoint', get_option('siteurl').'/wp-json/wp_live_chat_support/v1');
         } else {
     	wp_localize_script('wplc-user-script', 'wplc_restapi_enabled', '0');
@@ -2242,6 +2243,7 @@ function wplc_admin_javascript() {
       wp_localize_script('wplc-admin-js', 'wplc_wav_file', $wplc_wav_file);
 
       wp_localize_script('wplc-admin-js', 'wplc_ajax_nonce', $ajax_nonce);
+
       wp_localize_script('wplc-admin-js', 'wplc_notification_icon', $not_icon);
 
       $extra_data = apply_filters("wplc_filter_admin_javascript",array());
@@ -2828,6 +2830,7 @@ function wplc_return_admin_chat_javascript($cid) {
     
     if(class_exists("WP_REST_Request")) {
 	    wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_enabled', '1');
+	    wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
 		wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_endpoint', get_option('siteurl').'/wp-json/wp_live_chat_support/v1');
         } else {
     	wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_enabled', '0');
@@ -4762,7 +4765,7 @@ function wplc_basic_filter_control_return_chat_response_box_before($string) {
 add_filter("wplc_filter_typing_control_div_theme_2","wplc_basic_filter_control_return_chat_response_box_before_theme2",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before_theme2($string) {
     remove_filter("wplc_filter_typing_control_div_theme_2","wplc_pro_filter_control_return_chat_response_box_before_theme2");
-    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator wplc-color-4'></div>";
 
     return $string;
 }
