@@ -1054,6 +1054,18 @@ function wplc_push_js_to_front_basic() {
 		wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
 	}
 
+    $wplc_error_messages = array(
+    	'valid_name' 	=> __( "Please enter your name", "wplivechat" ),
+    	'valid_email' 	=> __( "Please enter your email address", "wplivechat" ),
+    	'server_connection_lost' => __("Connection to server lost. Please reload this page. Error: ", "wplivechat"),
+    	'chat_ended_by_operator' => __("The chat has been ended by the operator", "wplivechat"),
+    	'empty_message' => __( "Please enter a message", "wplivechat" ),
+
+	);
+
+    $wplc_error_messages = apply_filters( "wplc_user_error_messages_filter", $wplc_error_messages );
+
+    wp_localize_script('wplc-user-script', 'wplc_error_messages', $wplc_error_messages);
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
     $wplc_run_override = "0";
     $wplc_run_override = apply_filters("wplc_filter_run_override",$wplc_run_override);
@@ -2873,6 +2885,8 @@ function wplc_return_admin_chat_javascript($cid) {
     } else {
         $wplc_user_email_address = "";
     }
+
+
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_name', $display_name);
     wp_localize_script('wplc-admin-chat-js', 'wplc_enable_ding', $enable_ding);
