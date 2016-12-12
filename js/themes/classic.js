@@ -100,7 +100,15 @@ jQuery(document).ready(function() {
 	    jQuery.event.trigger({type: "wplc_open_chat"});
 	});
     jQuery("body").on("click", ".wplc_retry_chat", function() {
-        jQuery.event.trigger({type: "wplc_open_chat"});
+            
+        Cookies.set('wplc_chat_status', 5);
+
+        jQuery("#wplc_chatbox").html("");
+        jQuery("#wp-live-chat-4").fadeOut();
+        jQuery("#wp-live-chat-2").fadeIn();
+        jQuery("#wp-live-chat-2-inner").fadeIn();
+        
+
     });
     jQuery("body").on("click", "#speeching_button", function() {
         jQuery("#wplc_hovercard").hide();

@@ -5045,7 +5045,7 @@ add_filter( "wplc_start_chat_user_form_after_filter", "wplc_powered_by_link_in_c
  * @param  int 		$cid    the current chat ID
  * @return string         	the chat contents, with the 'Powered by' link appended to it
  */
-function wplc_powered_by_link_in_chat( $string, $cid ){
+function wplc_powered_by_link_in_chat( $string ){	
 
 	$show_powered_by = get_option( "WPLC_POWERED_BY" );
 	
