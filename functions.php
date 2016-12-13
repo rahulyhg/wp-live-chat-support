@@ -1015,6 +1015,14 @@ function wplc_return_admin_chat_messages($cid) {
             "
         );
 
+        $current_user = get_user_by( 'id', $wplc_current_user );
+        
+        if( $current_user ){
+            $wplc_user_gravatar = md5( trim($current_user->data->user_email) ); 
+        } else {
+            $wplc_user_gravatar = "";
+        }
+
         $msg_hist = "";
         foreach ($results as $result) {
 
@@ -1035,7 +1043,7 @@ function wplc_return_admin_chat_messages($cid) {
                         $image = "<img src=".$src." width='20px' id='wp-live-chat-2-img'/>";
                     }
                 } else {
-                    /* HERE */
+                    /* HERE */                                        
                     $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=20' class='wplc-admin-message-avatar' />";
                 }
 

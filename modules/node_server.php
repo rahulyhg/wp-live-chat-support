@@ -156,7 +156,11 @@ function wplc_filter_notification_hook_node($type,$cid,$data){
 		case "transfer": 
 
 			$user_info = get_userdata(intval($data['aid']));
-	        $agent = $user_info->display_name;
+			if( $user_info ){
+	        	$agent = $user_info->display_name;
+	        } else {
+	        	$agent = "";
+	        }
 
 	        if(isset($data["auto_transfer"]) && $data["auto_transfer"] == true){
 	        	if(intval($data['aid']) === 0){

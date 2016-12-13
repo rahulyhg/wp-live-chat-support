@@ -108,10 +108,12 @@ jQuery(document).ready(function() {
 	    jQuery.event.trigger({type: "wplc_open_chat"});
 	});
 
-    jQuery("body").on("click", ".wplc_retry_chat", function() {
-        jQuery("#wplc_hovercard").fadeOut("fast");
-        wplc_is_chat_open = true;
-        jQuery.event.trigger({type: "wplc_open_chat"});
+    jQuery("body").on("click", ".wplc_retry_chat", function() {            
+        jQuery("#wplc_chatbox").html("");
+        jQuery("#wp-live-chat-4").fadeOut();
+        Cookies.remove('wplc_cid');
+        Cookies.remove('wplc_chat_status');
+        jQuery("#wp-live-chat-2-inner").fadeIn();
     });
 
 
