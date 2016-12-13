@@ -1391,7 +1391,7 @@ function wplc_store_offline_message($name, $email, $message){
         'timestamp' => current_time('mysql'),
         'name' => sanitize_text_field($name),
         'email' => sanitize_email($email),
-        'message' => sanitize_text_field($message),
+        'message' => implode( "\n", array_map( 'sanitize_text_field', explode( "\n", $message ) ) ),
         'ip' => sanitize_text_field($offline_ip_address),
         'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
     );

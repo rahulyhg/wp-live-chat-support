@@ -19,6 +19,23 @@
   textarea, input[type='text'], input[type='email'], input[type='password']{ width: 100% !important; }
   </style>
 
+  <?php
+  /**
+   * Removes the ajax loader and forces the settings page to load as is after 3 seconds.
+   * 
+   * This has been put here to counter any PHP fatal warnings that may be experienced on the settings page.
+   *
+   * Putting this in the wplc_tabs.js file will not work as that file is not loaded if there is a PHP fatal error
+   */
+  ?>
+  <script>
+     setTimeout( function() {
+        jQuery("#wplc_settings_page_loader").remove();
+        jQuery(".wrap").css('display','block');
+        jQuery(".wplc_settings_save_notice").css('display','block');
+   },3000);
+ </script>
+
 <?php wplc_stats("settings");
 
 
@@ -51,8 +68,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
         
         $wplc_mail_type = get_option("wplc_mail_type");
         if (!isset($wplc_mail_type) || $wplc_mail_type == "" || !$wplc_mail_type) { $wplc_mail_type = "wp_mail"; }
-        if ($wplc_settings["wplc_settings_align"]) { $wplc_settings_align[intval($wplc_settings["wplc_settings_align"])] = "SELECTED"; }
-        if ($wplc_settings["wplc_settings_enabled"]) { $wplc_settings_enabled[intval($wplc_settings["wplc_settings_enabled"])] = "SELECTED"; }
+        if (isset($wplc_settings["wplc_settings_align"])) { $wplc_settings_align[intval($wplc_settings["wplc_settings_align"])] = "SELECTED"; }
+        if (isset($wplc_settings["wplc_settings_enabled"])) { $wplc_settings_enabled[intval($wplc_settings["wplc_settings_enabled"])] = "SELECTED"; }
         if (isset($wplc_settings["wplc_settings_fill"])) { $wplc_settings_fill = $wplc_settings["wplc_settings_fill"]; } else { $wplc_settings_fill = "ed832f"; }
         if (isset($wplc_settings["wplc_settings_font"])) { $wplc_settings_font = $wplc_settings["wplc_settings_font"]; } else { $wplc_settings_font = "FFFFFF"; }
         if (isset($wplc_settings["wplc_settings_color1"])) { $wplc_settings_color1 = $wplc_settings["wplc_settings_color1"]; } else { $wplc_settings_color1 = "ED832F"; }
@@ -466,6 +483,37 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
                     <tr>
+                        <td width="300" valign="top"><?php _e("Offline Chat Box Title", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_pro_na" name="wplc_pro_na" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_na'])) { echo stripslashes($wplc_settings['wplc_pro_na']); } ?>" /> <br />
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="300" valign="top"><?php _e("Offline Text Fields", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_pro_offline1" name="wplc_pro_offline1" type="text" size="50" maxlength="150" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline1'])) { echo stripslashes($wplc_settings['wplc_pro_offline1']); } ?>" /> <br />
+                            <input id="wplc_pro_offline2" name="wplc_pro_offline2" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline2'])) { echo stripslashes($wplc_settings['wplc_pro_offline2']); } ?>" /> <br />
+                            <input id="wplc_pro_offline3" name="wplc_pro_offline3" type="text" size="50" maxlength="150" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline3'])) { echo stripslashes($wplc_settings['wplc_pro_offline3']); } ?>" /> <br />
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="300" valign="top"><?php _e("Custom fields", "wplivechat") ?>:</td>
+                        <td>
+                            <?php do_action( "wplc_hook_offline_custom_fields_integration_settings" ); ?>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <h4><?php _e("Email settings", 'wplivechat') ?></h4> 
+
+
+                <table class='form-table wp-list-table widefat fixed striped pages'>
+                    <tr>
                         <td width='300' valign='top'>
 <?php _e("Email Address", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Email address where offline messages are delivered to. Use comma separated email addresses to send to more than one email address", "wplivechat") ?>"></i>
                         </td>
@@ -485,7 +533,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                     </tr>
 
                 </table>
-                <hr/>
+
                 <table class='form-table wp-list-table widefat fixed striped pages'>
                     <tr>
                         <td width="33%"><?php _e("Sending Method", "wplivechat") ?></td>
@@ -534,26 +582,6 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                         <td>
                             <input id="wplc_mail_password" name="wplc_mail_password" type="password" class="regular-text" value="<?php echo get_option("wplc_mail_password") ?>" placeholder="Password" />
-                        </td>
-                    </tr>
-                </table>
-                <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>
-                    <tr>
-                        <td width="300" valign="top"><?php _e("Offline Chat Box Title", "wplivechat") ?>:</td>
-                        <td>
-                            <input id="wplc_pro_na" name="wplc_pro_na" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_na'])) { echo stripslashes($wplc_settings['wplc_pro_na']); } ?>" /> <br />
-
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="300" valign="top"><?php _e("Offline Text Fields", "wplivechat") ?>:</td>
-                        <td>
-                            <input id="wplc_pro_offline1" name="wplc_pro_offline1" type="text" size="50" maxlength="150" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline1'])) { echo stripslashes($wplc_settings['wplc_pro_offline1']); } ?>" /> <br />
-                            <input id="wplc_pro_offline2" name="wplc_pro_offline2" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline2'])) { echo stripslashes($wplc_settings['wplc_pro_offline2']); } ?>" /> <br />
-                            <input id="wplc_pro_offline3" name="wplc_pro_offline3" type="text" size="50" maxlength="150" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline3'])) { echo stripslashes($wplc_settings['wplc_pro_offline3']); } ?>" /> <br />
-
-
                         </td>
                     </tr>
                 </table>

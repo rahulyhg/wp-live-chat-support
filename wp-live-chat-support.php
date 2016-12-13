@@ -29,6 +29,7 @@
  * Fixed a bug that caused an error in the dashboard when using the PHP cloud server
  * Fixed the styling within the admin chat window to suit the theme chosen
  * Fixed a bug that caused duplicate loading of messages when the user started typing before the admin chat screen was open
+ * Integrated with Contact Form Ready to allow for custom forms to be used for the offline message form
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -481,6 +482,7 @@ require_once (plugin_dir_path(__FILE__) . "includes/surveys.php");
 require_once (plugin_dir_path(__FILE__) . "includes/notification_control.php");
 require_once (plugin_dir_path(__FILE__) . "includes/modal_control.php");
 require_once (plugin_dir_path(__FILE__) . "modules/documentation_suggestions.php");
+require_once (plugin_dir_path(__FILE__) . "modules/offline_messages_custom_fields.php");
 require_once (plugin_dir_path(__FILE__) . "modules/google_analytics.php");
 require_once (plugin_dir_path(__FILE__) . "modules/api/wplc-api.php");
 require_once (plugin_dir_path(__FILE__) . "modules/beta_features.php");
@@ -1080,7 +1082,7 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_offline_msg3',stripslashes($wplc_settings['wplc_pro_offline3']));
     wp_localize_script('wplc-user-script', 'wplc_localized_string_is_typing', __("is typing...","wplivechat"));
 
-    if(isset($wplc_settings['wplc_elem_trigger_id']) && trim($wplc_settings['wplc_elem_trigger_id']) !== ""){
+    if(isset($wplc_settings['wplc_elem_trigger_id']) && trim($wplc_settings['wplc_elem_trigger_id']) !== "") {
     	if(isset($wplc_settings['wplc_elem_trigger_action'])){ 
     		wp_localize_script('wplc-user-script', 'wplc_elem_trigger_action',stripslashes($wplc_settings['wplc_elem_trigger_action']));
     	}
@@ -1643,6 +1645,8 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
       $ret_msg .= apply_filters("wplc_filter_live_chat_box_html_start_chat_button",wplc_filter_control_live_chat_box_html_start_chat_button($wplc_settings,$wplc_using_locale )); 
       $ret_msg .= "</div>";
     } else {
+
+
       /* admin not logged in, show offline messages */
       $wplc_offline = __("We are currently offline. Please leave a message and we'll get back to you shortly.", "wplivechat");
       $text = ($wplc_using_locale ? $wplc_offline : stripslashes($wplc_settings['wplc_pro_offline1']));
@@ -1668,7 +1672,18 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
       $ret_msg .= apply_filters("wplc_filter_live_chat_box_html_send_offline_message_button",wplc_filter_control_live_chat_box_html_send_offline_message_button($wplc_settings)); 
       $ret_msg .= "</div>";
 
+
+
     }
+    $data = array(
+    	'ret_msg' => $ret_msg,
+    	'wplc_settings' => $wplc_settings,
+    	'logged_in' => $logged_in,
+    	'wplc_using_locale' => $wplc_using_locale
+	);
+
+    $ret_msg = apply_filters( "wplc_filter_2nd_layer_modify" , $data );
+
     return $ret_msg;
 }
 
@@ -1875,7 +1890,6 @@ function wplc_output_box_ajax_new($cid = null) {
         
 
         $logged_in = apply_filters("wplc_loggedin_filter",false);
-
 
         $wplc_settings = get_option('WPLC_SETTINGS');
         $ret_msg['cbox'] = apply_filters("wplc_theme_control",$wplc_settings,$logged_in,$wplc_using_locale); 
@@ -3485,7 +3499,7 @@ function wplc_admin_display_offline_messages_new() {
             echo "<td class='chat_id column-chat_d'>" . $result->timestamp . "</td>";
             echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\" /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
-            echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . $result->message . "</td>";
+            echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . nl2br($result->message) . "</td>";
             echo "<td class='chat_name column_chat_delete'><button class='button wplc_delete_message' title='".__('Delete Message', 'wplivechat')."' class='wplc_delete_message' mid='".$result->id."'><i class='fa fa-times'></i></button></td>";
             echo "</tr>";
         }
