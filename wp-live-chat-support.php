@@ -1010,6 +1010,7 @@ function wplc_push_js_to_front_basic() {
 
     if(class_exists("WP_REST_Request")) {
 	    wp_localize_script('wplc-user-script', 'wplc_restapi_enabled', '1');
+	    wp_localize_script('wplc-user-script', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
 		wp_localize_script('wplc-user-script', 'wplc_restapi_endpoint', get_option('siteurl').'/wp-json/wp_live_chat_support/v1');
         } else {
     	wp_localize_script('wplc-user-script', 'wplc_restapi_enabled', '0');
@@ -1053,6 +1054,18 @@ function wplc_push_js_to_front_basic() {
 		wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
 	}
 
+    $wplc_error_messages = array(
+    	'valid_name' 	=> __( "Please enter your name", "wplivechat" ),
+    	'valid_email' 	=> __( "Please enter your email address", "wplivechat" ),
+    	'server_connection_lost' => __("Connection to server lost. Please reload this page. Error: ", "wplivechat"),
+    	'chat_ended_by_operator' => __("The chat has been ended by the operator", "wplivechat"),
+    	'empty_message' => __( "Please enter a message", "wplivechat" ),
+
+	);
+
+    $wplc_error_messages = apply_filters( "wplc_user_error_messages_filter", $wplc_error_messages );
+
+    wp_localize_script('wplc-user-script', 'wplc_error_messages', $wplc_error_messages);
     wp_localize_script('wplc-user-script', 'wplc_enable_ding', $wplc_ding);
     $wplc_run_override = "0";
     $wplc_run_override = apply_filters("wplc_filter_run_override",$wplc_run_override);
@@ -1077,7 +1090,7 @@ function wplc_push_js_to_front_basic() {
     	wp_localize_script('wplc-user-script', 'wplc_elem_trigger_id',stripslashes($wplc_settings['wplc_elem_trigger_id']));
     }
 
-    $extra_data_array = array();
+    $extra_data_array = array("object_switch" => true);
     $extra_data_array = apply_filters("wplc_filter_front_js_extra_data",$extra_data_array);
     wp_localize_script('wplc-user-script', 'wplc_extra_data',$extra_data_array);
 
@@ -2242,6 +2255,7 @@ function wplc_admin_javascript() {
       wp_localize_script('wplc-admin-js', 'wplc_wav_file', $wplc_wav_file);
 
       wp_localize_script('wplc-admin-js', 'wplc_ajax_nonce', $ajax_nonce);
+
       wp_localize_script('wplc-admin-js', 'wplc_notification_icon', $not_icon);
 
       $extra_data = apply_filters("wplc_filter_admin_javascript",array());
@@ -2828,6 +2842,7 @@ function wplc_return_admin_chat_javascript($cid) {
     
     if(class_exists("WP_REST_Request")) {
 	    wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_enabled', '1');
+	    wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
 		wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_endpoint', get_option('siteurl').'/wp-json/wp_live_chat_support/v1');
         } else {
     	wp_localize_script('wplc-admin-chat-js', 'wplc_restapi_enabled', '0');
@@ -2870,6 +2885,8 @@ function wplc_return_admin_chat_javascript($cid) {
     } else {
         $wplc_user_email_address = "";
     }
+
+
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_name', $display_name);
     wp_localize_script('wplc-admin-chat-js', 'wplc_enable_ding', $enable_ding);
@@ -4762,7 +4779,7 @@ function wplc_basic_filter_control_return_chat_response_box_before($string) {
 add_filter("wplc_filter_typing_control_div_theme_2","wplc_basic_filter_control_return_chat_response_box_before_theme2",2,1);
 function wplc_basic_filter_control_return_chat_response_box_before_theme2($string) {
     remove_filter("wplc_filter_typing_control_div_theme_2","wplc_pro_filter_control_return_chat_response_box_before_theme2");
-    $string = $string. "<div class='typing_indicator wplc-color-2'></div>";
+    $string = $string. "<div class='typing_indicator wplc-color-4'></div>";
 
     return $string;
 }
@@ -5028,7 +5045,7 @@ add_filter( "wplc_start_chat_user_form_after_filter", "wplc_powered_by_link_in_c
  * @param  int 		$cid    the current chat ID
  * @return string         	the chat contents, with the 'Powered by' link appended to it
  */
-function wplc_powered_by_link_in_chat( $string, $cid ){
+function wplc_powered_by_link_in_chat( $string ){	
 
 	$show_powered_by = get_option( "WPLC_POWERED_BY" );
 	

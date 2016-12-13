@@ -284,12 +284,14 @@ if(typeof obj[key] !== "undefined" && typeof obj[key]['other'] !== "undefined" &
 
 if( typeof additional_data !== 'undefined' && additional_data != "" ) {
     additional_data = additional_data.replace(/\\/g, '');
-    //additional_data = JSON.parse( additional_data );
+    //additional_data = additional_data.replace(/\"/g, '');
+    
+    additional_data = JSON.parse( additional_data );
 
     var data_column_html = "";
     jQuery.each( additional_data, function( key, val){        
-        var field_name = JSON.parse(val[0]);
-        var field_value = JSON.parse(val[1]);
+        var field_name = val[0];
+        var field_value = val[1];
 
         data_column_html += "<span class='wplc-sub-item-header'>"+field_name+":</span> "+field_value+"<br/>";
 
