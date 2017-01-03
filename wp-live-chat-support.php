@@ -11,9 +11,9 @@
  */
  
 /* 
- * 7.0.00 - 2016-11-xx
+ * 7.0.00 - 2016-12-14
  * Major performance improvements - 300% reduction in DB calls
- * Documentation Suggestions introduced
+ * Node Server Integration (Experimental)
  * Users no longer have to wait for an agent to answer a chat, they can start typing immediately
  * Users can send a request a new chat if a chat times out or an agent doesnt answer
  * Changed tabs in the settings page to be vertical
@@ -30,6 +30,9 @@
  * Fixed the styling within the admin chat window to suit the theme chosen
  * Fixed a bug that caused duplicate loading of messages when the user started typing before the admin chat screen was open
  * Integrated with Contact Form Ready to allow for custom forms to be used for the offline message form
+ * Google Analytics Integration
+ * Ability to change the subject of the offline message
+ * Ability to add custom CSS and JavaScript in the settings page 
  * 
  * 6.2.11 - 2016-10-27 - Medium Priority 
  * Fixed a bug that caused issues with the User JS file when being minified
@@ -461,7 +464,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "7.0.01";
+$wplc_version = "7.0.00";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -514,7 +517,7 @@ add_action('admin_enqueue_scripts', 'wplc_add_admin_stylesheet');
 if (function_exists('wplc_admin_menu_pro')) {
     add_action('admin_menu', 'wplc_admin_menu_pro');
 } else {
-    add_action('admin_menu', 'wplc_admin_menu');
+    add_action('admin_menu', 'wplc_admin_menu', 4);
 }
 add_action('admin_head', 'wplc_superadmin_javascript');
 register_activation_hook(__FILE__, 'wplc_activate');
@@ -1682,9 +1685,14 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
     	'wplc_using_locale' => $wplc_using_locale
 	);
 
-    $ret_msg = apply_filters( "wplc_filter_2nd_layer_modify" , $data );
 
-    return $ret_msg;
+    $ret_msg = apply_filters( "wplc_filter_2nd_layer_modify" , $data );
+	if( is_array( $ret_msg ) ){
+		/* if nothing uses this filter is comes back as an array, so return the original message in that array */
+        return $ret_msg['ret_msg'];
+    } else {
+        return $ret_msg;
+    }
 }
 
 /**
@@ -4074,7 +4082,7 @@ add_filter("wplc_filter_admin_long_poll_chat_loop_iteration","wplc_filter_contro
 function wplc_filter_control_wplc_admin_long_poll_chat_iteration($array,$post_data,$i) {
   if(isset($post_data['action_2']) && $post_data['action_2'] == "wplc_long_poll_check_user_opened_chat"){
       $chat_status = wplc_return_chat_status(sanitize_text_field($post_data['cid']));
-      if($chat_status == 3){
+      if(intval($chat_status) == 3){
           $array['action'] = "wplc_user_open_chat";
       }
   } else {

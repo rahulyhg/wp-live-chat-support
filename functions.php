@@ -1068,7 +1068,7 @@ function wplc_return_admin_chat_messages($cid) {
                     $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>$msg</span><br /><div class='wplc-clear-float-message'></div>";
                 }
             } else {
-                $msg_hist .= "<span class='wplc_system_notification wplc-color-2'>".$msg."</span>";
+                $msg_hist .= "<span class='wplc_system_notification wplc-color-4'>".$msg."</span>";
             }
         }
 

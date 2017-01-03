@@ -10,7 +10,7 @@ var wplc_node_message_restart_handler = null;
 var wplc_node_client_event_logger = null;
 var wplc_node_sockets_ready = false;
 var wplc_transport_prepared = false;
-
+ 
 var wplc_node_async_array = new Array(); //Array which will be sent to our async URL for storage
 var wplc_node_async_send_rate = 1; //Amount of messages that need to be present before we sent the async request
 var wplc_node_async_cookie_check_complete = false;
@@ -22,6 +22,8 @@ var wplc_node_pair_name = "";
 
 var wplc_node_switch_ajax_complete = false;
 var wplc_node_retry_count = 0;
+
+
 
 function WPLCServer(){
 	var wplc_server_ref = this;
@@ -130,7 +132,7 @@ WPLCServer.Socket = {
 		wplc_node_client_event_logger = (typeof clientEventLog !== "undefined" && typeof clientEventLog === "function") ? clientEventLog : false;
 
 		wplc_server_log("Socket Init");
-		wplc_node_socket = new WebSocket('ws://34.193.164.98:6086');
+		wplc_node_socket = new WebSocket('wss://wp-livechat.us-2.evennode.com');
 
 		if(wplc_node_async_cookie_check_complete !== true){
 			//Check if there are any messages we forgot to send via async
@@ -496,6 +498,7 @@ function wplc_node_global_message_receiver(data){
 jQuery(function(){
 	jQuery(document).ready(function(){
 		var wplc_node_searchTimeout; 
+		
 		jQuery("body").on("keydown","#wplc_chatmsg, #wplc_admin_chatmsg", function(e) {
 		    if(typeof wplc_node_sockets_ready !== "undefined" && wplc_node_sockets_ready === true){
 		    	if(typeof wplc_node_is_client_typing !== "undefined"){
