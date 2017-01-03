@@ -1153,7 +1153,10 @@ jQuery(document).ready(function() {
 
         jQuery(document).on("wplc_open_chat", function (event) {
             /* what is the current status? */
-            wplc_chat_status = Cookies.get('wplc_chat_status');
+            wplc_chat_status = Cookies.get('wplc_chat_status');            
+            if( typeof wplc_chat_status == 'undefined' ){
+                Cookies.set('wplc_chat_status', 5, { expires: 1, path: '/' });
+            }
             var wplc_tmp_checker = wplc_pre_open_check_status(status, function() {
                 open_chat();
             });
