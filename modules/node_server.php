@@ -47,8 +47,8 @@ function wplc_node_server_token_regenerate(){
  * @return string (or false on fail)
 */
 function wplc_node_server_post($route, $form_data){
-	//$url = "http://wp-livechat.us-2.evennode.com" . "/" . $route;
-	$url = "http://" . "34.193.164.98:6086" . "/" . $route;
+	$url = "https://wp-livechat.us-2.evennode.com" . "/" . $route;
+	//$url = "http://" . "34.193.164.98:6086" . "/" . $route;
 	if(!isset($form_data['server_token'])){
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
     	if(!$wplc_node_token){

@@ -35,10 +35,10 @@
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-server" aria-hidden="true"></i><br/><h4><?php _e("Light Weight Message Delivery","wplivechat"); ?></h4></div>
         
-        <p style='text-align: center;'><?php _e("Use our server to handle the load and save almost 300% on server resources!","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("Use our server to handle the load and save 1000%+ on server resources!","wplivechat"); ?></p>        
     </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent wihout waiting","wplivechat"); ?></h4></div>        
+        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent without waiting","wplivechat"); ?></h4></div>        
         <p style='text-align: center;'><?php _e("Visitors can now send messages before an agent has accepted a chat, allowing them to give detailed information to the agent before the agent joins.","wplivechat"); ?></p>        
     </div>   
     <div class="col">

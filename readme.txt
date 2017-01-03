@@ -3,7 +3,7 @@ Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
 Requires at least: 3.8
-Tested up to: 4.6.1
+Tested up to: 4.7
 Stable tag: trunk
 License: GPLv2
 
@@ -29,7 +29,10 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Fully customizable live chat experience
 * Apply animations to the chat window
 * Access historical live chat records
+* Use our new powerful Node.js message relay server to improve performance of your live chats
 * Compatible with translation plugins
+* Google Analytics integration
+* Create a custom offline message form when you're not online
 * No advertising or links
 * Add surveys or polls to your chat box, before or after a chat session
 * Quick Responses (insert a predefined response to your live chat box)
@@ -66,6 +69,9 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Fully responsive admin chat dashboard
 * Compatible with all caching plugins (live chat window loaded via Ajax)
 * Desktop Notifications when receiving new live chats
+* Documentation suggestions
+* Transfer chats to another agents
+* Departments
 * Set up your user profile
 * Add your company logo to the live chat window
 * Add your photo to the live chat window
@@ -212,6 +218,30 @@ It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+
+= 7.0.00 - 2016-12-14 - Medium Priority =
+* Major performance improvements - 300% reduction in DB calls
+* Node Server Integration (Experimental)
+* Users no longer have to wait for an agent to answer a chat, they can start typing immediately
+* Users can send a request a new chat if a chat times out or an agent doesnt answer
+* Changed tabs in the settings page to be vertical
+* Removed deprecated functions
+* JavaScript errors fixed when using IE
+* Ability to enable a powered by link on the chat
+* Ability to enable/disable the visitor name and/or gravatar
+* Chat history page columns styling fixes
+* Ability to show the date and/or time in the chat window
+* Styling improvements made to the settings page
+* Ability to redirect to a thank you page after the chat has ended
+* You can now start a new chat after refreshing the page instead of waiting 24 hours
+* Fixed a bug that caused an error in the dashboard when using the PHP cloud server
+* Fixed the styling within the admin chat window to suit the theme chosen
+* Fixed a bug that caused duplicate loading of messages when the user started typing before the admin chat screen was open
+* Integrated with Contact Form Ready to allow for custom forms to be used for the offline message form
+* Google Analytics Integration
+* Ability to change the subject of the offline message
+* Ability to add custom CSS and JavaScript in the settings page 
 
 = 6.2.11 - 2016-10-27 - Medium Priority =
 * Fixed a bug that caused issues with the User JS file when being minified
