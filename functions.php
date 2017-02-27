@@ -620,7 +620,8 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
                 
             }
 
-            $from = apply_filters("wplc_filter_admin_from",$from, $cid);
+            $from = apply_filters("wplc_filter_admin_name",$from, $cid);
+
         }
         else if (intval($result->originates) == 0) {
             /* 
@@ -644,16 +645,27 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
         
         if (!$system_notification) {
             /* this is a normal message */
-
+            // var_dump($msg);
             if(function_exists('wplc_decrypt_msg')){
                 $msg = wplc_decrypt_msg($msg);
             }
+       
+            $msg_array = maybe_unserialize( $msg );
+
+            if( is_array( $msg_array ) ){
+                $msg = $msg_array['m'];
+            }             
+
+            $msg = stripslashes($msg);
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
+
             $msg = stripslashes($msg);
+
+
                 
             if($display_name){
-                $msg_hist[$id] = "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
+                $msg_hist[$id] = "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from </strong> $msg</span><br /><div class='wplc-clear-float-message'></div>";
             } else {            
                 $msg_hist[$id] = "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$msg</span><div class='wplc-clear-float-message'></div>";
             }
@@ -793,12 +805,12 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
     $previous_time = "";
     $previous_timestamp = 0;
     foreach ($results as $result) {
-
+        
         $system_notification = false;
 
         $from = $result->msgfrom;
         $id = $result->id;
-        $msg = stripslashes($result->msg);
+        $msg = $result->msg;
         $timestamp = strtotime($result->timestamp);
 
         $time_diff = $timestamp - $previous_timestamp;
@@ -902,14 +914,26 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
         
             if(function_exists('wplc_decrypt_msg')){
                 $msg = wplc_decrypt_msg($msg);
-            }
+            }                    
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
-            $msg = stripslashes($msg);
+            
+            if( is_serialized( $msg ) ){
+                $msg_array = maybe_unserialize( $msg );            
+                
+                if( is_array( $msg_array ) ){
+                    $msg = $msg_array['m'];
+                } else {
+                    $msg = $msg;
+                }       
+                
+                $msg = stripslashes($msg);
+            }       
+            
 
             if($display_name){
                 if ($html) {
-                    $str = "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$image <strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";
+                    $str = "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$image <strong>$from </strong> $msg</span><br /><div class='wplc-clear-float-message'></div>";
                     $msg_array[$id] = $str;
                     $msg_hist .= $str;
 
@@ -924,7 +948,7 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
                     $msg_array[$id] = $str;
                     $msg_hist .= $str;
                 } else {
-                    $str = "($timeshow) $from: $msg\r\n";
+                    $str = "($timeshow) $msg\r\n";
                     $msg_array[$id] = $str;
                     $msg_hist .= $str;
                 }
@@ -1051,19 +1075,25 @@ function wplc_return_admin_chat_messages($cid) {
 
             } else if (intval($result->originates) == 3) {
                 $system_notification = true;
-            }
-
+            }            
             if (!$system_notification) {
-
+                
                 if(function_exists('wplc_decrypt_msg')){
                     $msg = wplc_decrypt_msg($msg);
-                }
+                }                
 
-                $msg = apply_filters("wplc_filter_message_control_out",$msg);
+                $msg_array = maybe_unserialize( $msg );
+
+                if( is_array( $msg_array ) ){
+                    $msg = $msg_array['m'];
+                }             
+
                 $msg = stripslashes($msg);
 
+                $msg = apply_filters("wplc_filter_message_control_out",$msg);                
+
                 if($display_name){
-                    $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>".$image."<strong>$from</strong>: $msg</span><br /><div class='wplc-clear-float-message'></div>";            
+                    $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>".$image."<strong>$from </strong> $msg</span><br /><div class='wplc-clear-float-message'></div>";            
                 } else {            
                     $msg_hist .= "<span class='wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1'>$msg</span><br /><div class='wplc-clear-float-message'></div>";
                 }
@@ -1280,7 +1310,9 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
         return;
     } else {
     
-        require 'phpmailer/PHPMailerAutoload.php';
+
+
+        //require 'phpmailer/PHPMailerAutoload.php';
         $wplc_pro_settings = get_option("WPLC_PRO_SETTINGS");
         $host = get_option('wplc_mail_host');
         $port = get_option('wplc_mail_port');
@@ -1288,8 +1320,21 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
         $password = get_option("wplc_mail_password");
         if($host && $port && $username && $password){
             //Create a new PHPMailer instance
-            $mail = new PHPMailer();
-            //Tell PHPMailer to use SMTP
+
+            global $phpmailer;
+     
+            // (Re)create it, if it's gone missing
+            if ( ! ( $phpmailer instanceof PHPMailer ) ) {
+                require_once ABSPATH . WPINC . '/class-phpmailer.php';
+                require_once ABSPATH . WPINC . '/class-smtp.php';
+                $mail = new PHPMailer( true );
+            }
+
+
+
+            //$mail = new PHPMailer();
+
+
             $mail->isSMTP();
             //Enable SMTP debugging
             // 0 = off (for production use)
@@ -1308,6 +1353,14 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
             } else if($port == "465"){
                 $mail->SMTPSecure = 'ssl';
             }
+
+            // Empty out the values that may be set
+            $mail->ClearAllRecipients();
+            $mail->ClearAttachments();
+            $mail->ClearCustomHeaders();
+            $mail->ClearReplyTos();
+
+            
             //Whether to use SMTP authentication
             $mail->SMTPAuth = true;
             //Username to use for SMTP authentication

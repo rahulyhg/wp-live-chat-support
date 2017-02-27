@@ -97,8 +97,20 @@ function wplc_filter_control_chat_notification_agent_joined($type,$cid,$data) {
         global $wplc_tblname_msgs;
 
 
-        $user_info = get_userdata(intval($data['aid']));
-        $agent = $user_info->display_name;
+        $wplc_acbc_data = get_option("WPLC_ACBC_SETTINGS");
+
+        if( isset( $wplc_acbc_data['wplc_use_wp_name'] ) && $wplc_acbc_data['wplc_use_wp_name'] == '1' ){
+            $user_info = get_userdata(intval($data['aid']));
+            $agent = $user_info->display_name;
+        } else {
+            if (!empty($wplc_acbc_data['wplc_chat_name'])) {
+                $agent = $wplc_acbc_data['wplc_chat_name'];
+            } else {
+                $agent = 'Admin';
+            }
+        }   
+            
+
         $msg = $agent . " ". __("has joined the chat.","wplivechat");
 
         $wpdb->insert( 

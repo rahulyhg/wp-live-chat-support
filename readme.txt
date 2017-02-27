@@ -1,7 +1,7 @@
 === WP Live Chat Support ===
 Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
-Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
+Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 3.8
 Tested up to: 4.7
 Stable tag: trunk
@@ -35,7 +35,6 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Create a custom offline message form when you're not online
 * No advertising or links
 * Add surveys or polls to your chat box, before or after a chat session
-* Quick Responses (insert a predefined response to your live chat box)
 * Anonymity for your visitors
 * No "Powered by" links on the live chat window
 * No monthly live chat subscriptions needed
@@ -48,7 +47,6 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Comprehensive list of live chat options
 * Enable/Disable the chat box on mobile devices
 * Enable/Disable the sound when a new live chat message is received
-* Select whether Name and Email is required when users initiate a chat
 * Ban visitors from chatting to you based on IP Address
 * Allow the live chat box to automatically pop up
 * Limit the live chat box to only show to registered users
@@ -208,6 +206,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 7.0.02 =
+We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
+
 = 6.2.04 =
 It is highly recommended that you upgrade to WP Live Chat Support version 6.0.04 for security reasons.
 
@@ -219,6 +220,23 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 
 == Changelog ==
 
+= 7.0.04 - 2017-02-15 =
+* Fixed a bug that caused messages to be returned encoded after refreshing the page
+* Fixed a bug that caused the incorrect agent name to be used in the chat window
+* Fixed a bug that caused the 'No Answer' text to not save and show in the chat window
+
+= 7.0.03 - 2017-02-06 =
+* Fixed a bug that caused the name of the agent to disappear after refreshing the page
+* Fixed a bug that caused the agent name to display twice in the chat window
+
+= 7.0.02 - 2017-01-26 - High priority =
+* PHPMailer vulnerability patch (removed our version of PHPMailer and are now using WP's built-in version)
+* Added the ability for plugin users to subscribe to our mailing list
+
+= 7.0.01 - 2017-01-03 =
+* Fixed a bug that caused the chat to disappear after being opened for some users
+* Changes made to the German language files
+* PHPMailer has been updated to the latest version
 
 = 7.0.00 - 2016-12-14 - Medium Priority =
 * Major performance improvements - 300% reduction in DB calls
@@ -766,4 +784,4 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 * More text fields can be customized
 
 = 1.0 =
-* Launch! 
+* Launch!
