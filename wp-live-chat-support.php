@@ -1112,8 +1112,16 @@ function wplc_push_js_to_front_basic() {
     		$chat_data = wplc_get_chat_data( $_COOKIE['wplc_cid'] );
     		
 	        $user_info = get_userdata( intval( $chat_data->agent_id ) );
+        	
+        	if( $user_info ){
 	        
-	        $agent = $user_info->display_name;
+	        	$agent = $user_info->display_name;
+
+	        } else {
+
+	        	$agent = "agent";
+
+	        }
 
     	} else {
     		$agent = 'agent';
