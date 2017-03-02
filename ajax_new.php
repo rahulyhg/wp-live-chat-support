@@ -76,7 +76,7 @@ function wplc_init_ajax_callback() {
              // header("HTTP/1.0 500"); //Simulate 500 error
              // header("HTTP/1.0 404"); //Simulate 404 error
              // die();
-
+			 
             if (defined('WPLC_TIMEOUT')) { @set_time_limit(WPLC_TIMEOUT); } else { @set_time_limit(120); }
             //sleep(6);
             $i = 1;
@@ -88,6 +88,7 @@ function wplc_init_ajax_callback() {
                 echo json_encode($array);
                 exit();
             }
+			
             while($i <= $iterations){
                 
                 
@@ -110,8 +111,6 @@ function wplc_init_ajax_callback() {
                 
 
                 if ($new_chat_data == "false") { $new_chat_data = false; }
-                
-                
                 
                 if($new_chat_data !== $old_chat_data){
                     $array['old_chat_data'] = $old_chat_data;
