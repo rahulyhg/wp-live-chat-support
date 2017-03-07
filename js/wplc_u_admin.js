@@ -183,35 +183,41 @@ function wplc_display_error(error, dismiss) {
 }
 
 function wplc_handle_chat_output(response) {
-var obj = jQuery.parseJSON(response);
-if (obj === false || obj === null) {
-        jQuery("#wplc_chat_ul").html("");
-        current_chat_ids = {};
-        wplc_handle_count_change(0);
-        
-} else {
-    var size = Object.size(current_chat_ids);
-    wplc_handle_count_change(size);
-    if (size < 1) {
-        /* no prior visitor information, update without any checks */
-        current_chat_ids = obj["ids"];
-        wplc_update_chat_list(false,obj);
-    } else {
-        /* we have had visitor information prior to this call, update systematically */
-        if (obj === null) {
-            jQuery("#wplc_chat_ul").html("");
-        } else {
-            current_chat_ids = obj["ids"];
-            wplc_update_chat_list(true,obj);
-        }
-    }
+	var obj = jQuery.parseJSON(response);
+	if (obj === false || obj === null) {
+			jQuery("#wplc_chat_ul").html("");
+			current_chat_ids = {};
+			wplc_handle_count_change(0);
+			
+	} else {
+		// NB: Perry: this block didn't appear to do anything
+		//var size = Object.size(current_chat_ids);
+		//wplc_handle_count_change(size);
+		
+		if (size < 1) {
+			/* no prior visitor information, update without any checks */
+			current_chat_ids = obj["ids"];
+			if(current_chat_ids)
+				wplc_update_chat_list(false,obj);
+		} else {
+			/* we have had visitor information prior to this call, update systematically */
+			if (obj === null) {
+				jQuery("#wplc_chat_ul").html("");
+			} else {
+				current_chat_ids = obj["ids"];
+				if(current_chat_ids)
+					wplc_update_chat_list(true,obj);
+			}
+		}
 
 
-}
-var size = Object.size(current_chat_ids);
-wplc_handle_count_change(size);
+	}
 
-
+	if(obj["visitor_count"])
+	{
+		var size = obj["visitor_count"];
+		wplc_handle_count_change(size);
+	}
 
 }
 function wplc_handle_count_change(qty) {
