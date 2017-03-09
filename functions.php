@@ -662,8 +662,8 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
         if (!$system_notification) {
             /* this is a normal message */
             // var_dump($msg);
-            if(function_exists('wplc_decrypt_msg')){
-                $msg = wplc_decrypt_msg($msg);
+            if(function_exists('wplc_encrypt_decrypt_msg')){
+                $msg = wplc_encrypt_decrypt_msg($msg);
             }
        
             $msg_array = maybe_unserialize( $msg );
@@ -928,8 +928,8 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
 
         if (!$system_notification) {
         
-            if(function_exists('wplc_decrypt_msg')){
-                $msg = wplc_decrypt_msg($msg);
+            if(function_exists('wplc_encrypt_decrypt_msg')){
+                $msg = wplc_encrypt_decrypt_msg($msg);
             }                    
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
@@ -1094,8 +1094,8 @@ function wplc_return_admin_chat_messages($cid) {
             }            
             if (!$system_notification) {
                 
-                if(function_exists('wplc_decrypt_msg')){
-                    $msg = wplc_decrypt_msg($msg);
+                if(function_exists('wplc_encrypt_decrypt_msg')){
+                    $msg = wplc_encrypt_decrypt_msg($msg);
                 }                
 
                 $msg_array = maybe_unserialize( $msg );
