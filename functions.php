@@ -446,7 +446,7 @@ function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
         else if (intval($result->status) == 3) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
             $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-	        if ( $wplc_current_user == $result->agent_id ) {
+	        if ( !isset( $result->agent_id ) || $wplc_current_user == $result->agent_id ) { //Added backwards compat checks
 		        $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
 	        } else {
 		        $actions = "<span class=\"wplc-chat-in-progress\">" . __( "In progress with another agent", "wplivechat" ) . "</span>";
