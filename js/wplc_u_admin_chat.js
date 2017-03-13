@@ -239,6 +239,9 @@ if (new_chat_status === "0") {
             var height = jQuery('#admin_chat_box_area_' + cid)[0].scrollHeight;
             jQuery('#admin_chat_box_area_' + cid).scrollTop(height);
             document.getElementById('wplc_admin_chatmsg').disabled = true;
+            jQuery(".admin_chat_box_inner_bottom").hide();
+            jQuery(".admin_chat_quick_controls").hide();
+            jQuery(".end_chat_div").hide();
         }
     }
 }
