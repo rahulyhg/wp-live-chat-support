@@ -1495,7 +1495,13 @@ function wplc_filter_control_live_chat_box_html_header_div_top($wplc_settings) {
 add_filter("wplc_filter_chat_header_under","wplc_filter_control_chat_header_under",1,2);
 function wplc_filter_control_chat_header_under($ret_msg,$wplc_settings) {
   if (isset($wplc_settings['wplc_newtheme']) && $wplc_settings['wplc_newtheme'] == "theme-2") {
-    $ret_msg .= "<style>#wp-live-chat-header { background:url(".plugins_url('images/chaticon.png', __FILE__).") no-repeat; background-size: cover; }</style>";
+	  
+	// Serve the icon up over HTTPS if needs be
+	$icon = plugins_url('images/chaticon.png', __FILE__);
+	if($_SERVER['HTTPS'])
+		$icon = preg_replace('/^http:\/\//', 'https:\/\/', $icon);
+	  
+    $ret_msg .= "<style>#wp-live-chat-header { background:url('$icon') no-repeat; background-size: cover; }</style>";
     if (function_exists("wplc_acbc_filter_control_chat_header_under")) {
       remove_filter("wplc_filter_chat_header_under","wplc_acbc_filter_control_chat_header_under");  
     }
