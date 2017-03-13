@@ -1,5 +1,5 @@
 
-<p class="about-description"><?php _e("WP Live Chat is created by an international team of developers.","wp-google-maps"); ?></p>
+<p class="about-description"><?php _e("WP Live Chat Support is supported by an international team of developers.","wp-google-maps"); ?></p>
 <h3 class="wp-people-group"><?php _e("Project Leaders","wplivechat"); ?></h3>
 <ul class="wp-people-group " id="wp-people-group-project-leaders">
 
@@ -14,7 +14,7 @@ Nick Duncan</a>
 <li class="wp-person" id="wp-person-dylanauty">
 	<a href="https://profiles.wordpress.org/dylanauty/"  target="_BLANK" class="web"><img src="http://en.gravatar.com/userimage/99843032/c4b24cccc2f7bd5b23ed2d1d8b1638e4?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">
 Dylan Auty</a>
-	<span class="title"><?php _e("Developer","wplivechat"); ?></span>
+	<span class="title"><?php _e("Plugin Developer, App Developer &amp; Support","wplivechat"); ?></span>
 </li>
 <li class="wp-person" id="wp-person-jarrydlong">
 	<a href="https://profiles.wordpress.org/jarryd-long/"  target="_BLANK" class="web"><img src="https://en.gravatar.com/avatar/82d56ebcb216f9f146559a99e721de01?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">
@@ -29,7 +29,7 @@ Nathan Miller</a>
 <li class="wp-person" id="wp-person-andrewlima">
 	<a href="https://profiles.wordpress.org/andrewza/"  target="_BLANK" class="web"><img src="https://en.gravatar.com/avatar/dbd24c87ac41577d55fab74f8604159b?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">
 Andrew Lima</a>
-	<span class="title"><?php _e("Support &amp; Development","wplivechat"); ?></span>
+	<span class="title"><?php _e("Developer &amp; Support","wplivechat"); ?></span>
 </li>
 <li class="wp-person" id="wp-person-travislima">
 	<a href="https://profiles.wordpress.org/travislima/"  target="_BLANK" class="web"><img src="https://en.gravatar.com/avatar/33eb56e7f32e4561965dd7f2ec57430d?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">
@@ -44,7 +44,7 @@ Tam Duncan</a>
 <li class="wp-person" id="wp-person-veroniquesmit">
 	<a href="https://twitter.com/veroniqs19"  target="_BLANK" class="web"><img src="https://en.gravatar.com/avatar/23fc68b805f9b67f6cb048c8e639d423?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">
 Veronique Smit</a>
-	<span class="title"><?php _e("Marketing","wplivechat"); ?></span>
+	<span class="title"><?php _e("Marketing &amp; Support","wplivechat"); ?></span>
 </li>
 <li class="wp-person" id="wp-person-stephangriesel">
 	<a href="https://twitter.com/SteveGriesel"  target="_BLANK" class="web"><img src="https://en.gravatar.com/avatar/ed67fe71c0388e17901d711afd8d08b4?s=60&amp;d=mm&amp;r=g" srcset="http://1.gravatar.com/avatar/76424a001dc6b3ebb4faca0c567800c4?s=120&amp;d=mm&amp;r=g 2x" class="gravatar" alt="">

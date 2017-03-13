@@ -1,9 +1,9 @@
 <?php //global $wpgmza_global_array; ?>
 <div class="wrap about-wrap">
 <p>&nbsp;</p>
-<h1 style='margin-right: 0;'><?php _e("Welcome to WP Live Chat Version 7","wplivechat"); ?> <div class="wplc-badge" style=' float: right; display: block; max-width: 20%; margin-left: 15%;'><img src='<?php echo plugins_url( "/wp-live-chat-support/images/wplc-logo.png" ); ?>' /></div></h1>
+<h1 style='margin-right: 0;'><?php _e("Welcome to WP Live Chat Support v7","wplivechat"); ?> <div class="wplc-badge" style=' float: right; display: block; max-width: 20%; margin-left: 15%;'><img src='<?php echo plugins_url( "/wp-live-chat-support/images/wplc-logo.png" ); ?>' /></div></h1>
 
-<div class="about-text"><?php _e("Chat to your visitors with the most comprehensive, cost effective Live Chat plugin.","wplivechat"); ?></div>
+<div class="about-text"><?php _e("WP Live Chat Support is the most cost effective, feature rich, amazingly supported and most positively reviewed live chat plugin on WordPress!","wplivechat"); ?></div>
 
 <a class="button-primary" style='padding:5px; padding-right:15px; padding-left:15px; height:inherit;' href="admin.php?page=wplivechat-menu&override=1"><?php echo __("Skip intro and start accepting chats","wplivechat"); ?></a>
 <p>&nbsp;</p>
@@ -35,15 +35,15 @@
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-server" aria-hidden="true"></i><br/><h4><?php _e("Light Weight Message Delivery","wplivechat"); ?></h4></div>
         
-        <p><?php _e("Use our server to handle the load and you're going to save almost 300% on resources!","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("Use our server to handle the load and save 1000%+ on server resources!","wplivechat"); ?></p>        
     </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent wihout waiting","wplivechat"); ?></h4></div>        
-        <p><?php _e("Visitors can now send messages before an agent has accepted a chat, allowing them to give detailed information to the agent in while they wait. ","wplivechat"); ?></p>        
+        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent without waiting","wplivechat"); ?></h4></div>        
+        <p style='text-align: center;'><?php _e("Visitors can now send messages before an agent has accepted a chat, allowing them to give detailed information to the agent before the agent joins.","wplivechat"); ?></p>        
     </div>   
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-mail-forward" aria-hidden="true"></i><br/><h4><?php _e("Redirect to a page when the chat has ended","wplivechat"); ?></h4></div>        
-        <p><?php _e("Redirect your visitors to a new page after the chat has ended. ","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("Redirect your visitors to a new page after a chat has ended. ","wplivechat"); ?></p>        
     </div>
 </div>
 
@@ -51,17 +51,17 @@
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-pie-chart" aria-hidden="true"></i><br/><h4><?php _e("Google Analytics Integration","wplivechat"); ?></h4></div>
         
-        <p><?php _e("Keep track of your visitors events with our new Google Analytics Integration","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("Keep track of your visitor's events with our new Google Analytics Integration","wplivechat"); ?></p>        
     </div>
     <div class="col">
         <div style='text-align: center;' ><i class="fa-4x fa fa-keyboard-o" aria-hidden="true"></i><br/><h4><?php _e("Typing Indicator","wplivechat"); ?></h4></div>
         
-        <p><?php _e("See as and when both parties are typing when using our Beta Node Server!","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("See as and when both parties are typing when using our Node Server (beta).","wplivechat"); ?></p>        
     </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-envelope" aria-hidden="true"></i><br/><h4><?php _e("Customizable Offline Message Emails","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-envelope" aria-hidden="true"></i><br/><h4><?php _e("Customizable Offline Message Forms","wplivechat"); ?></h4></div>
         
-        <p><?php _e("Change the subject of your offline message to your preference.","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php echo sprintf( __( "Build your own offline message form using <a href='%s' target='_BLANK'>Contact Form Ready</a>'s drag and drop form builder.","wplivechat"), 'https://wordpress.org/plugins/contact-form-ready/' ); ?></p>        
     </div>
 </div>
 

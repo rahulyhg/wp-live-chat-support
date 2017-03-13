@@ -76,6 +76,11 @@ add_filter("wplc_settings_save_filter_hook", "wplc_beta_settings_save_hooked", 1
  * Save 'Beta Features' settings
 */
 function wplc_beta_settings_save_hooked($wplc_data){
-  if (isset($_POST['wplc_use_node_server'])) { $wplc_data['wplc_use_node_server'] = esc_attr($_POST['wplc_use_node_server']); }
+  if( function_exists( 'wplc_cloud_load_updates' ) ){
+    /** Cloud Server is active - this must not be enabled at all */
+    $wplc_data['wplc_use_node_server'] = 0;
+  } else {
+    if (isset($_POST['wplc_use_node_server'])) { $wplc_data['wplc_use_node_server'] = esc_attr($_POST['wplc_use_node_server']); }
+  }  
   return $wplc_data;
 }

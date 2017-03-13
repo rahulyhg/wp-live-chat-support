@@ -1,9 +1,9 @@
 === WP Live Chat Support ===
 Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
-Tags: live chat, live support, chat plugin, live help, wordpress chat, customer support, chat, chat services, live chat plugin, live support plugin, live chat support plugin, wordpress live chat, wordpress live chat plugin, live chat software, live chat services, chat plugin, support plugin, support, chat software, chat online, visitor chat, chat, free chat, free live chat, customer support, online support, live help, live chat help, chat widget, live chat widget 
+Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 3.8
-Tested up to: 4.6.1
+Tested up to: 4.7
 Stable tag: trunk
 License: GPLv2
 
@@ -29,10 +29,12 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Fully customizable live chat experience
 * Apply animations to the chat window
 * Access historical live chat records
+* Use our new powerful Node.js message relay server to improve performance of your live chats
 * Compatible with translation plugins
+* Google Analytics integration
+* Create a custom offline message form when you're not online
 * No advertising or links
 * Add surveys or polls to your chat box, before or after a chat session
-* Quick Responses (insert a predefined response to your live chat box)
 * Anonymity for your visitors
 * No "Powered by" links on the live chat window
 * No monthly live chat subscriptions needed
@@ -45,7 +47,6 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Comprehensive list of live chat options
 * Enable/Disable the chat box on mobile devices
 * Enable/Disable the sound when a new live chat message is received
-* Select whether Name and Email is required when users initiate a chat
 * Ban visitors from chatting to you based on IP Address
 * Allow the live chat box to automatically pop up
 * Limit the live chat box to only show to registered users
@@ -66,6 +67,9 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Fully responsive admin chat dashboard
 * Compatible with all caching plugins (live chat window loaded via Ajax)
 * Desktop Notifications when receiving new live chats
+* Documentation suggestions
+* Transfer chats to another agents
+* Departments
 * Set up your user profile
 * Add your company logo to the live chat window
 * Add your photo to the live chat window
@@ -202,6 +206,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 7.0.02 =
+We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
+
 = 6.2.04 =
 It is highly recommended that you upgrade to WP Live Chat Support version 6.0.04 for security reasons.
 
@@ -212,6 +219,47 @@ It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+= 7.0.04 - 2017-02-15 =
+* Fixed a bug that caused messages to be returned encoded after refreshing the page
+* Fixed a bug that caused the incorrect agent name to be used in the chat window
+* Fixed a bug that caused the 'No Answer' text to not save and show in the chat window
+
+= 7.0.03 - 2017-02-06 =
+* Fixed a bug that caused the name of the agent to disappear after refreshing the page
+* Fixed a bug that caused the agent name to display twice in the chat window
+
+= 7.0.02 - 2017-01-26 - High priority =
+* PHPMailer vulnerability patch (removed our version of PHPMailer and are now using WP's built-in version)
+* Added the ability for plugin users to subscribe to our mailing list
+
+= 7.0.01 - 2017-01-03 =
+* Fixed a bug that caused the chat to disappear after being opened for some users
+* Changes made to the German language files
+* PHPMailer has been updated to the latest version
+
+= 7.0.00 - 2016-12-14 - Medium Priority =
+* Major performance improvements - 300% reduction in DB calls
+* Node Server Integration (Experimental)
+* Users no longer have to wait for an agent to answer a chat, they can start typing immediately
+* Users can send a request a new chat if a chat times out or an agent doesnt answer
+* Changed tabs in the settings page to be vertical
+* Removed deprecated functions
+* JavaScript errors fixed when using IE
+* Ability to enable a powered by link on the chat
+* Ability to enable/disable the visitor name and/or gravatar
+* Chat history page columns styling fixes
+* Ability to show the date and/or time in the chat window
+* Styling improvements made to the settings page
+* Ability to redirect to a thank you page after the chat has ended
+* You can now start a new chat after refreshing the page instead of waiting 24 hours
+* Fixed a bug that caused an error in the dashboard when using the PHP cloud server
+* Fixed the styling within the admin chat window to suit the theme chosen
+* Fixed a bug that caused duplicate loading of messages when the user started typing before the admin chat screen was open
+* Integrated with Contact Form Ready to allow for custom forms to be used for the offline message form
+* Google Analytics Integration
+* Ability to change the subject of the offline message
+* Ability to add custom CSS and JavaScript in the settings page 
 
 = 6.2.11 - 2016-10-27 - Medium Priority =
 * Fixed a bug that caused issues with the User JS file when being minified
@@ -736,4 +784,4 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 * More text fields can be customized
 
 = 1.0 =
-* Launch! 
+* Launch!

@@ -47,8 +47,8 @@ function wplc_node_server_token_regenerate(){
  * @return string (or false on fail)
 */
 function wplc_node_server_post($route, $form_data){
-	//$url = "http://wp-livechat.us-2.evennode.com" . "/" . $route;
-	$url = "http://" . "34.193.164.98:6086" . "/" . $route;
+	$url = "https://wp-livechat.us-2.evennode.com" . "/" . $route;
+	//$url = "http://" . "34.193.164.98:6086" . "/" . $route;
 	if(!isset($form_data['server_token'])){
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
     	if(!$wplc_node_token){
@@ -156,7 +156,11 @@ function wplc_filter_notification_hook_node($type,$cid,$data){
 		case "transfer": 
 
 			$user_info = get_userdata(intval($data['aid']));
-	        $agent = $user_info->display_name;
+			if( $user_info ){
+	        	$agent = $user_info->display_name;
+	        } else {
+	        	$agent = "";
+	        }
 
 	        if(isset($data["auto_transfer"]) && $data["auto_transfer"] == true){
 	        	if(intval($data['aid']) === 0){
