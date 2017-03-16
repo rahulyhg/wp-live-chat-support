@@ -3,21 +3,28 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 7.0.04
+  Version: 7.0.06
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
   Domain Path: /languages
  */
  
-/* 
- * 7.0.04 - 2017-02-15
+/**
+ * 7.0.06 -2017-03-13 - Low Priority
+ * Enhancement: 'Open Chat' button changes to 'Chat Accepted' once a chat is active
+ * Bug Fix: Compatibility bug fix for decryption in the Pro version
+ * 
+ * 7.0.05 - 2017-03-01 - Low priority 
+ * Fixed broken links on the plugins page 
+ *  
+ * 7.0.04 - 2017-02-15 - Medium Priority
  * Fixed a bug that caused messages to be returned encoded after refreshing the page
  * Fixed a bug that caused the incorrect agent name to be used in the chat window
  * Fixed a bug that caused the 'No Answer' text to not save and show in the chat window
  * 
  * 
- * 7.0.03 - 2017-02-06
+ * 7.0.03 - 2017-02-06 - Medium Priority
  * Fixed a bug that caused the name of the agent to disappear after refreshing the page
  * Fixed a bug that caused the agent name to display twice in the chat window
  * 
@@ -483,7 +490,7 @@ global $wplc_tblname_offline_msgs;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "7.0.04";
+$wplc_version = "7.0.06";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url() . "/wp-live-chat-support/");
@@ -1498,8 +1505,9 @@ function wplc_filter_control_chat_header_under($ret_msg,$wplc_settings) {
 	  
 	// Serve the icon up over HTTPS if needs be
 	$icon = plugins_url('images/chaticon.png', __FILE__);
-	if($_SERVER['HTTPS'])
+	if( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] ){
 		$icon = preg_replace('/^http:\/\//', 'https:\/\/', $icon);
+	}
 	  
     $ret_msg .= "<style>#wp-live-chat-header { background:url('$icon') no-repeat; background-size: cover; }</style>";
     if (function_exists("wplc_acbc_filter_control_chat_header_under")) {
