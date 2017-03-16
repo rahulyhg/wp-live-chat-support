@@ -1714,7 +1714,26 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
       $ret_msg .= apply_filters("wplc_filter_live_chat_box_html_start_chat_button",wplc_filter_control_live_chat_box_html_start_chat_button($wplc_settings,$wplc_using_locale )); 
       $ret_msg .= "</div>";
     } else {
+	    if ( isset( $wplc_settings['wplc_loggedin_user_info'] ) && $wplc_settings['wplc_loggedin_user_info'] == 1 ) {
+		    $wplc_use_loggedin_user_details = 1;
+	    } else {
+		    $wplc_use_loggedin_user_details = 0;
+	    }
 
+	    $wplc_loggedin_user_name  = '';
+	    $wplc_loggedin_user_email = '';
+
+	    if ( $wplc_use_loggedin_user_details == 1 ) {
+		    global $current_user;
+
+		    if ( $current_user->data != null ) {
+			    $wplc_loggedin_user_name  = $current_user->user_nicename;
+			    $wplc_loggedin_user_email = $current_user->user_email;
+		    }
+	    } else {
+		    $wplc_loggedin_user_name  = '';
+		    $wplc_loggedin_user_email = '';
+	    }
 
       /* admin not logged in, show offline messages */
       $wplc_offline = __("We are currently offline. Please leave a message and we'll get back to you shortly.", "wplivechat");
@@ -1724,8 +1743,8 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
       $ret_msg .= $text;
       $ret_msg .= "</div>";
       $ret_msg .= "<div id=\"wplc_message_div\">";
-      $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value=\"\" placeholder=\"".__("Name", "wplivechat")."\" />";
-      $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" value=\"\"  placeholder=\"".__("Email", "wplivechat")."\" />";
+      $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value=\"$wplc_loggedin_user_name\" placeholder=\"".__("Name", "wplivechat")."\" />";
+      $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" value=\"$wplc_loggedin_user_email\"  placeholder=\"".__("Email", "wplivechat")."\" />";
       $ret_msg .= "<textarea name=\"wplc_message\" id=\"wplc_message\" placeholder=\"".__("Message", "wplivechat")."\"></textarea>";
 
       if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
