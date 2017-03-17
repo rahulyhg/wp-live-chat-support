@@ -968,3 +968,9 @@ span.wplc_system_notification {
 #wplc_tabs .ui-tabs-anchor {
     width: 100%;
 }
+
+.wplc-chat-in-progress {
+    display: inline-block;
+    width: 100px;
+    margin-top: 5px;
+}

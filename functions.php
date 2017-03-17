@@ -446,7 +446,11 @@ function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
         else if (intval($result->status) == 3) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
             $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-            $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
+	        if ( !isset( $result->agent_id ) || $wplc_current_user == $result->agent_id ) { //Added backwards compat checks
+		        $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
+	        } else {
+		        $actions = "<span class=\"wplc-chat-in-progress\">" . __( "In progress with another agent", "wplivechat" ) . "</span>";
+	        }
         }
         else if (intval($result->status) == 2) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
@@ -468,21 +472,32 @@ function wplc_list_chats_new($post_data) {
 
     global $wpdb;
     global $wplc_tblname_chats;
+	
+	$data_array = array();
+    $id_list = array();
+	
     $status = 3;
     $wplc_c = 0;    
 
+	// Retrieve count of users in same department or in no department
+	$user_id = get_current_user_id();
+	$user_department = get_user_meta($user_id ,"wplc_user_department", true);
+	
+	$wplc_chat_count_sql = "SELECT COUNT(*) FROM $wplc_tblname_chats WHERE status IN (3,2,10,5,8,9,12)";
+	if($user_department > 0)
+		$wplc_chat_count_sql .= " AND (department_id=0 OR department_id=$user_department)";
+	$data_array['visitor_count'] = $wpdb->get_var($wplc_chat_count_sql);
+	
+	// Retrieve data
     $wplc_chat_sql = "SELECT * FROM $wplc_tblname_chats WHERE (`status` = 3 OR `status` = 2 OR `status` = 10 OR `status` = 5 or `status` = 8 or `status` = 9 or `status` = 12)";
     $wplc_chat_sql .= apply_filters("wplc_alter_chat_list_sql_before_sorting", "");
+	
     $wplc_chat_sql .= " ORDER BY `timestamp` ASC";
 
     $results = $wpdb->get_results($wplc_chat_sql);
-    $data_array = array();
-    $id_list = array();
-    
-            
-    if (!$results) {
-        $data_array = false;
-    } else {
+
+    	
+    if($results) {
         
         
         foreach ($results as $result) {
@@ -543,9 +558,10 @@ function wplc_list_chats_new($post_data) {
            $data_array[$result->id]['data']['ip'] = $user_ip;
            $data_array[$result->id]['other'] = $other_data;
         }
+		
         $data_array['ids'] = $id_list;
     }
-    
+	
     return json_encode($data_array);
 }
 
@@ -646,8 +662,8 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
         if (!$system_notification) {
             /* this is a normal message */
             // var_dump($msg);
-            if(function_exists('wplc_decrypt_msg')){
-                $msg = wplc_decrypt_msg($msg);
+            if(function_exists('wplc_encrypt_decrypt_msg')){
+                $msg = wplc_encrypt_decrypt_msg($msg);
             }
        
             $msg_array = maybe_unserialize( $msg );
@@ -912,8 +928,8 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
 
         if (!$system_notification) {
         
-            if(function_exists('wplc_decrypt_msg')){
-                $msg = wplc_decrypt_msg($msg);
+            if(function_exists('wplc_encrypt_decrypt_msg')){
+                $msg = wplc_encrypt_decrypt_msg($msg);
             }                    
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
@@ -1078,8 +1094,8 @@ function wplc_return_admin_chat_messages($cid) {
             }            
             if (!$system_notification) {
                 
-                if(function_exists('wplc_decrypt_msg')){
-                    $msg = wplc_decrypt_msg($msg);
+                if(function_exists('wplc_encrypt_decrypt_msg')){
+                    $msg = wplc_encrypt_decrypt_msg($msg);
                 }                
 
                 $msg_array = maybe_unserialize( $msg );
