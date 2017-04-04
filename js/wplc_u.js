@@ -1213,4 +1213,17 @@ jQuery(document).ready(function() {
                 open_chat(0);
             });
         }
+
+    // Fix conflict with Responsive Lighbox plugin
+    setTimeout(function () {
+        if (jQuery('html').hasClass('nivo-lightbox-notouch') || jQuery('a[rel*="lightbox"]').length) {
+            jQuery("body").on("keyup", function (event) {
+                if (event.keyCode === 13) {
+                    jQuery("#wplc_send_msg").trigger("click");
+                }
+            });
+        }
+    }, 5000);
+
+
 });
