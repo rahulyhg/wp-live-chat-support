@@ -208,6 +208,14 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <input type="checkbox" value="1" name="wplc_enable_msg_sound" <?php if(isset($wplc_settings['wplc_enable_msg_sound'])  && $wplc_settings['wplc_enable_msg_sound'] == 1 ) { echo "checked"; } ?> />                      
                   </td>
               </tr>
+              <tr>
+                  <td width='300' valign='top'>
+			          <?php _e("Enable Font Awesome set","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this if you have Font Awesome set included with your theme", "wplivechat") ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1" name="wplc_enable_font_awesome" <?php if(isset($wplc_settings['wplc_enable_font_awesome']) && $wplc_settings['wplc_enable_font_awesome'] == 1 ) { echo "checked"; } ?> />
+                  </td>
+              </tr>
               <?php if (!function_exists("wplc_pro_activate")) { ?>
 
               <tr>
