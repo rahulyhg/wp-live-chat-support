@@ -314,6 +314,22 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                     </small>
                 </td>
             </tr>
+              <!-- Chat Icon-->
+              <tr>
+                  <td width='300' valign='top'>
+			          <?php _e("Icon","wplivechat")?>:
+                  </td>
+                  <td>
+                      <input id="wplc_pro_chat_button" type="button" value="<?php _e("Upload Image","wplivechat")?>" readonly disabled />
+                      <small>
+                          <i>
+					          <?php _e("available in the","wplivechat")?>
+                              <a href="http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=pic" title="<?php _e("Pro Add-on","wplivechat")?>" target="_BLANK"><?php _e("Pro Add-on","wplivechat")?></a>
+					          <?php _e("only","wplivechat")?>
+                          </i>
+                      </small>
+                  </td>
+              </tr>
             <!-- Chat Pic-->
             <tr>
                 <td width='300' valign='top'>

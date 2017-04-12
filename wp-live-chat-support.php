@@ -1509,8 +1509,9 @@ function wplc_filter_control_chat_header_under($ret_msg,$wplc_settings) {
 	if( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] ){
 		$icon = preg_replace('/^http:\/\//', 'https:\/\/', $icon);
 	}
-	  
-    $ret_msg .= "<style>#wp-live-chat-header { background:url('$icon') no-repeat; background-size: cover; }</style>";
+	  $icon = apply_filters("wplc_filter_chaticon",$icon);
+
+	  $ret_msg .= "<style>#wp-live-chat-header { background:url('$icon') no-repeat; background-size: cover; }</style>";
     if (function_exists("wplc_acbc_filter_control_chat_header_under")) {
       remove_filter("wplc_filter_chat_header_under","wplc_acbc_filter_control_chat_header_under");  
     }
@@ -2017,7 +2018,7 @@ function wplc_output_box_ajax_new($cid = null) {
 
 }
 function wplc_return_default_theme($wplc_settings,$logged_in,$wplc_using_locale) {
-    $ret_msg = apply_filters("wplc_filter_live_chat_box_html_main_div_top",wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$logged_in,$wplc_using_locale));
+	$ret_msg = apply_filters("wplc_filter_live_chat_box_html_main_div_top",wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$logged_in,$wplc_using_locale));
     $ret_msg .= "<div class=\"wp-live-chat-wraper\">";
     $ret_msg .=   apply_filters("wplc_filter_live_chat_box_html_header_div_top",wplc_filter_control_live_chat_box_html_header_div_top($wplc_settings));
     $ret_msg .= " <i id=\"wp-live-chat-minimize\" class=\"fa fa-minus wplc-color-bg-2 wplc-color-1\" style=\"display:none;\"></i>";
