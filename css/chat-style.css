@@ -974,3 +974,16 @@ span.wplc_system_notification {
     width: 100px;
     margin-top: 5px;
 }
+
+.wplc-history__date {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.wplc-history__date-end {
+    margin-bottom: 10px;
+}
+
+.wplc-history__date strong {
+    margin-right: 5px;
+}
