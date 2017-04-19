@@ -525,6 +525,18 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                         </td>
                     </tr>
                     <tr>
+                        <td width="300" valign="top"><?php _e("Offline Button Text", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_pro_offline_btn" name="wplc_pro_offline_btn" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline_btn'])) { echo stripslashes($wplc_settings['wplc_pro_offline_btn']); } ?>" /> <br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="300" valign="top"><?php _e("Offline Send Button Text", "wplivechat") ?>:</td>
+                        <td>
+                            <input id="wplc_pro_offline_btn_send" name="wplc_pro_offline_btn_send" type="text" size="50" maxlength="50" class="regular-text" value="<?php if (isset($wplc_settings['wplc_pro_offline_btn_send'])) { echo stripslashes($wplc_settings['wplc_pro_offline_btn_send']); } ?>" /> <br />
+                        </td>
+                    </tr>
+                    <tr>
                         <td width="300" valign="top"><?php _e("Custom fields", "wplivechat") ?>:</td>
                         <td>
                             <?php do_action( "wplc_hook_offline_custom_fields_integration_settings" ); ?>
