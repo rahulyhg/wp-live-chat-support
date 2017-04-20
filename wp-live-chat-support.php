@@ -652,6 +652,7 @@ function wplc_version_control() {
 	    if (!isset($wplc_settings['wplc_user_welcome_chat'])) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
 	    if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
 	    if (!isset($wplc_settings['wplc_user_enter'])) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
+	    if (!isset($wplc_settings['wplc_close_btn_text'])) { $wplc_settings["wplc_close_btn_text"] = __("close", "wplivechat"); }
 
 
         if (!isset($wplc_settings['wplc_powered_by_link'])) { $wplc_settings["wplc_powered_by_link"] = "0"; }
@@ -1450,7 +1451,7 @@ function wplc_filter_control_live_chat_box_html_main_div_top($wplc_settings,$log
   	$hovercard_content = apply_filters("wplc_filter_hovercard_content", $hovercard_content);
 
     $ret_msg .= "<div id='wplc_hovercard' style='display:none' class='".$wplc_theme_type."'>";
-    $ret_msg .= "<div id='wplc_hovercard_min' class='wplc_button_standard wplc-color-border-1 wplc-color-bg-1'>".__("close", "wplivechat")."</div>";
+    $ret_msg .= "<div id='wplc_hovercard_min' class='wplc_button_standard wplc-color-border-1 wplc-color-bg-1'>".stripslashes( $wplc_settings['wplc_close_btn_text'] )."</div>";
     $ret_msg .= "<div id='wplc_hovercard_content'>".apply_filters("wplc_filter_live_chat_box_pre_layer1","").$hovercard_content."</div>";
     $ret_msg .= "<div id='wplc_hovercard_bottom'>".apply_filters("wplc_filter_hovercard_bottom_before","").apply_filters("wplc_filter_live_chat_box_hover_html_start_chat_button","",$wplc_settings,$logged_in,$wplc_using_locale)."</div>";
     $ret_msg .= "</div>";
@@ -3076,6 +3077,7 @@ function wplc_activate() {
             "wplc_pro_offline_btn" => __("Leave a message", "wplivechat"),
             "wplc_pro_offline_btn_send" => __("Send message", "wplivechat"),
             "wplc_user_enter" => __("Press ENTER to send your message", "wplivechat"),
+            "wplc_close_btn_text" => __("close", "wplivechat"),
             "wplc_user_welcome_chat" => __("Welcome. How may I help you?", "wplivechat"),
             'wplc_welcome_msg' => __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat")
 
@@ -3758,6 +3760,7 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_pro_tst1'])) { $wplc_data['wplc_pro_tst1'] = esc_attr($_POST['wplc_pro_tst1']); }        
         if (isset($_POST['wplc_pro_intro'])) { $wplc_data['wplc_pro_intro'] = esc_attr($_POST['wplc_pro_intro']); }
         if (isset($_POST['wplc_user_enter'])) { $wplc_data['wplc_user_enter'] = esc_attr($_POST['wplc_user_enter']); }
+        if (isset($_POST['wplc_close_btn_text'])) { $wplc_data['wplc_close_btn_text'] = esc_attr($_POST['wplc_close_btn_text']); }
         if (isset($_POST['wplc_user_welcome_chat'])) { $wplc_data['wplc_user_welcome_chat'] = esc_attr($_POST['wplc_user_welcome_chat']); }
         if (isset($_POST['wplc_welcome_msg'])) { $wplc_data['wplc_welcome_msg'] = esc_attr($_POST['wplc_welcome_msg']); }
 
@@ -4851,6 +4854,7 @@ function wplc_string_check() {
 	if (!isset($wplc_settings['wplc_user_welcome_chat'])) { $wplc_settings["wplc_user_welcome_chat"] = __("Welcome. How may I help you?", "wplivechat"); }
 	if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
 	if (!isset($wplc_settings['wplc_user_enter'])) { $wplc_settings["wplc_user_enter"] = __("Press ENTER to send your message", "wplivechat"); }
+	if (!isset($wplc_settings['wplc_close_btn_text'])) { $wplc_settings["wplc_close_btn_text"] = __("close", "wplivechat"); }
 
   update_option("WPLC_SETTINGS",$wplc_settings);
 

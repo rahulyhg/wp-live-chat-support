@@ -887,6 +887,12 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                             <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /> <span class='description'><?php _e('This text is shown above the user chat input field', 'wplivechat'); ?></span><br />
                         </td>
                     </tr>
+                      <tr class="wplc_localization_strings">
+                          <td width="200" valign="top"><?php _e("Close Button Text", "wplivechat") ?>:</td>
+                          <td>
+                              <input id="wplc_close_btn_text" name="wplc_close_btn_text" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_close_btn_text']) ?>" /><br />
+                          </td>
+                      </tr>
                         
                     <tr>
                         <th><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></th>
