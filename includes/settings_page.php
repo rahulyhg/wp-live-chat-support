@@ -165,7 +165,15 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <?php _e("Require Name And Email","wplivechat")?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Users will have to enter their Name and Email Address when starting a chat", "wplivechat") ?>"></i>                      
                   </td>
                   <td valign='top'>
-                      <input type="checkbox" value="1" name="wplc_require_user_info" <?php if(isset($wplc_settings['wplc_require_user_info'])  && $wplc_settings['wplc_require_user_info'] == 1 ) { echo "checked"; } ?> />                    
+                      <input type="checkbox" value="1" name="wplc_require_user_info" id="wplc_require_user_info" <?php if(isset($wplc_settings['wplc_require_user_info'])  && $wplc_settings['wplc_require_user_info'] == 1 ) { echo "checked"; } ?> />
+                  </td>
+              </tr>
+              <tr class="wplc-user-default-visitor-name__row">
+                  <td width='300' valign='top'>
+		              <?php _e("Default visitor name","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This name will be displayed for all not logged in visitors", "wplivechat") ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="text" name="wplc_user_default_visitor_name" id="wplc_user_default_visitor_name" value="<?php if ( isset( $wplc_settings['wplc_user_default_visitor_name'] ) ) { echo stripslashes( $wplc_settings['wplc_user_default_visitor_name'] ); } else { echo __( "Guest", "wplivechat" ); } ?>" />
                   </td>
               </tr>
               <tr>

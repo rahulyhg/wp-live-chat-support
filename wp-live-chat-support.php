@@ -684,6 +684,10 @@ function wplc_version_control() {
 
         
         if (!isset($wplc_settings['wplc_require_user_info'])) { $wplc_settings['wplc_require_user_info'] = "1"; }
+	    if (!isset($wplc_settings['wplc_user_default_visitor_name'])) {
+		    $wplc_default_visitor_name = __( "Guest", "wplivechat" );
+		    $wplc_settings['wplc_user_default_visitor_name'] = $wplc_default_visitor_name;
+	    }
         if (!isset($wplc_settings['wplc_loggedin_user_info'])) { $wplc_settings['wplc_loggedin_user_info'] = "1"; }
         if (!isset($wplc_settings['wplc_user_alternative_text'])) { 
             $wplc_alt_text = __("Please click \'Start Chat\' to initiate a chat with an agent", "wplivechat");
@@ -1541,6 +1545,12 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
       $wplc_use_loggedin_user_details = 0;
   }
 
+	if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 1) {
+		$wplc_ask_user_details = 1;
+	} else {
+		$wplc_ask_user_details = 0;
+	}
+
   $wplc_loggedin_user_name = "";
   $wplc_loggedin_user_email = "";
 
@@ -1548,19 +1558,17 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
       global $current_user;
 
       if ($current_user->data != null) {
-          //Logged in. Get name and email
-          $wplc_loggedin_user_name = $current_user->user_nicename;
-          $wplc_loggedin_user_email = $current_user->user_email;
+          if ( is_user_logged_in() || $wplc_ask_user_details == 1 ) {
+	          //Logged in. Get name and email
+	          $wplc_loggedin_user_name = $current_user->user_nicename;
+	          $wplc_loggedin_user_email = $current_user->user_email;
+          } else {
+	          $wplc_loggedin_user_name = stripslashes( $wplc_settings['wplc_user_default_visitor_name'] );
+          }
       }
   } else {
-      $wplc_loggedin_user_name = '';
-      $wplc_loggedin_user_email = '';
-  }
-
-  if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 1) {
-      $wplc_ask_user_details = 1;
-  } else {
-      $wplc_ask_user_details = 0;
+	  $wplc_loggedin_user_name = '';
+	  $wplc_loggedin_user_email = '';
   }
 
   if ($wplc_ask_user_details == 1) {
@@ -1732,8 +1740,13 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
 		    global $current_user;
 
 		    if ( $current_user->data != null ) {
-			    $wplc_loggedin_user_name  = $current_user->user_nicename;
-			    $wplc_loggedin_user_email = $current_user->user_email;
+			    if ( is_user_logged_in() ) {
+				    //Logged in. Get name and email
+				    $wplc_loggedin_user_name = $current_user->user_nicename;
+				    $wplc_loggedin_user_email = $current_user->user_email;
+			    } else {
+				    $wplc_loggedin_user_name = stripslashes( $wplc_settings['wplc_user_default_visitor_name'] );
+			    }
 		    }
 	    } else {
 		    $wplc_loggedin_user_name  = '';
@@ -3041,7 +3054,8 @@ function wplc_activate() {
     wplc_handle_db();
     if (!get_option("WPLC_SETTINGS")) {
         $wplc_alt_text = __("Please click \'Start Chat\' to initiate a chat with an agent", "wplivechat");
-        $wplc_admin_email = get_option('admin_email');
+	    $wplc_default_visitor_name = __( "Guest", "wplivechat" );
+	    $wplc_admin_email = get_option('admin_email');
         add_option('WPLC_SETTINGS', array(
             "wplc_settings_align" => "2",
             "wplc_settings_enabled" => "1",
@@ -3057,6 +3071,7 @@ function wplc_activate() {
             "wplc_require_user_info" => '1',
             "wplc_loggedin_user_info" => '1',
             "wplc_user_alternative_text" => $wplc_alt_text,
+            "wplc_user_default_visitor_name" => $wplc_default_visitor_name,
             "wplc_enabled_on_mobile" => '1',
             "wplc_display_name" => '1',
             "wplc_record_ip_address" => '1',
@@ -3723,7 +3738,8 @@ function wplc_head_basic() {
         if (isset($_POST['wplc_powered_by_link'])) { $wplc_data['wplc_powered_by_link'] = esc_attr($_POST['wplc_powered_by_link']); }
         if (isset($_POST['wplc_auto_pop_up'])) { $wplc_data['wplc_auto_pop_up'] = esc_attr($_POST['wplc_auto_pop_up']); }
         if (isset($_POST['wplc_require_user_info'])) { $wplc_data['wplc_require_user_info'] = esc_attr($_POST['wplc_require_user_info']); } else { $wplc_data['wplc_require_user_info'] = "0";  }
-        if (isset($_POST['wplc_loggedin_user_info'])) { $wplc_data['wplc_loggedin_user_info'] = esc_attr($_POST['wplc_loggedin_user_info']); } else {  $wplc_data['wplc_loggedin_user_info'] = "0"; }
+	    if (isset($_POST['wplc_user_default_visitor_name']) && $_POST['wplc_user_default_visitor_name'] != '') { $wplc_data['wplc_user_default_visitor_name'] = esc_attr($_POST['wplc_user_default_visitor_name']); } else { $wplc_data['wplc_user_default_visitor_name'] = __("Guest", "wplivechat"); }
+	    if (isset($_POST['wplc_loggedin_user_info'])) { $wplc_data['wplc_loggedin_user_info'] = esc_attr($_POST['wplc_loggedin_user_info']); } else {  $wplc_data['wplc_loggedin_user_info'] = "0"; }
         if (isset($_POST['wplc_user_alternative_text']) && $_POST['wplc_user_alternative_text'] != '') { $wplc_data['wplc_user_alternative_text'] = esc_attr($_POST['wplc_user_alternative_text']); } else { $wplc_data['wplc_user_alternative_text'] = __("Please click 'Start Chat' to initiate a chat with an agent", "wplivechat"); }
         if (isset($_POST['wplc_enabled_on_mobile'])) { $wplc_data['wplc_enabled_on_mobile'] = esc_attr($_POST['wplc_enabled_on_mobile']); } else {  $wplc_data['wplc_enabled_on_mobile'] = "0"; }
         if (isset($_POST['wplc_display_name'])) { $wplc_data['wplc_display_name'] = esc_attr($_POST['wplc_display_name']); } 
