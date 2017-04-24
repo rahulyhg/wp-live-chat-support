@@ -257,7 +257,21 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </td>
               </tr>
 
-
+                  <tr class="wplc-exclude-post-types__row">
+                      <td width='200' valign='top'>
+			              <?php _e("Exclude chat window on selected post types","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Do not show the chat window on the following post types pages.", "wplivechat") ?>"></i>
+                      </td>
+                      <td valign='top'>
+                          <input type="text" readonly="readonly"/>
+                          <small>
+                              <i>
+					              <?php _e("available in the","wplivechat")?>
+                                  <a href="http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=exclude_pages" title="<?php _e("Pro Add-on","wplivechat")?>" target="_BLANK"><?php _e("Pro Add-on","wplivechat")?></a>
+					              <?php _e("only","wplivechat")?>
+                              </i>
+                          </small>
+                      </td>
+                  </tr>
 
               <?php } ?>
             </table>

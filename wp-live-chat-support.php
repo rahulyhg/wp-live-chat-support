@@ -884,7 +884,7 @@ function wplc_api_keys_menu() {
 }
 
 
-add_action("init","wplc_load_user_js",0);
+add_action("init","wplc_load_user_js",999);
 
 
 function wplc_load_user_js () {
