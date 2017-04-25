@@ -1545,7 +1545,7 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
       $wplc_use_loggedin_user_details = 0;
   }
 
-	if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 1) {
+	if (isset($wplc_settings['wplc_require_user_info']) && ( $wplc_settings['wplc_require_user_info'] == 1 || $wplc_settings['wplc_require_user_info'] == 'name' )) {
 		$wplc_ask_user_details = 1;
 	} else {
 		$wplc_ask_user_details = 0;
@@ -1554,30 +1554,51 @@ function wplc_filter_control_live_chat_box_html_ask_user_detail($wplc_settings) 
   $wplc_loggedin_user_name = "";
   $wplc_loggedin_user_email = "";
 
-  if ($wplc_use_loggedin_user_details == 1) {
+  if ($wplc_use_loggedin_user_details == 1 && is_user_logged_in()) {
       global $current_user;
 
       if ($current_user->data != null) {
-          if ( is_user_logged_in() || $wplc_ask_user_details == 1 ) {
-	          //Logged in. Get name and email
-	          $wplc_loggedin_user_name = $current_user->user_nicename;
-	          $wplc_loggedin_user_email = $current_user->user_email;
-          } else {
-	          $wplc_loggedin_user_name = stripslashes( $wplc_settings['wplc_user_default_visitor_name'] );
-          }
+          //Logged in. Get name and email
+          $wplc_loggedin_user_name = $current_user->user_nicename;
+          $wplc_loggedin_user_email = $current_user->user_email;
       }
   } else {
-	  $wplc_loggedin_user_name = '';
-	  $wplc_loggedin_user_email = '';
+	  if ( $wplc_ask_user_details == 0 ) {
+		  $wplc_loggedin_user_name = stripslashes( $wplc_settings['wplc_user_default_visitor_name'] );
+	  }
   }
 
-  if ($wplc_ask_user_details == 1) {
-      //Ask the user to enter name and email
+  if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 1) {
+	  //Ask the user to enter name and email
 
-      $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value='".$wplc_loggedin_user_name."' placeholder=\"".__("Name", "wplivechat")."\" />";
-      $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"0\" value=\"".$wplc_loggedin_user_email."\" placeholder=\"".__("Email", "wplivechat")."\"  />";
-      $ret_msg .= apply_filters("wplc_start_chat_user_form_after_filter", "");
+	  $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value='" . $wplc_loggedin_user_name . "' placeholder=\"" . __( "Name", "wplivechat" ) . "\" />";
+	  $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"0\" value=\"" . $wplc_loggedin_user_email . "\" placeholder=\"" . __( "Email", "wplivechat" ) . "\"  />";
+	  $ret_msg .= apply_filters( "wplc_start_chat_user_form_after_filter", "" );
 
+  } elseif (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'email') {
+	  $ret_msg .= "<div style=\"padding: 7px; text-align: center;\">";
+	  if (isset($wplc_settings['wplc_user_alternative_text'])) {
+		  $ret_msg .= html_entity_decode( stripslashes($wplc_settings['wplc_user_alternative_text']) );
+	  }
+	  $ret_msg .= '</div>';
+
+	  $wplc_random_user_number = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+	  if ($wplc_loggedin_user_name != '') { $wplc_lin = $wplc_loggedin_user_name; } else {  $wplc_lin = 'user' . $wplc_random_user_number; }
+	  $ret_msg .= "<input type=\"hidden\" name=\"wplc_name\" id=\"wplc_name\" value=\"".$wplc_lin."\" />";
+	  $ret_msg .= "<input type=\"text\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"0\" value=\"" . $wplc_loggedin_user_email . "\" placeholder=\"" . __( "Email", "wplivechat" ) . "\"  />";
+	  $ret_msg .= apply_filters("wplc_start_chat_user_form_after_filter", "");
+  } elseif (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'name') {
+	  $ret_msg .= "<div style=\"padding: 7px; text-align: center;\">";
+	  if (isset($wplc_settings['wplc_user_alternative_text'])) {
+		  $ret_msg .= html_entity_decode( stripslashes($wplc_settings['wplc_user_alternative_text']) );
+	  }
+	  $ret_msg .= '</div>';
+
+	  $wplc_random_user_number = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+	  if ($wplc_loggedin_user_email != '' && $wplc_loggedin_user_email != null) { $wplc_lie = $wplc_loggedin_user_email; } else { $wplc_lie = $wplc_random_user_number . '@' . $wplc_random_user_number . '.com'; }
+	  $ret_msg .= "<input type=\"text\" name=\"wplc_name\" id=\"wplc_name\" value='" . $wplc_loggedin_user_name . "' placeholder=\"" . __( "Name", "wplivechat" ) . "\" />";
+	  $ret_msg .= "<input type=\"hidden\" name=\"wplc_email\" id=\"wplc_email\" wplc_hide=\"1\" value=\"".$wplc_lie."\" />";
+	  $ret_msg .= apply_filters("wplc_start_chat_user_form_after_filter", "");
   } else {
       //Dont ask the user
       $ret_msg .= "<div style=\"padding: 7px; text-align: center;\">";

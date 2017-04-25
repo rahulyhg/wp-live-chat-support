@@ -988,6 +988,7 @@ span.wplc_system_notification {
     margin-right: 5px;
 }
 
-.wplc-exclude-post-types__item {
+.wplc-exclude-post-types__item,
+.wplc-require-user-info__item {
     margin-bottom: 5px;
 }
