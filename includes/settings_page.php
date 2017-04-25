@@ -162,10 +162,25 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                 -->
                   <tr>
                   <td width='300' valign='top'>
-                      <?php _e("Require Name And Email","wplivechat")?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Users will have to enter their Name and Email Address when starting a chat", "wplivechat") ?>"></i>                      
+                      <?php _e("Required Chat Box Fields","wplivechat")?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Set default fields that will be displayed when users starting a chat", "wplivechat") ?>"></i>
                   </td>
                   <td valign='top'>
-                      <input type="checkbox" value="1" name="wplc_require_user_info" id="wplc_require_user_info" <?php if(isset($wplc_settings['wplc_require_user_info'])  && $wplc_settings['wplc_require_user_info'] == 1 ) { echo "checked"; } ?> />
+                      <div class="wplc-require-user-info__item">
+                          <input type="radio" value="1" name="wplc_require_user_info" id="wplc_require_user_info_both" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == '1') { echo "checked"; } ?> />
+                          <label for="wplc_require_user_info_both"><?php _e( 'Show name and email', 'wplivechat' ); ?></label>
+                      </div>
+                      <div class="wplc-require-user-info__item">
+                          <input type="radio" value="email" name="wplc_require_user_info" id="wplc_require_user_info_email" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'email') { echo "checked"; } ?> />
+                          <label for="wplc_require_user_info_email"><?php _e( 'Show email', 'wplivechat' ); ?></label>
+                      </div>
+                      <div class="wplc-require-user-info__item">
+                          <input type="radio" value="name" name="wplc_require_user_info" id="wplc_require_user_info_name" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'name') { echo "checked"; } ?> />
+                          <label for="wplc_require_user_info_name"><?php _e( 'Show name', 'wplivechat' ); ?></label>
+                      </div>
+                      <div class="wplc-require-user-info__item">
+                          <input type="radio" value="0" name="wplc_require_user_info" id="wplc_require_user_info_none" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == '0') { echo "checked"; } ?> />
+                          <label for="wplc_require_user_info_none"><?php _e( 'No fields', 'wplivechat' ); ?></label>
+                      </div>
                   </td>
               </tr>
               <tr class="wplc-user-default-visitor-name__row">

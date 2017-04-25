@@ -430,18 +430,19 @@ jQuery(document).ready(function () {
        
     });
 
-    var visitorNameRow = jQuery('.wplc-user-default-visitor-name__row');
-    if ( jQuery('#wplc_require_user_info').is(':checked') ) {
-        visitorNameRow.hide();
-    } else {
+    var visitorNameRow = jQuery('.wplc-user-default-visitor-name__row'),
+        requireUserInfo = jQuery('input[name=wplc_require_user_info]:checked').val();
+    if ( '0' === requireUserInfo || 'email' === requireUserInfo ) {
         visitorNameRow.show();
+    } else {
+        visitorNameRow.hide();
     }
 
-    jQuery('body').on("click", "#wplc_require_user_info", function (event) {
-        if ( jQuery('#wplc_require_user_info').is(':checked') ) {
-            visitorNameRow.hide();
-        } else {
+    jQuery('body').on("click", "input[name=wplc_require_user_info]", function (event) {
+        if ( '0' === jQuery(this).val() || 'email' === jQuery(this).val() ) {
             visitorNameRow.show();
+        } else {
+            visitorNameRow.hide();
         }
     });
 
