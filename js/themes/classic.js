@@ -124,5 +124,6 @@ jQuery(document).ready(function() {
 
     jQuery("body").on("click", "#wp-live-chat-header", function(){
         jQuery("#wplc_hovercard").hide();
+        jQuery("#wplc-chat-alert").removeClass('is-active');
     });
 });
