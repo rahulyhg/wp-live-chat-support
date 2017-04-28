@@ -531,6 +531,9 @@ jQuery(document).ready(function() {
                                 }
 
                                 if(wplc_new_message_sound){
+                                    if (response['alert']) {
+                                        jQuery('#wplc-chat-alert').addClass('is-active');
+                                    }
                                     var height = jQuery('#wplc_chatbox')[0].scrollHeight;
                                     jQuery('#wplc_chatbox').scrollTop(height);
                                     if (typeof wplc_enable_ding !== 'undefined' && wplc_enable_ding === "1") {
