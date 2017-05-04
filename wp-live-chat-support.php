@@ -4000,39 +4000,42 @@ function wplc_extensions_menu() {
                 )            
             )
         );
-        $data = json_decode($response['body']);
 
-        global $wplc_version;
-        $wplc_version = str_replace(",","",$wplc_version);
+        if(is_array($response) && isset($response['body'])){
+	        $data = json_decode($response['body']);
 
-
-        if ($data) {
-            $output = "";
-            foreach ($data as $extension) {
-              if (!isset($extension->fromversion)) { $extension->fromversion = 0; }
-              if (intval($wplc_version) >= intval($extension->fromversion)) {
+	        global $wplc_version;
+	        $wplc_version = str_replace(",","",$wplc_version);
 
 
-                $output .= '<div class="wplc-extension">';
-                $output .= '<h3 class="wplc-extension-title">'.$extension->title.'</h3>';
-                $output .= '<a href="'.$extension->link.'" title="'.$extension->title.'" target="_BLANK">';
-                $output .= '<img width="320" height="200" src="'.$extension->image.'" class="attachment-showcase wp-post-image" alt="'.$extension->title.'" title="'.$extension->title.'">';
-                $output .= '</a>';
-                $output .= '<p></p>';
-                $output .= '<p><div class="wplc-extension-label-box">';
-                $output .= '</div></p>';
-                $output .= '<p>'.$extension->description.'</p>';
-                if ($extension->slug != false && is_plugin_active($extension->slug."/".$extension->slug.".php")) {
-                    $button = '<a href="javascriot:void(0);" title="" disabled class="button-secondary">'.__("Already installed","wplivechat").'</a>';
-                } else {
-                    $button = '<a href="'.$extension->link.'" title="'.$extension->title.'" class="button-secondary" target="_BLANK">'.$extension->button_text.'</a>';
-                }
-                $output .= $button;
-                $output .= '</div>';
-              }
-            }
-            echo $output;
-        }
+	        if ($data) {
+	            $output = "";
+	            foreach ($data as $extension) {
+	              if (!isset($extension->fromversion)) { $extension->fromversion = 0; }
+	              if (intval($wplc_version) >= intval($extension->fromversion)) {
+
+
+	                $output .= '<div class="wplc-extension">';
+	                $output .= '<h3 class="wplc-extension-title">'.$extension->title.'</h3>';
+	                $output .= '<a href="'.$extension->link.'" title="'.$extension->title.'" target="_BLANK">';
+	                $output .= '<img width="320" height="200" src="'.$extension->image.'" class="attachment-showcase wp-post-image" alt="'.$extension->title.'" title="'.$extension->title.'">';
+	                $output .= '</a>';
+	                $output .= '<p></p>';
+	                $output .= '<p><div class="wplc-extension-label-box">';
+	                $output .= '</div></p>';
+	                $output .= '<p>'.$extension->description.'</p>';
+	                if ($extension->slug != false && is_plugin_active($extension->slug."/".$extension->slug.".php")) {
+	                    $button = '<a href="javascriot:void(0);" title="" disabled class="button-secondary">'.__("Already installed","wplivechat").'</a>';
+	                } else {
+	                    $button = '<a href="'.$extension->link.'" title="'.$extension->title.'" class="button-secondary" target="_BLANK">'.$extension->button_text.'</a>';
+	                }
+	                $output .= $button;
+	                $output .= '</div>';
+	              }
+	            }
+	            echo $output;
+	        }
+	    }
     ?>
 
     
