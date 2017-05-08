@@ -74,8 +74,8 @@ function wplc_node_server_post($route, $form_data){
             'content' => http_build_query($form_data)
         )
     );
-    $context  = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
+    $context  = @stream_context_create($options);
+    $result = @file_get_contents($url, false, $context);
     
     if ($result === FALSE) { 
         return false;
