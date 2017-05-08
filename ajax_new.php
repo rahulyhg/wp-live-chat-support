@@ -325,7 +325,8 @@ function wplc_init_ajax_callback() {
                             $array['data'] = null;
                             $array['check'] = true;
                             if($_POST['status'] == 5){
-                                $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array',false);
+	                            $array['sound'] = false;
+	                            $messages = wplc_return_chat_messages(sanitize_text_field($_POST['cid']),false,true,$wplc_settings,$cdata,'array',false);
                                 if ($messages){
                                     $array['data'] = $messages;
                                 }
