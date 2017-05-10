@@ -204,7 +204,7 @@
     border-style: solid;
 }
 
-.wplc-user-message img{
+.wplc-user-message img.wplc-user-message-avatar {
 
     border-radius: 25px;
     position: absolute;
