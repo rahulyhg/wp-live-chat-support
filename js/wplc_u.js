@@ -1042,10 +1042,16 @@ jQuery(document).ready(function() {
                 if (typeof wplc_name == "undefined" || wplc_name == null || wplc_name == "") {
                     wplc_name = Cookies.get('wplc_name');
                 }
+                if (typeof wplc_name == "undefined") {
+                    wplc_name = 'Guest';
+                }
 
                 var wplc_email = jQuery("#wplc_email").val();
                 if (typeof wplc_email == "undefined" || wplc_email == null || wplc_email == "") {
                     wplc_email = Cookies.get('wplc_email');
+                }
+                if (typeof wplc_email == "undefined") {
+                    wplc_email = '';
                 }
 
 
