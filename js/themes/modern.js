@@ -1,3 +1,4 @@
+
 jQuery(document).on("wplc_minimize_chat", function( e ) {
     wplc_is_chat_open = false;
     jQuery('#wp-live-chat').height("");
@@ -133,5 +134,6 @@ jQuery(document).ready(function() {
 
 
             
+
 
 });

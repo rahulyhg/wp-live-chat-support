@@ -1016,3 +1016,4 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
     
     </div>
 
+

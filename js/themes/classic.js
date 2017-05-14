@@ -126,4 +126,5 @@ jQuery(document).ready(function() {
         jQuery("#wplc_hovercard").hide();
         jQuery("#wplc-chat-alert").removeClass('is-active');
     });
+
 });

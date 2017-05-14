@@ -4106,6 +4106,7 @@ function wplc_extensions_menu() {
 			    }
 			    echo $output;
 		    }
+
 	    }
     ?>
 
