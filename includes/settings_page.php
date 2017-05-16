@@ -167,15 +167,15 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   <td valign='top'>
                       <div class="wplc-require-user-info__item">
                           <input type="radio" value="1" name="wplc_require_user_info" id="wplc_require_user_info_both" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == '1') { echo "checked"; } ?> />
-                          <label for="wplc_require_user_info_both"><?php _e( 'Show name and email', 'wplivechat' ); ?></label>
+                          <label for="wplc_require_user_info_both"><?php _e( 'Name and email', 'wplivechat' ); ?></label>
                       </div>
                       <div class="wplc-require-user-info__item">
                           <input type="radio" value="email" name="wplc_require_user_info" id="wplc_require_user_info_email" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'email') { echo "checked"; } ?> />
-                          <label for="wplc_require_user_info_email"><?php _e( 'Show email', 'wplivechat' ); ?></label>
+                          <label for="wplc_require_user_info_email"><?php _e( 'Email', 'wplivechat' ); ?></label>
                       </div>
                       <div class="wplc-require-user-info__item">
                           <input type="radio" value="name" name="wplc_require_user_info" id="wplc_require_user_info_name" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == 'name') { echo "checked"; } ?> />
-                          <label for="wplc_require_user_info_name"><?php _e( 'Show name', 'wplivechat' ); ?></label>
+                          <label for="wplc_require_user_info_name"><?php _e( 'Name', 'wplivechat' ); ?></label>
                       </div>
                       <div class="wplc-require-user-info__item">
                           <input type="radio" value="0" name="wplc_require_user_info" id="wplc_require_user_info_none" <?php if (isset($wplc_settings['wplc_require_user_info']) && $wplc_settings['wplc_require_user_info'] == '0') { echo "checked"; } ?> />
