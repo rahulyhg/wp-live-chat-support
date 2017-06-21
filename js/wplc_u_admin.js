@@ -221,11 +221,13 @@ function wplc_handle_chat_output(response) {
 
 }
 function wplc_handle_count_change(qty) {
-if (qty > chat_count) {
+    console.log(chat_count);
+    console.log(qty);
+if (parseInt(qty) !== parseInt(chat_count)) {
     jQuery(".wplc_chat_vis_count_box").animate({backgroundColor: '#B3D24B'}, 300);
     jQuery(".wplc_vis_online").html(qty);
     jQuery(".wplc_chat_vis_count_box").animate({backgroundColor: 'white'}, 200);
-} else if (qty === chat_count) {
+} else if (parseInt(qty) === parseInt(chat_count)) {
     jQuery(".wplc_vis_online").html(qty);
 } else {
     jQuery(".wplc_chat_vis_count_box").animate({backgroundColor: '#E1734A'}, 300);
@@ -428,6 +430,22 @@ jQuery(document).ready(function () {
             }
         });
        
+    });
+
+    var visitorNameRow = jQuery('.wplc-user-default-visitor-name__row'),
+        requireUserInfo = jQuery('input[name=wplc_require_user_info]:checked').val();
+    if ( '0' === requireUserInfo || 'email' === requireUserInfo ) {
+        visitorNameRow.show();
+    } else {
+        visitorNameRow.hide();
+    }
+
+    jQuery('body').on("click", "input[name=wplc_require_user_info]", function (event) {
+        if ( '0' === jQuery(this).val() || 'email' === jQuery(this).val() ) {
+            visitorNameRow.show();
+        } else {
+            visitorNameRow.hide();
+        }
     });
 
     if (typeof wplc_choose_accept_chats !== "undefined" && wplc_choose_accept_chats === "0" ) {
