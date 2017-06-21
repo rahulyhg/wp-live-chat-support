@@ -993,3 +993,31 @@ span.wplc_system_notification {
     margin-bottom: 5px;
 
 }
+.wplc-chat-box-notification--disabled {
+    padding: 5px;
+    display: block;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #d26d6d;
+    background-color: #f3bfbf;
+    font-weight: bold;
+}
+
+
+.admin_chat_box_inner span.timedate {
+    clear: both;
+    position: relative;
+    font-size: 0.8em;
+    font-style:italic
+}
+.wplc-msg-float-left {
+    left: 32px;
+    float:left;
+}
+.wplc-msg-float-right {
+    right: 32px;
+    float:right;
+}
+
+

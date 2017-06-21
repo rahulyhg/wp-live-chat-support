@@ -126,7 +126,7 @@ function wplc_return_nimble_surveys() {
             'body' => array( 
                 'wordpress_plugin' => 1,
                 'action' => 'return_surveys',
-                'siteurl' => get_option('siteurl')
+                'siteurl' => site_url()
             )
         )
     );
@@ -302,7 +302,7 @@ function wplc_admin_survey_layout() {
     else {
 
     $link1 = sprintf( __( 'Register on <a href="%s" target="_BLANK" title="NimbleSquirrel">NimbleSquirrel</a> (It\'s free.)', 'wplivechat' ),
-        'http://app.nimblesquirrel.com/join.php?email='.get_option("admin_email")."&site=".get_option('siteurl').'&utm_source=wplc&utm_medium=click&utm_campaign=plugin_register'
+        'http://app.nimblesquirrel.com/join.php?email='.get_option("admin_email")."&site=".site_url().'&utm_source=wplc&utm_medium=click&utm_campaign=plugin_register'
     );
     $link2 = sprintf( __( '<a href="%s" target="_BLANK" title="Create a survey">Create a survey</a>.', 'wplivechat' ),
         'http://app.nimblesquirrel.com/my_account.php?a=add_survey_wizard&utm_source=wplc&utm_medium=click&utm_campaign=add_survey'

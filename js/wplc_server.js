@@ -23,6 +23,7 @@ var wplc_node_pair_name = "";
 var wplc_node_switch_ajax_complete = false;
 var wplc_node_retry_count = 0;
 
+var wplc_msg_history = new Array();
 
 
 function WPLCServer(){
@@ -282,7 +283,7 @@ WPLCServer.Ajax = {
 			},
 			complete : function(response){
 				if(typeof wplc_send_complete_callback === "function"){
-					wplc_send_complete_callback(response);
+					wplc_send_complete_callback(response, wplc_send_data);
 				}
 			}
 		});
@@ -474,10 +475,11 @@ function wplc_node_global_message_receiver(data){
 	}
 
 	if(typeof data['pair_typing'] !== "undefined"){
+
 		if(data['pair_typing'] === true || data['pair_typing'] === "true"){
 			if(wplc_node_is_pair_typing_indicator_visible === false){
 				if (jQuery("#wplc_user_typing").length>0) { } else {
-                	jQuery(".typing_indicator").html("<span id='wplc_user_typing'>"+wplc_node_pair_name+" "+wplc_localized_string_is_typing+"</span>");
+                	jQuery(".typing_indicator").html("<span id='wplc_user_typing'>"+wplc_node_pair_name+" "+wplc_localized_string_is_typing_single+"</span>");
                 	jQuery(".typing_indicator").addClass("typing_indicator_active");
                 }
 			}
@@ -493,6 +495,216 @@ function wplc_node_global_message_receiver(data){
 		}
 
 	}
+}
+String.prototype.wplcStripSlashes = function(){
+    return this.replace(/\\(.)/mg, "$1");
+}
+
+function wplc_add_date_and_time(the_message,originates) {
+	if (parseInt(originates) === 1 || parseInt(originates) === 2) {
+	
+		var time_msg = '';
+
+		/* identfy the timestamp */
+		if (typeof the_message.other === "undefined" || typeof the_message.other.datetime === "undefined" || the_message.other === false) {
+			/* only run if it hasnt got a timestamp in the .other.datetime key */
+			if (typeof the_message.timestamp !== "undefined") {
+				/* most likely came from node as node */
+
+				if (typeof the_message.other !== "object") { the_message.other = {}; }
+				the_message.other.datetime = the_message.timestamp;
+
+			}
+		}
+		
+
+		if (typeof the_message.other === "undefined" || typeof the_message.other.datetime === "undefined") {
+			/* there is no datetime so return nothing */
+			return '';
+		} else {
+			if (typeof wplc_show_chat_detail !== "undefined") {
+		       
+		        if (typeof wplc_show_chat_detail.date !== "undefined" && wplc_show_chat_detail.date === "1") {
+		        	var dateTime = new Date(parseInt(the_message.other.datetime)*1000);
+					dateTime = dateTime.getMonth() + '/' + dateTime.getDate();
+		        	time_msg += dateTime+ " ";
+
+		        }
+		         if (typeof wplc_show_chat_detail.time !== "undefined" && wplc_show_chat_detail.time === "1") {
+
+
+		        	var dateTime = new Date(parseInt(the_message.other.datetime)*1000);
+					dateTime = dateTime.getHours() + ':' + dateTime.getMinutes();
+
+		        	time_msg += dateTime;
+		        }
+		        if (time_msg !== '') {
+		        	if (parseInt(originates) === 1) { aoru_class = 'wplc-msg-float-left'; } else { aoru_class = 'wplc-msg-float-right'; }
+		        	time_msg = '<span class="timedate '+aoru_class+'">'+time_msg+'</span>';
+		        }
+		    }
+
+
+			return time_msg;
+		}
+	} else {
+		return '';
+	}
+	
+}
+
+/**
+ * Pushes the message object to the chat box
+ * 
+ * @param  {object} the_message The message object
+ * @param  {string} aoru        a for Agent, u for User
+ * @return void
+ */
+function wplc_push_message_to_chatbox(the_message, aoru, next) {
+
+	/**
+	 * First check if we have processed this message already, by comparing the ID
+	 *
+	 * Some system notifications may not come through with an ID so we can accept those.
+	 */
+	var add_message = true;
+	if (typeof the_message.mid !== "undefined") {
+		if (parseInt(the_message.mid) === 0 || the_message.mid === null) {
+			add_message = true;
+		} else {
+			if (typeof wplc_msg_history[the_message.mid] !== "undefined") {
+				/* we have this message already */
+				add_message = false;
+			} else {
+				/* add this to our history */
+				wplc_msg_history[the_message.mid] = true;
+			}
+		}
+	}
+	if (add_message) {
+	    if(typeof the_message.originates !== "undefined" && the_message.originates !== null && the_message.originates !== "null"){
+	        var message_class = "";
+	        var grav_hash = "";
+	        var message_grav = "";
+	        var message_from = "";
+	        var message_content = "";
+	        var message_aid;
+
+
+	        if(parseInt(the_message.originates) === 1) {
+	            //From Admin
+	            
+	            /* Define which agent it was sent from  */
+	            if (typeof the_message.other !== "undefined" && typeof the_message.other.aid !== "undefined") {
+	            	message_aid = the_message.other.aid.toString(); /* set it to a string because wp_localize doesnt know how to set keys as integers */
+	            } else if (typeof the_message.other !== "undefined" && typeof the_message.other.agent_id !== "undefined") {
+	            	/* cloud server uses "agent_id" instead of "aid" */
+					message_aid = the_message.other.agent_id.toString();
+	            } else {
+	            	message_aid = false;
+	            }
+	            message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
+
+	            if (aoru === 'u') {
+	            	if (message_aid !== false && typeof wplc_agent_data !== "undefined" && typeof wplc_agent_data[message_aid] !== "undefined") {
+	            		/* we know who the agent was that sent this message (v7.1.00+) */
+	            		if (typeof wplc_show_chat_detail !== "undefined") {
+			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_agent_data[message_aid].md5 !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_agent_data[message_aid].md5+"?s=30'  class='wplc-admin-message-avatar' />" : "");  }
+			                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_agent_data[message_aid].name !== "undefined" ? wplc_agent_data[message_aid].name : "") + ": ";  }                                                
+			            }
+
+	            	} else {
+	            		/* we do'nt know which agent sent this message, so lets set it as the current user instead (backwards compat) */
+			            if (typeof wplc_show_chat_detail !== "undefined") {
+			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_current_agent.email !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_current_agent.email+"?s=30'  class='wplc-admin-message-avatar' />" : "");  }
+			                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_current_agent.name !== "undefined" ? wplc_current_agent.name : "") + ": ";  }                                                
+			            }
+			        }
+		        } else {
+	    			if (message_aid !== false && typeof wplc_agent_data !== "undefined" && typeof wplc_agent_data[message_aid] !== "undefined") {
+	            		/* we know who the agent was that sent this message (v7.1.00+) */
+	            		if (typeof wplc_show_chat_detail !== "undefined") {
+			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_agent_data[message_aid].md5 !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_agent_data[message_aid].md5+"?s=30'  class='wplc-admin-message-avatar' />" : "");  }
+			                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_agent_data[message_aid].name !== "undefined" ? wplc_agent_data[message_aid].name : "") + ": ";  }                                                
+			            }
+
+	            	} else {
+		        		if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_admin_agent_email !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_admin_agent_email+"?s=30'  class='wplc-admin-message-avatar' />" : "");  }
+		                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_admin_agent_name !== "undefined" ? wplc_admin_agent_name : "") + ": ";  } 
+		            }
+		        }
+
+	            message_content = the_message.msg.wplcStripSlashes();
+	            wplc_new_message_sound = true;
+	            
+	        } else if (parseInt(the_message.originates) === 0 || parseInt(the_message.originates) === 3) {
+	            //System Notification
+	            message_class = "wplc_system_notification wplc-color-4";
+	            message_content = the_message.msg;
+	            if (typeof the_message.other.ntype !== "undefined") {
+	                if (the_message.other.ntype === "joined") {
+	                    jQuery.event.trigger({type: "wplc_agent_joined", ndata:the_message});                                            
+	                }
+	            }
+
+	        } else {
+	        	/* most likely from the user */
+	            message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
+	            if (aoru === 'u') {
+	                if (jQuery(wplc_email).val() !== "") {
+	                    message_grav = md5(jQuery(wplc_email).val());
+	                    message_grav = "<img src='//www.gravatar.com/avatar/" + message_grav + "?s=30'  class='wplc-user-message-avatar' />";    
+	                }
+	                if (typeof Cookies.get("wplc_name") === "undefined") {                                      
+	                	message_from = 'Guest: ';
+	                } else {
+	                	message_from = Cookies.get("wplc_name") + ": ";
+	                }
+	            } else {
+	            	if (typeof wplc_chat_email !== "undefined") {
+	                    message_grav = "<img src='//www.gravatar.com/avatar/" + wplc_chat_email + "?s=30'  class='wplc-user-message-avatar' />";
+	            	}
+	            	if (typeof wplc_chat_name !== "undefined") {
+	            		message_from = wplc_chat_name + ": ";
+	            	}
+	            }
+	            message_content = the_message.msg.wplcStripSlashes();
+	        }
+
+	        if(message_content !== ""){
+	            var concatenated_message = "<span class='" + message_class + "'>";
+	            if (typeof wplc_show_chat_detail !== "undefined") {
+	                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") {
+	                  concatenated_message += message_grav;    
+	                }
+	                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") {
+	                  concatenated_message += message_from;    
+	                }
+
+	            }
+	            
+	            concatenated_message += message_content;
+	            concatenated_message += "</span>";
+	            concatenated_message += wplc_add_date_and_time(the_message,the_message.originates);
+
+	            if (aoru === 'u') {
+	            	wplc_chat_box_elemn = "#wplc_chatbox";
+	            } else {
+	            	wplc_chat_box_elemn = "#admin_chat_box_area_"+wplc_cid;
+	            }
+	            
+
+	            if(typeof niftyFormatParser !== "undefined"){
+
+	                jQuery(wplc_chat_box_elemn).append(niftyFormatParser(concatenated_message));
+	            } else{
+	                jQuery(wplc_chat_box_elemn).append(concatenated_message);
+	            }
+	            
+	        } 
+	    }  
+	}
+    next();
 }
 
 jQuery(function(){

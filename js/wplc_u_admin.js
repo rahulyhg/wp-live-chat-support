@@ -160,7 +160,6 @@ function wplc_call_to_server(data) {
             }
         },
         complete: function (response) {
-            //console.log(wplc_run);
             if (wplc_run) {
                 setTimeout(function () {
                     wplc_call_to_server(data);
@@ -184,7 +183,7 @@ function wplc_display_error(error, dismiss) {
 
 function wplc_handle_chat_output(response) {
 	var obj = jQuery.parseJSON(response);
-	if (obj === false || obj === null) {
+    if (obj === false || obj === null) {
 			jQuery("#wplc_chat_ul").html("");
 			current_chat_ids = {};
 			wplc_handle_count_change(0);
@@ -213,16 +212,19 @@ function wplc_handle_chat_output(response) {
 
 	}
 
-	if(obj["visitor_count"])
-	{
+	if(obj !== null && typeof obj !== "undefined" && obj["visitor_count"]) {
 		var size = obj["visitor_count"];
-		wplc_handle_count_change(size);
+        if (parseInt(size) === 0) {
+            jQuery("#wplc_chat_ul").html("");
+            current_chat_ids = {};
+            wplc_handle_count_change(0);
+        } else {
+		  wplc_handle_count_change(size);
+        }
 	}
 
 }
 function wplc_handle_count_change(qty) {
-    console.log(chat_count);
-    console.log(qty);
 if (parseInt(qty) !== parseInt(chat_count)) {
     jQuery(".wplc_chat_vis_count_box").animate({backgroundColor: '#B3D24B'}, 300);
     jQuery(".wplc_vis_online").html(qty);

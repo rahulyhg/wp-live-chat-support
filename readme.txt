@@ -3,7 +3,7 @@ Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 3.8
-Tested up to: 4.7
+Tested up to: 4.8
 Stable tag: trunk
 License: GPLv2
 
@@ -219,6 +219,61 @@ It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+= 7.1.01 - 2017-06-18 - Low priority =
+* Small bug fix for agent profiles
+
+= 7.1.00 - 2017-06-18 - Medium priority =
+* Modernised the live chat box
+* Fixed a bug that caused the wrong agent name to show up in the "typing" element after a chat was transferred
+* Other minor bug fixes
+* Added better support for caching systems (style sheets now have a version tag)
+* Added additional support for the new features of the Cloud server
+* Replaced all appropriate references of get_option('siteurl'); with site_url(); to embrace SSL where needed
+* Images are now preloaded on the front end for a better user experience
+* Fixed a fatal error found on some installations (https://github.com/CodeCabin/wp-live-chat-support/issues/329)
+* Fixed a bug that cause the "Retry chat" to not work with the modern chat box
+* Fixed a bug with the missed chat functionality - when an agent missed the chat, the chat ID would change and the agent would not be able to communicate with the visitor
+* Fixed a bug with the listing of all missed chats
+* Fixed a bug that sent pings to the node server when it was not necessary, causing an overload of the node server
+* Fixed a bug that did not allow you to view the chat history of a missed chat
+* Fixed a bug that caused the 'display name' and 'display avatar' to behave erratically 
+* Fixed a bug that caused the time and date display functionality to behave erratically
+* Fixed a bug that caused a JavaScript error on the admin chat dashboard when a single visitor leaves the site 
+* Fixed a bug that caused the chat widow to appear before the chat circle when engaged in a chat and moving from page to page
+* The visitor can now restart any chat that has been ended by an agent
+* You can now customize the text "The chat has been ended by the operator"
+* Fixed a bug that caused duplicate loading of messages
+* When using a custom element to open the chat window, that element now has a cursor pointer styled to it by default
+* Fixed a bug that incorrectly fired off ajax events when minimizing or maximizing the offline message box
+* Fixed a bug that caused the offline message box to show up incorrectly after being dragged
+* Fixed a bug that caused "maximize" notifications to not get sent through to agents when using the Node server
+* Fixed a bug that did not allow single missed chats to be deleted
+* Fixed a bug that caused the text input field to continually be focused on thereby causing issues
+
+= 7.0.08 - 2017-06-08 - Low Priority =
+* Tested on WordPress 4.8
+
+= 7.0.07 -2017-05-16 - Medium Priority =
+* You can now change the text of the offline message button
+* You can now change the text of the close chat button
+* Added a notification to the chat dashboard to help agents identify if the chat box is not showing up on the front end, and provide a reason
+* Added ability to set a default visitor name
+* Added ability to choose which user fields are required (name, email or both)
+* Added visual aid when new message is sent and chat is minimized (user's side)
+* Fixed a bug that caused a sound to be played on every page load of a visitor
+* Fixed a bug that stopped a user from sending a message when the admin initiated a chat
+* Fixed the bug that showed the incorrect icon for IE
+* Fixed a bug that caused empty button without remove/delete icon in Missed Chats
+* Fixed a bug that caused attached images to not display correctly
+* Fixed a bug that caused notifications to show up in the front end when the agent is testing a chat with him or herself
+
+= 7.0.06 -2017-03-13 - Low Priority =
+* Enhancement: 'Open Chat' button changes to 'Chat Accepted' once a chat is active
+* Bug Fix: Compatibility bug fix for decryption in the Pro version
+
+= 7.0.05 - 2017-03-01 - Low priority =
+* Fixed broken links on the plugins page 
 
 = 7.0.04 - 2017-02-15 =
 * Fixed a bug that caused messages to be returned encoded after refreshing the page

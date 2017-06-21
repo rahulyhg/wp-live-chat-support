@@ -233,12 +233,20 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>
               <tr>
                   <td width='300' valign='top'>
-			          <?php _e("Enable Font Awesome set","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this if you have Font Awesome set included with your theme", "wplivechat") ?>"></i>
+    			          <?php _e("Enable Font Awesome set","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this if you have Font Awesome set included with your theme", "wplivechat") ?>"></i>
                   </td>
                   <td valign='top'>
                       <input type="checkbox" value="1" name="wplc_enable_font_awesome" <?php if(isset($wplc_settings['wplc_enable_font_awesome']) && $wplc_settings['wplc_enable_font_awesome'] == 1 ) { echo "checked"; } ?> />
                   </td>
               </tr>
+              <tr>
+                  <td width='300' valign='top'>
+                    <?php _e("Enable chat notifications on all admin pages","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This will allow you to receive chat notifications while browsing any admin page.", "wplivechat") ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1" name="wplc_enable_all_admin_pages" <?php if(isset($wplc_settings['wplc_enable_all_admin_pages']) && $wplc_settings['wplc_enable_all_admin_pages'] == 1 ) { echo "checked"; } ?> />
+                  </td>
+              </tr>              
               <?php if (!function_exists("wplc_pro_activate")) { ?>
 
               <tr>
@@ -316,7 +324,9 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <input type="checkbox" name="wplc_auto_pop_up" value="1" <?php if(isset($wplc_settings['wplc_auto_pop_up'])  && $wplc_settings['wplc_auto_pop_up'] == 1 ) { echo "checked"; } ?>/>
                   </td>
               </tr>
-              <tr>
+             
+
+
 
               <?php if (!function_exists("wplc_pro_activate")) { ?>
               <tr>
@@ -757,7 +767,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
               </tr> 
 
               <tr style='margin-bottom: 10px;'>
-                <td><label for=""><?php _e('Colour Scheme', 'wplivechat'); ?></label></td>
+                <td><label for=""><?php _e('Color Scheme', 'wplivechat'); ?></label></td>
                 <td>    
                     <div class='wplc_theme_block'>
                         <div class='wplc_palette'>
@@ -832,10 +842,20 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
 
                 </td>
               </tr>
-              <tr height="30">
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-              </tr>                
+
+              <tr>
+                  <td width='300' valign='top'><?php _e("Chat background","wplivechat")?>:</td>
+                  <td>
+                      
+                      <select id='wplc_settings_bg' name='wplc_settings_bg'>
+                          <option value="cloudy.jpg" <?php if (!isset($wplc_settings['wplc_settings_bg']) || ($wplc_settings['wplc_settings_bg'] == "cloudy.jpg") ) { echo "selected"; } ?>><?php _e("Cloudy","wplivechat"); ?></option>
+                          <option value="geometry.jpg" <?php if (isset($wplc_settings['wplc_settings_bg']) && $wplc_settings['wplc_settings_bg'] == "geometry.jpg") { echo "selected"; } ?>><?php _e("Geometry","wplivechat"); ?></option>
+                          <option value="tech.jpg" <?php if (isset($wplc_settings['wplc_settings_bg']) && $wplc_settings['wplc_settings_bg'] == "tech.jpg") { echo "selected"; } ?>><?php _e("Tech","wplivechat"); ?></option>
+                          <option value="social.jpg" <?php if (isset($wplc_settings['wplc_settings_bg']) && $wplc_settings['wplc_settings_bg'] == "social.jpg") { echo "selected"; } ?>><?php _e("Social","wplivechat"); ?></option>
+                          <option value="0" <?php if (isset($wplc_settings['wplc_settings_bg']) && $wplc_settings['wplc_settings_bg'] == "0") { echo "selected"; } ?>><?php _e("None","wplivechat"); ?></option>
+                      </select>
+                  </td>
+              </tr>              
               <tr>
                   <td width='200' valign='top'><?php _e("Palette Color 1","wplivechat")?>:</td>
                   <td>
@@ -921,15 +941,18 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                     <tr class="wplc_localization_strings">
                         <td width="200" valign="top"><?php _e("Other text", "wplivechat") ?>:</td>
                         <td>
-                            <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /> <span class='description'><?php _e('This text is shown above the user chat input field', 'wplivechat'); ?></span><br />
+                            <input id="wplc_user_enter" name="wplc_user_enter" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_user_enter']) ?>" /><br />
+                            <input id="wplc_text_chat_ended" name="wplc_text_chat_ended" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo ( empty( $wplc_settings['wplc_text_chat_ended'] ) ) ? stripslashes(__("The chat has been ended by the operator.", "wplivechat")) : stripslashes( $wplc_settings['wplc_text_chat_ended'] ) ?>" /> <br />
                         </td>
                     </tr>
+                    <!--
                       <tr class="wplc_localization_strings">
                           <td width="200" valign="top"><?php _e("Close Button Text", "wplivechat") ?>:</td>
                           <td>
                               <input id="wplc_close_btn_text" name="wplc_close_btn_text" type="text" size="50" maxlength="150" class="regular-text" value="<?php echo stripslashes($wplc_settings['wplc_close_btn_text']) ?>" /><br />
                           </td>
                       </tr>
+                    -->
                         
                     <tr>
                         <th><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></th>
