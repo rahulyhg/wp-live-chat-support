@@ -1,8 +1,38 @@
+#wplc_chatmsg {
+    background-color: #fff !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 32px;
+    color: #60686e;
+    /* width: 100%; */
+    width: 275px !important;
+    height: 40px;
+    /* margin-bottom: 10px; */
+    border: 0;
+    border-radius: 5px;
+    background: #fff;
+    resize: none;
+    border: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-left: 30px;
+    padding-right: 100px;
+    box-sizing: border-box;
+    min-height: 35px;
+    overflow-y: hidden;
+    padding: 5px !important;
+    margin-top: 10px;
+    background-color: #fff !important;
+    padding-left: 30px !important;
+}
 #wp-live-chat textarea {
     width: 100%;
-    height: 100px;
+    
 }
-#wp-live-chat input, #wp-live-chat textarea, #wp-live-chat select{
+.nifty_rating_icon {
+    margin-right: 10px;
+}
+#wp-live-chat-2-inner input, #wp-live-chat-2-inner textarea, #wp-live-chat-2-inner select{
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
     color: #2b2b2b;
@@ -13,6 +43,7 @@
     height: inherit;
     width: 100%;
 }
+
 #wplc_chatbox {
     padding: 5px;
     height: 190px;  
@@ -241,10 +272,14 @@
     padding-right: 45px;
     height: 220px;
 }
-
+/*
 .wplc_left #wplc_chatbox, .wplc_right #wplc_chatbox{
     height: 330px !important;
     width: 240px;
+}*/
+#wplc_user_message_div {
+    border-top:1px solid #eee;
+    background-color:#FFF;
 }
 
 .wplc_close.wplc_right #wp-live-chat-1{
@@ -262,6 +297,13 @@
     bottom: 0;
     position: absolute;
     left: 8px;
+}
+span.wplc_system_notification {
+    display: block;
+    padding: 8px;
+    clear:both;
+    font-style: italic;
+    text-align: left;
 }
 
 .wplc_close.wplc_right #wp-live-chat-header{
@@ -295,14 +337,12 @@
     top: initial;
 }
 
-
-.wplc-user-message img{
+.wplc-user-message .wplc-user-message-avatar{
     border-radius: 25px;
     position: absolute;
     top: 3px;
     right: -38px;
 }
-
 .wplc-admin-message img{
     border-radius: 25px;
     position: absolute;
@@ -411,7 +451,7 @@
 }
 
 #nifty_text_editor_holder {
-    margin-top: -8px;
+    margin-top: 0;
     margin-left: 4px;
 }
 
@@ -429,31 +469,24 @@
 
 #nifty_ratings_form {
     position: absolute;
-    left: 65px;
-    top: -3px;
+    left: -40px;
+    top: -38px;
     width: 250px;
     padding: 2px;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 input#nifty_ratings_comment {
-    width: 70%;
+    width: 60%;
     margin-bottom: 0px;
     line-height: inherit;
     font-size: 12px;
-    top: -2px;
+    top: 0px;
     position: relative;
+    float: left;
 }
 
-#nifty_ratings_form:before {
-    top: 11px;
-    left: -7px;
-    border-width: 6px 7px 6px 0;
-    border-color: transparent #666;
-    content: "";
-    position: absolute;
-    border-style: solid;
-}
+
 
 #nifty_ratings_comment {
     height: 25px !important;
@@ -461,16 +494,18 @@ input#nifty_ratings_comment {
 }
 
 #nifty_rating_button {
-    float: right;
+    float: left;
     border-style: none;
     width: 27%;
     border-radius: 2px;
     text-align: center;
     font-size: 12px;
-    padding: 4px;
-    top: 3px;
-    right: 2px;
+    padding: 2px;
+    /* top: 3px; */
+    /* right: 2px; */
     position: relative;
+    margin-left: 10px;
+    margin-top:1px;
 }
 
 #nifty_rating_thanks {
@@ -648,4 +683,18 @@ input#nifty_ratings_comment {
     position: absolute;
     bottom: 3px;
     padding: 3px;
+}
+
+#wplc_chatbox span.timedate {
+    font-size: 0.8em;
+    display:block;
+    font-style:italic;
+}
+.wplc-msg-float-left {
+    margin-left: 15%;
+    text-align: left;
+}
+.wplc-msg-float-right {
+    margin-right: 15%;
+    text-align: right;
 }

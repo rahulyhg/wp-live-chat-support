@@ -1,7 +1,7 @@
 #wplc_hovercard.modern {
     position: fixed;
     bottom: 96px;
-    left: 75px;
+    left: 20px;
     width: 300px;
     height: 145px;
     border: 1px solid #ccc;
@@ -18,7 +18,7 @@
     left: 41px;
 }
 .modern #wp-live-chat-2 {
-    left:0 !important;
+    left:20px !important;
     right:auto;
 }
 

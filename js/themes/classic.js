@@ -11,11 +11,14 @@ jQuery(document).on("wplc_minimize_chat", function( e ) {
     } else if(jQuery("#wp-live-chat").attr("original_pos") === "left"){
         jQuery("#wp-live-chat").css("left", "0");
         jQuery("#wp-live-chat").css("bottom", "100px");
+        jQuery("#wp-live-chat").css("width", "");
+        jQuery("#wp-live-chat").css("height", "");
     } else if(jQuery("#wp-live-chat").attr("original_pos") === "right"){
         jQuery("#wp-live-chat").css("left", "");
         jQuery("#wp-live-chat").css("right", "0");
         jQuery("#wp-live-chat").css("bottom", "100px");
         jQuery("#wp-live-chat").css("width", "");
+        jQuery("#wp-live-chat").css("height", "");
     }
     jQuery('#wp-live-chat').addClass("wplc_close");
     jQuery('#wp-live-chat').removeClass("wplc_open");
@@ -30,10 +33,9 @@ jQuery(document).on("wplc_minimize_chat", function( e ) {
     jQuery("#nifty_ratings_holder").hide();
     jQuery("#wp-live-chat-react").hide();
     jQuery("#wp-live-chat-minimize").hide();
-
-
-
-
+});
+jQuery(document).on("click", "#wp-live-chat", function( e ){
+    
 });
 
 jQuery(document).on("wplc_start_chat", function( e ) { 
@@ -48,12 +50,20 @@ jQuery(document).on( "wplc_open_chat_1", function( e ) {
 	
     jQuery('#wp-live-chat').removeClass("wplc_close");
     jQuery('#wp-live-chat').addClass("wplc_open");
-    //jQuery("#wp-live-chat-1").hide();
     jQuery("#wp-live-chat-react").hide();
     jQuery("#wp-live-chat-header").css('cursor', 'all-scroll');
-    //jQuery("#wp-live-chat-1").css('cursor', 'all-scroll');
     Cookies.set('wplc_hide', "", { expires: 1, path: '/' });
     jQuery("#wp-live-chat-minimize").show();
+
+    /* set the width again as jQuery sometimes messes this up completely. */
+    if(jQuery("#wp-live-chat").attr("original_pos") === "left"){
+       jQuery("#wp-live-chat").css("width", "280px");
+       jQuery("#wp-live-chat").css("height", "auto !important");
+    } else if(jQuery("#wp-live-chat").attr("original_pos") === "right"){
+       jQuery("#wp-live-chat").css("width", "280px");
+       jQuery("#wp-live-chat").css("height", "auto !important");
+    }
+
 
 	jQuery(function() {
 		jQuery( "#wp-live-chat" ).draggable({ 
@@ -68,23 +78,27 @@ jQuery(document).on( "wplc_open_chat_1", function( e ) {
 
 });
 
+
 jQuery(document).on( "wplc_open_chat_2", function( e ) {
 
 	jQuery("#wp-live-chat-2").hide();
+
+    if(!jQuery("#wp-live-chat").hasClass("wplc_open")){
+       jQuery("#wplc_chatmsg").focus();
+    }
 
     wplc_chat_status = Cookies.get('wplc_chat_status');
     if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
        jQuery("#wp-live-chat-4").show();
        jQuery("#wplc_social_holder").show();
        jQuery("#nifty_ratings_holder").show();
-       jQuery("#wplc_chatmsg").focus();
        jQuery("#wp-live-chat-1").css("cursor","pointer");
     } else if (e.wplc_online === false) {
        jQuery("#wp-live-chat-2").show();
+       jQuery("#wp-live-chat").css("height","auto !important");
        jQuery("#wp-live-chat-4").hide();
        jQuery("#wplc_social_holder").hide();
        jQuery("#nifty_ratings_holder").hide();
-       jQuery("#wplc_chatmsg").focus();
        jQuery("#wp-live-chat-1").css("cursor","pointer");
    }
 
@@ -100,15 +114,12 @@ jQuery(document).ready(function() {
 	    jQuery.event.trigger({type: "wplc_open_chat"});
 	});
     jQuery("body").on("click", ".wplc_retry_chat", function() {
-            
         Cookies.set('wplc_chat_status', 5);
-
         jQuery("#wplc_chatbox").html("");
         jQuery("#wp-live-chat-4").fadeOut();
         jQuery("#wp-live-chat-2").fadeIn();
         jQuery("#wp-live-chat-2-inner").fadeIn();
-        
-
+        wplc_shown_welcome = false;
     });
     jQuery("body").on("click", "#speeching_button", function() {
         jQuery("#wplc_hovercard").hide();
@@ -124,6 +135,7 @@ jQuery(document).ready(function() {
 
     jQuery("body").on("click", "#wp-live-chat-header", function(){
         jQuery("#wplc_hovercard").hide();
+        jQuery("#wp-live-chat").css("height","");
         jQuery("#wplc-chat-alert").removeClass('is-active');
     });
 

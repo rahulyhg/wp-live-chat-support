@@ -1,35 +1,8 @@
 
 #wplc_hovercard.modern {
-    bottom: 200px;
+    bottom: 120px;
     right: 93px;
 
-}
-
-#wplc_hovercard:before {
-    content: "";
-    position: absolute;
-    right: -9px;
-    top: auto;
-    border-width: 9px 0 9px 9px;
-    border-style: solid;
-    border-color: transparent #ccc;
-    display: block;
-    width: 0;
-    left:auto;
-    bottom:83px;
-}
-#wplc_hovercard:after {
-    content: "";
-    position: absolute;
-    right: -8px;
-    top: auto;
-    border-width: 8px 0 8px 8px;
-    border-style: solid;
-    border-color: transparent #FFF;
-    display: block;
-    width: 0;
-    left:auto;
-    bottom:84px;
 }
 
 
@@ -70,4 +43,15 @@
 
 }
 
+.modern div#wp-live-chat-header {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+}
+div#wp-live-chat-2 {
+    right:93px;
+}
+.wplc_right #wp-live-chat-4 {
+    right:93px;
+}
 

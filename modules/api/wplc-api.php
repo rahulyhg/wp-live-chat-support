@@ -244,7 +244,6 @@ function wplc_api_test_component(){
 							var returned_data = wplcParseResponse(response);
 							jQuery("#wplc_rest_console_response").text("Success:\n--------\n" + returned_data);
 						}).fail(function(e){
-							//console.log("somin wrong ");
 							var errors = "";
 							errors = wplcParseResponse(e.responseText);
 							jQuery("#wplc_rest_console_response").text("Error:\n--------\n" + errors);

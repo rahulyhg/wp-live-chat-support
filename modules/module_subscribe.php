@@ -12,7 +12,9 @@ function wplc_plugin_action_links( $links ) {
     array_unshift( $links,
         '<a class="edit" href="' . admin_url('admin.php?page=wplivechat-menu-settings') . '">' . __( 'Settings', 'wplivechat' ) . '</a>' );
     array_unshift( $links,
-        '<a class="" target="_BLANK" href="https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=pro_settings_link">' . __( 'Extensions', 'wplivechat' ) . '</a>' );
+        '<a class="" target="_BLANK" href="https://www.wp-livechat.com/extensions/?utm_source=plugin&utm_medium=link&utm_campaign=pro_settings_link">' . __( 'Extensions', 'wplivechat' ) . '</a>' );
+    array_unshift( $links,
+        '<a class="" target="_BLANK" href="https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=plugin_link_upgrade">' . __( 'Get Pro Version', 'wplivechat' ) . '</a>' );
 
 
     return $links;

@@ -1,45 +1,18 @@
 
 #wplc_hovercard.modern {
-    bottom: 200px;
+    bottom: 135px;
     left: 93px;
 }
 
 
 
-#wplc_hovercard:before {
-content: "";
-    position: absolute;
-    left: -9px;
-    top: auto;
-    border-width: 9px 9px 9px 0;
-    border-style: solid;
-    border-color: transparent #ccc;
-    display: block;
-    width: 0;
-    right:auto;
-    bottom:83px;
-}
-#wplc_hovercard:after {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: auto;
-    border-width: 8px 8px 8px 0;
-    border-style: solid;
-    border-color: transparent #FFF;
-    display: block;
-    width: 0;
-    right:auto;
-    bottom:84px;
-}
-
 .modern #wp-live-chat-2 {
-    left:0 !important;
+    left:93px !important;
     right:auto;
 }
 
 .modern #wp-live-chat-4 {
-    left:0 !important;
+    left:93px !important;
     right:auto;
 }
 
@@ -84,3 +57,12 @@ content: "";
     top: 160px;
     left: 35px;
 }
+.modern div#wp-live-chat-header {
+    position: absolute;
+    bottom: 0px;
+    left: 20px;
+}
+div#wp-live-chat-2 {
+   left:93px;
+}
+
