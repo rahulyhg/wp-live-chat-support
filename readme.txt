@@ -1,9 +1,9 @@
 === WP Live Chat Support ===
-Contributors: WP-LiveChat, NickDuncan, CodeCabin_, Jarryd Long, dylanauty
+Contributors: WP-LiveChat, NickDuncan, CodeCabin_, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 3.8
-Tested up to: 4.8
+Tested up to: 4.9
 Stable tag: trunk
 License: GPLv2
 
@@ -206,6 +206,15 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 7.1.07 = 
+It is highly recommended that you upgrade to WP Live Chat Support version 7.1.07 for security reasons.
+
+= 7.1.05 = 
+It is highly recommended that you upgrade to WP Live Chat Support version 7.1.05 for security reasons.
+
+= 7.1.03 = 
+It is highly recommended that you upgrade to WP Live Chat Support version 7.1.04 for security reasons.
+
 = 7.0.02 =
 We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
@@ -219,6 +228,25 @@ It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+= 7.1.07 - 2017-11-06 - High priority =
+* Patched a security exploit found by James @ Pritect, Inc.  Thank you James!
+ 
+= 7.1.06 - 2017-09-27 - Low priority =
+* Fixed a bug that stopped agents from deleting offline messages
+
+= 7.1.05 - 2017-08-01 - High Priority =
+* XSS Vulenrability Fixed - Thank you Omaid Faizyar
+
+= 7.1.04 - 2017-07-10 - Medium Priority =
+* Fixed a fatal error when trying to delete chat history
+
+= 7.1.03 - 2017-07-10 - High Priority =
+* XSS Vulenrability Fixed - Thank you pluginvulnerabilities.com
+
+= 7.1.02 - 2017-06-29 - Medium priority =
+* Fixed undefined variables when using social profiles, a bio and tag line
+* Fixed a bug that caused some messages to not get recorded
 
 = 7.1.01 - 2017-06-18 - Low priority =
 * Small bug fix for agent profiles

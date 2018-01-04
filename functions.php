@@ -150,6 +150,7 @@ function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
 
     if ($from == "1") {
         $fromname = wplc_return_chat_name(sanitize_text_field($cid));
+        if (empty($fromname)) { $fromname = 'Guest'; }
         //$fromemail = wplc_return_chat_email($cid);
         $orig = '2';
     }
@@ -1892,7 +1893,7 @@ function wplc_admin_display_missed_chats() {
                 //Prompt
                 echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
                         ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_missed_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wplivechat")."</a>
+                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_missed_cid&cid=".intval( sanitize_text_field( $_GET['cid'] ) )."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wplivechat")."</a>
                       </div>";
             }
         }
