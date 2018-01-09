@@ -75,7 +75,7 @@
     position: absolute;
     overflow-y: auto;
     padding:10px;
-    width:100%;
+    width:auto;
     overflow-y: scroll;
 }
 #wp-live-chat-inner-container {
@@ -203,7 +203,7 @@
 #wp-live-chat-2-info {
     font-size: 1em;
     display: block;
-    width: 100%;
+    width: auto;
     overflow: hidden;
     text-align: center;
     margin: 0 auto;
