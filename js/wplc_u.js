@@ -215,10 +215,10 @@ jQuery(document).ready(function() {
      * 
      */
     function wplc_send_welcome_message() {
-        if(wplc_welcome_msg !== "" && !wplc_shown_welcome){
+        if(localized.wplc_welcome_msg !== "" && !wplc_shown_welcome){
             message_class = "wplc_system_notification wplc-color-4";
             var concatenated_message = "<span class='" + message_class + "'>";
-            concatenated_message += wplc_welcome_msg;
+            concatenated_message += localized.wplc_welcome_msg;
             concatenated_message += "</span>";
 
             if(typeof niftyFormatParser !== "undefined"){
@@ -230,8 +230,31 @@ jQuery(document).ready(function() {
             
             wplc_shown_welcome = true;
         } 
-
     }
+
+    // WPML translations for front end
+    jQuery(document).on('click', '#wp-live-chat-header', function(){
+        if (localized.using_translation) {
+            jQuery('#wplc-pro-fst1').html(localized.wplc_pro_button);
+            jQuery('#wplc-pro-fst2').html(localized.wplc_chat_with_us);
+            jQuery('#speeching_button').html(localized.speeching_button);
+
+        }
+    });
+
+    jQuery(document).on('click', '#speeching_button', function(){
+        if (localized.using_translation) {
+            jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst1').html(localized.wplc_pro_button);
+            jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst2').html(localized.wplc_chat_with_us);
+            jQuery(document).find('#wp-live-chat-2-info').html(localized.chat_info);
+            jQuery(document).find('#wplc_start_chat_btn').html(localized.speeching_button);
+            jQuery(document).find('#wplc_name').attr( 'placeholder', localized.wplc_name );
+            jQuery(document).find('#wplc_email').attr( 'placeholder', localized.wplc_email );
+            jQuery(document).find('#wplc_chatmsg').attr( 'placeholder', localized.type_here );
+            
+            console.log(localized);
+        }
+    });
 
     /**
      * Scrolls the chat box to the bottom
