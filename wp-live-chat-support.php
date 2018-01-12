@@ -736,7 +736,6 @@ function wplc_version_control() {
 
 
         if (!isset($wplc_settings['wplc_powered_by_link'])) { $wplc_settings["wplc_powered_by_link"] = "0"; }
-
             
 
         /* users who are updating will stay on the  existing theme */
@@ -1092,13 +1091,15 @@ function wplc_push_js_to_front_basic() {
 
     
     wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery', 'wplc-server-script'),$wplc_version);
+
     /**
      * No longer in use as of 6.2.11 as using the minified file causes issues on sites that are minified.
      * @deprecated 6.2.11
      */
     // wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.min.js', __FILE__),array('jquery'),$wplc_version);
 
-    wp_enqueue_script('wplc-user-script');
+    // Localize the script with new data
+	
 
     if (isset($wplc_settings['wplc_newtheme'])) { $wplc_newtheme = $wplc_settings['wplc_newtheme']; } else { }
     if (isset($wplc_newtheme)) {
@@ -1216,7 +1217,7 @@ function wplc_push_js_to_front_basic() {
     
     wp_localize_script('wplc-user-script', 'wplc_offline_msg', stripslashes($wplc_settings['wplc_pro_offline2']));
     wp_localize_script('wplc-user-script', 'wplc_offline_msg3',stripslashes($wplc_settings['wplc_pro_offline3']));
-    wp_localize_script('wplc-user-script', 'wplc_welcome_msg',stripslashes($wplc_settings['wplc_welcome_msg']));
+    
 
     
 
@@ -1268,9 +1269,31 @@ function wplc_push_js_to_front_basic() {
     if (get_option('WPLC_HIDE_CHAT') == TRUE) { $wplc_hide_chat = "yes"; } else { $wplc_hide_chat = null; }
     wp_localize_script('wplc-user-script', 'wplc_hide_chat', $wplc_hide_chat);
 
+    $translation_array = array();
     if(isset($wplc_settings['wplc_redirect_to_thank_you_page']) && isset($wplc_settings['wplc_redirect_thank_you_url']) && $wplc_settings['wplc_redirect_thank_you_url'] !== "" && $wplc_settings['wplc_redirect_thank_you_url'] !== " "){
     	wp_localize_script('wplc-user-script', 'wplc_redirect_thank_you', urldecode($wplc_settings['wplc_redirect_thank_you_url']));
+    	$translation_array['wplc_redirect_thank_you'] = urldecode($wplc_settings['wplc_redirect_thank_you_url']);
     }
+
+    wp_localize_script('wplc-user-script', 'wplc_welcome_msg',stripslashes($wplc_settings['wplc_welcome_msg']));
+
+    $wplc_using_locale = ((isset($wplc_settings['wplc_using_localization_plugin']) && $wplc_settings['wplc_using_localization_plugin'] == 1) ? true : false );
+    $translation_array['using_translation'] = $wplc_using_locale;
+    $translation_array['wplc_welcome_msg'] = __(stripslashes($wplc_settings['wplc_welcome_msg']), 'wplivechat');
+    $translation_array['wplc_pro_button'] = __(stripslashes($wplc_settings['wplc_pro_fst1']), 'wplivechat');
+    $translation_array['wplc_chat_with_us'] = __(stripslashes($wplc_settings['wplc_pro_fst2']), 'wplivechat');
+    $translation_array['speeching_button'] = __(stripslashes($wplc_settings['wplc_pro_sst1']), 'wplivechat');
+    $translation_array['chat_info'] = __(stripslashes($wplc_settings['wplc_pro_intro']), 'wplivechat');
+    $translation_array['type_here'] = __('type here...', 'wplivechat');
+    
+    $translation_array['wplc_name'] = __('Name', 'wplivechat');
+    $translation_array['wplc_email'] = __('Email', 'wplivechat');
+
+    //wp_localize_script('wplc-user-script', 'localize', stripslashes($wplc_settings['wplc_pro_fst1']));
+
+	wp_localize_script( 'wplc-user-script', 'localized', $translation_array );
+
+    wp_enqueue_script('wplc-user-script');
 
     wp_enqueue_script('jquery-ui-core',false,array('wplc-user-script'),false,false);
     wp_enqueue_script('jquery-ui-draggable',false,array('wplc-user-script'),false,false);
@@ -2100,7 +2123,7 @@ function wplc_filter_control_live_chat_box_html_1st_layer($wplc_settings,$logged
     	$coltheme = $class_override;
     }
 
-    $wplc_tl_msg = "<div class='$coltheme'><strong>" . ($wplc_using_locale ? $wplc_fst_1 : stripslashes($wplc_settings['wplc_pro_fst1'])) . "</strong> " . ( $wplc_using_locale ? $wplc_fst_2 : stripslashes($wplc_settings['wplc_pro_fst2'])) ."</div>";
+    $wplc_tl_msg = "<div class='$coltheme'><strong id='wplc-pro-fst1'>" . ($wplc_using_locale ? $wplc_fst_1 : stripslashes($wplc_settings['wplc_pro_fst1'])) . "</strong> <p id='wplc-pro-fst2'>" . ( $wplc_using_locale ? $wplc_fst_2 : stripslashes($wplc_settings['wplc_pro_fst2'])) ."</p></div>";
 
     $ret_msg .= $wplc_tl_msg;
   } else {
