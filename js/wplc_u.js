@@ -235,24 +235,34 @@ jQuery(document).ready(function() {
     // WPML translations for front end
     jQuery(document).on('click', '#wp-live-chat-header', function(){
         if (localized.using_translation) {
-            jQuery('#wplc-pro-fst1').html(localized.wplc_pro_button);
-            jQuery('#wplc-pro-fst2').html(localized.wplc_chat_with_us);
-            jQuery('#speeching_button').html(localized.speeching_button);
-
+            if (wplc_online) {
+                jQuery('#wplc-pro-fst1').html(localized.wplc_pro_button);
+                jQuery('#wplc-pro-fst2').html(localized.wplc_chat_with_us);
+                jQuery('#speeching_button').html(localized.speeching_button);
+            } else {
+                jQuery(document).find('#speeching_button').html(localized.offline_speeching_button);
+                jQuery(document).find('.wplc_offline').html(localized.wplc_pro_na);
+            }
         }
     });
 
     jQuery(document).on('click', '#speeching_button', function(){
         if (localized.using_translation) {
-            jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst1').html(localized.wplc_pro_button);
-            jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst2').html(localized.wplc_chat_with_us);
-            jQuery(document).find('#wp-live-chat-2-info').html(localized.chat_info);
-            jQuery(document).find('#wplc_start_chat_btn').html(localized.speeching_button);
-            jQuery(document).find('#wplc_name').attr( 'placeholder', localized.wplc_name );
-            jQuery(document).find('#wplc_email').attr( 'placeholder', localized.wplc_email );
-            jQuery(document).find('#wplc_chatmsg').attr( 'placeholder', localized.type_here );
-            
-            console.log(localized);
+            if (wplc_online) {
+                 jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst1').html(localized.wplc_pro_button);
+                jQuery(document).find('#wp-live-chat-1 #wplc-pro-fst2').html(localized.wplc_chat_with_us);
+                jQuery(document).find('#wp-live-chat-2-info').html(localized.chat_info);
+                jQuery(document).find('#wplc_start_chat_btn').html(localized.speeching_button);
+                jQuery(document).find('#wplc_name').attr( 'placeholder', localized.wplc_name );
+                jQuery(document).find('#wplc_email').attr( 'placeholder', localized.wplc_email );
+                jQuery(document).find('#wplc_chatmsg').attr( 'placeholder', localized.type_here );
+            } else {
+                jQuery(document).find('#wplc_na_msg_btn').val( localized.wplc_pro_offline_btn_send );
+                jQuery(document).find('#wplc_name').attr( 'placeholder', localized.wplc_name );
+                jQuery(document).find('#wplc_email').attr( 'placeholder', localized.wplc_email );
+                jQuery(document).find('#wp-live-chat-2-info').html( localized.wplc_pro_offline1 );
+                console.log(localized.wplc_pro_offline1);
+            }
         }
     });
 
