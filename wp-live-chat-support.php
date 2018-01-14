@@ -1283,6 +1283,11 @@ function wplc_push_js_to_front_basic() {
     $translation_array['wplc_pro_button'] = __(stripslashes($wplc_settings['wplc_pro_fst1']), 'wplivechat');
     $translation_array['wplc_chat_with_us'] = __(stripslashes($wplc_settings['wplc_pro_fst2']), 'wplivechat');
     $translation_array['speeching_button'] = __(stripslashes($wplc_settings['wplc_pro_sst1']), 'wplivechat');
+    $translation_array['offline_speeching_button'] = __(stripslashes($wplc_settings['wplc_pro_offline_btn_send']), 'wplivechat');
+    $translation_array['wplc_pro_na'] = __(stripslashes($wplc_settings['wplc_pro_na']), 'wplivechat');
+	$translation_array['wplc_pro_offline_btn_send'] = __(stripslashes($wplc_settings['wplc_pro_offline_btn_send']), 'wplivechat');
+	$translation_array['wplc_pro_offline1'] = __(stripslashes($wplc_settings['wplc_pro_offline1']), 'wplivechat');
+
     $translation_array['chat_info'] = __(stripslashes($wplc_settings['wplc_pro_intro']), 'wplivechat');
     $translation_array['type_here'] = __('type here...', 'wplivechat');
     
