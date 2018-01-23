@@ -504,6 +504,7 @@ function wplc_add_date_and_time(the_message,originates) {
 	if (parseInt(originates) === 1 || parseInt(originates) === 2) {
 	
 		var time_msg = '';
+		var node_server_source = false;
 
 		/* identfy the timestamp */
 		if (typeof the_message.other === "undefined" || typeof the_message.other.datetime === "undefined" || the_message.other === false) {
@@ -514,6 +515,7 @@ function wplc_add_date_and_time(the_message,originates) {
 				if (typeof the_message.other !== "object") { the_message.other = {}; }
 				the_message.other.datetime = the_message.timestamp;
 
+				node_server_source = true;
 			}
 		}
 		
@@ -524,20 +526,19 @@ function wplc_add_date_and_time(the_message,originates) {
 		} else {
 			if (typeof wplc_show_chat_detail !== "undefined") {
 		       
-		        if (typeof wplc_show_chat_detail.date !== "undefined" && wplc_show_chat_detail.date === "1") {
-		        	var dateTime = new Date(parseInt(the_message.other.datetime)*1000);
-					dateTime = dateTime.getMonth() + '/' + dateTime.getDate();
+		        var dateTime = new Date(parseInt(the_message.other.datetime)*(node_server_source ? 1 : 1000));
+				
+		        if (typeof wplc_show_chat_detail.date !== "undefined" && wplc_show_chat_detail.date === "1")
+				{
+					dateTime = (dateTime.getMonth() + 1) + '/' + dateTime.getDate();
 		        	time_msg += dateTime+ " ";
 
 		        }
-		         if (typeof wplc_show_chat_detail.time !== "undefined" && wplc_show_chat_detail.time === "1") {
-
-
-		        	var dateTime = new Date(parseInt(the_message.other.datetime)*1000);
+				if (typeof wplc_show_chat_detail.time !== "undefined" && wplc_show_chat_detail.time === "1")
+				{
 					dateTime = dateTime.getHours() + ':' + dateTime.getMinutes();
-
-		        	time_msg += dateTime;
-		        }
+					time_msg += dateTime;
+				}
 		        if (time_msg !== '') {
 		        	if (parseInt(originates) === 1) { aoru_class = 'wplc-msg-float-left'; } else { aoru_class = 'wplc-msg-float-right'; }
 		        	time_msg = '<span class="timedate '+aoru_class+'">'+time_msg+'</span>';
