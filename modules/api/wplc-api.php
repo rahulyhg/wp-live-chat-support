@@ -41,7 +41,7 @@ function wplc_api_settings_tab_heading($tab_array) {
     $tab_array['api'] = array(
       "href" => "#tabs-api",
       "icon" => 'fa fa-plug',
-      "label" => __("Rest API","wplivechat")
+      "label" => __("REST API","wplivechat")
     );
     return $tab_array;
 }
@@ -69,7 +69,7 @@ function wplc_api_settings_tab_content() {
 		$secret_token = get_option("wplc_api_secret_token"); //Checks for token
 		?>
 			<h3><?php _e("REST API", "wplivechat") ?></h3>
-			<table class=" form-table wp-list-table widefat fixed striped pages">
+			<table class=" form-table wp-list-table wplc_list_table widefat fixed striped pages">
 				<tbody>
 					<tr>
 						<td width='200'>
@@ -275,7 +275,7 @@ function wplc_api_test_component(){
 			});
 			
 		</script>
-		<table class="wp-list-table widefat fixed striped pages wplc_rest_consol" style="display:none">
+		<table class="wp-list-table wplc_list_table widefat fixed striped pages wplc_rest_consol" style="display:none">
 			<thead>
 				<tr>
 					<th><?php _e("Rest Console ", "wplivechat") ?></th>

@@ -21,7 +21,7 @@ function wplc_hook_settings_page_more_doc_suggestions() {
     ?>
 		<div id="tabs-doc-suggest">
 			<h3><?php _e("Documentation Suggestions", "wplivechat") ?></h3>
-			<table class="form-table wp-list-table widefat fixed striped pages">
+			<table class="form-table wp-list-table wplc_list_table widefat fixed striped pages">
 				<tbody>
 					<tr>
 						<td width="300" valign="top">

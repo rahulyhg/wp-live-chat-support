@@ -58,3 +58,27 @@ function wplc_modal_remove_callback(){
 	wplc_modal_confirm_callback = null;
 	wplc_modal_cancel_callback = null;
 }
+
+(function($) {
+	
+	$(document).ready(function(event) {
+		if(!window.wdtEmojiBundle)
+			return;
+
+		$(document.body).on("click", function(event) {
+			
+			// If click event isn't on the emoji window, or the emoji open button, close the emoji window
+			if($(event.target).closest(".wdt-emoji-picker, .wdt-emoji-popup").length == 0 && !(
+				event.target.parentNode == null && $(event.target).hasClass("fa-smile-o")
+				))
+				wdtEmojiBundle.close();
+			
+		});
+		
+		// Close emoji window on scroll
+		$(window).scroll(function(event) {
+			wdtEmojiBundle.close();
+		});
+	});
+	
+})(jQuery);

@@ -5,7 +5,9 @@ jQuery(document).on("wplc_end_chat", function( e ) {
 	   jQuery("#wplc-extra-div").show();
      orig_title_wplc = jQuery("#wplc_first_message").html();
      jQuery("#wplc_first_message").html(wplc_end_chat_string);
+     jQuery("#nimblesquirrel_div").attr('style', 'width: 100% !important');
    }
+   
 });
 
 
@@ -14,6 +16,9 @@ jQuery(document).on("wplc_minimize_chat", function( e ) {
         jQuery("#wplc-extra-div").hide();
         jQuery("#wplc_first_message").html(orig_title_wplc);
     }
+});
 
 
+jQuery(document).on("click", "#wp-live-chat-header", function() {
+  jQuery("#nimblesquirrel_div").attr('style', 'width: 100% !important');
 });

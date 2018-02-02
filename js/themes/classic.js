@@ -47,7 +47,6 @@ jQuery(document).on("wplc_start_chat", function( e ) {
 });
 jQuery(document).on( "wplc_open_chat_1", function( e ) {
 
-	
     jQuery('#wp-live-chat').removeClass("wplc_close");
     jQuery('#wp-live-chat').addClass("wplc_open");
     jQuery("#wp-live-chat-react").hide();
@@ -65,15 +64,15 @@ jQuery(document).on( "wplc_open_chat_1", function( e ) {
     }
 
 
-	jQuery(function() {
-		jQuery( "#wp-live-chat" ).draggable({ 
-		    handle: "#wp-live-chat-header",
-		    drag: function( event, ui ) {
-		        jQuery(this).css("right","");
-		        jQuery(this).css("bottom","inherit");
-		    }
-		});
-	});
+    jQuery(function() {
+        jQuery( "#wp-live-chat" ).draggable({ 
+            handle: "#wp-live-chat-header",
+            drag: function( event, ui ) {
+                jQuery(this).css("right","");
+                jQuery(this).css("bottom","inherit");
+            }
+        });
+    });
 
 
 });
@@ -81,11 +80,14 @@ jQuery(document).on( "wplc_open_chat_1", function( e ) {
 
 jQuery(document).on( "wplc_open_chat_2", function( e ) {
 
-	jQuery("#wp-live-chat-2").hide();
+    jQuery("#wp-live-chat-2").hide();
 
     if(!jQuery("#wp-live-chat").hasClass("wplc_open")){
        jQuery("#wplc_chatmsg").focus();
     }
+
+    jQuery("#wp-live-chat-header").addClass("active");
+    jQuery("#wp-live-chat").addClass("mobile-active");
 
     wplc_chat_status = Cookies.get('wplc_chat_status');
     if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
@@ -102,17 +104,17 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
        jQuery("#wp-live-chat-1").css("cursor","pointer");
    }
 
-	jQuery("#wp-live-chat-3").hide();
-	jQuery("#wp-live-chat-close").hide();
-	//jQuery("#wp-live-chat-minimize").css("right","23px");
-	Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
+    jQuery("#wp-live-chat-3").hide();
+    jQuery("#wp-live-chat-close").hide();
+    //jQuery("#wp-live-chat-minimize").css("right","23px");
+    Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
 });
 
 jQuery(document).ready(function() { 
-	//opens chat when clicked on top bar
-	jQuery("body").on("click", "#wp-live-chat-1", function() {
-	    jQuery.event.trigger({type: "wplc_open_chat"});
-	});
+    //opens chat when clicked on top bar
+    jQuery("body").on("click", "#wp-live-chat-1", function() {
+        //jQuery.event.trigger({type: "wplc_open_chat"});
+    });
     jQuery("body").on("click", ".wplc_retry_chat", function() {
         Cookies.set('wplc_chat_status', 5);
         jQuery("#wplc_chatbox").html("");
@@ -125,7 +127,7 @@ jQuery(document).ready(function() {
         jQuery("#wplc_hovercard").hide();
         wplc_is_chat_open = true;
         jQuery.event.trigger({type: "wplc_open_chat"});
-        
+        jQuery("#wp-live-chat-minimize").show();
 
     });
 
@@ -137,6 +139,25 @@ jQuery(document).ready(function() {
         jQuery("#wplc_hovercard").hide();
         jQuery("#wp-live-chat").css("height","");
         jQuery("#wplc-chat-alert").removeClass('is-active');
+    });
+
+    jQuery("body").on("click", "#wp-live-chat-header", function(){
+        //if (!wplc_is_chat_open) {
+
+            if (jQuery(this).hasClass('active')) {
+                jQuery(this).removeClass('active');
+                jQuery.event.trigger({type: "wplc_minimize_chat"});
+                
+            } else {
+                //jQuery(this).addClass('active');
+                jQuery.event.trigger({type: "wplc_open_chat"});
+                jQuery("#wp-live-chat-minimize").show();
+
+            }
+
+
+            
+        //}
     });
 
 });

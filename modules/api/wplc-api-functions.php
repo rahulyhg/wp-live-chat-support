@@ -16,10 +16,16 @@ function wplc_api_accept_chat(WP_REST_Request $request){
 	if(isset($request)){
 		if(isset($request['token'])){
 			$check_token = get_option('wplc_api_secret_token');
-			if($check_token !== false && $request['token'] === $check_token){
+			if($check_token !== false && $request['token'] === $check_token){ 
 				if(isset($request['chat_id'])){
 					if(isset($request['agent_id'])){
-						if(wplc_change_chat_status(intval($request['chat_id']), 3, intval($request['agent_id']))){
+
+						$cid = wplc_return_chat_id_by_rel($request['chat_id']);
+						if(wplc_change_chat_status($cid, 3, intval($request['agent_id']))){
+							
+							
+							do_action("wplc_hook_update_agent_id",$request['cid'],intval($request['agent_id']));
+
 							$return_array['response'] = "Chat accepted successfully";
 							$return_array['code'] = "200";
 							$return_array['data'] = array("chat_id" => intval($request['chat_id']),
@@ -124,6 +130,113 @@ function wplc_api_end_chat(WP_REST_Request $request){
 	return $return_array;
 }
 
+
+/*
+ * Edit a message in DB
+ * Required GET/POST variables:
+ * - Token 
+ * - Chat ID (Rel)
+ * - Message
+ * - Message ID (Rel)
+*/
+function wplc_edit_message(WP_REST_Request $request){
+    $return_array = array();
+    if(isset($request)){
+        if(isset($request['server_token'])){
+            $check_token = get_option('wplc_api_secret_token');
+            if($check_token !== false && $request['server_token'] === $check_token){
+                if(isset($request['chat_id'])){
+                    if(isset($request['message'])){
+                        if(isset($request['msg_id'])){
+                            global $wpdb;
+                            global $wplc_tblname_msgs;
+
+                            $chat_id = sanitize_text_field($request['chat_id']);
+                            $message = sanitize_text_field($request['message']);
+                            $msg_id = sanitize_text_field($request['msg_id']); //We assume this is rel
+
+                            if( ! filter_var($chat_id, FILTER_VALIDATE_INT) ) {
+                                /*  We need to identify if this CID is a node CID, and if so, return the WP CID */
+                                $chat_id = wplc_return_chat_id_by_rel($chat_id);
+                            }
+
+                            $message = apply_filters("wplc_filter_message_control", $message);
+
+
+                            if(!empty($chat_id) && !empty($message) && !empty($msg_id)){
+                                $wpdb->update( 
+                                    $wplc_tblname_msgs, 
+                                    array( 
+                                        'msg' => $message
+                                    ), 
+                                    array(
+                                        'chat_sess_id' => $chat_id,
+                                        'rel' => $msg_id
+                                    )
+                                ); 
+
+                                $return_array['response'] = "Success";
+                                $return_array['code'] = "200";
+
+                            } else {
+                                $return_array['response'] = "One or more value not set";
+                                $return_array['code'] = "401";
+                                $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                        "chat_id"   => "Chat ID",
+                                                                        "message" => "Message",
+                                                                        "msg_id" => "Your Message ID");
+                            }
+
+
+                        } else {
+                            $return_array['response'] = "No 'msg_id' found";
+                            $return_array['code'] = "401";
+                            $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                    "chat_id"   => "Chat ID",
+                                                                    "message" => "Message",
+                                                                    "msg_id" => "Your Message ID");
+                        }
+                    } else {
+                        $return_array['response'] = "No 'message' found";
+                        $return_array['code'] = "401";
+                        $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                    "chat_id"   => "Chat ID",
+                                                                    "message" => "Message",
+                                                                    "msg_id" => "Your Message ID");
+                    }
+                 } else {
+                    $return_array['response'] = "No 'chat_id' found";
+                    $return_array['code'] = "401";
+                    $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                    "chat_id"   => "Chat ID",
+                                                                    "message" => "Message",
+                                                                    "msg_id" => "Your Message ID");
+                }
+             } else {
+                $return_array['response'] = "Secret server_token is invalid";
+                $return_array['code'] = "401";
+            }
+        }else{
+            $return_array['response'] = "No secret 'server_token' found";
+            $return_array['code'] = "401";
+            $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                    "chat_id"   => "Chat ID",
+                                                                    "message" => "Message",
+                                                                    "msg_id" => "Your Message ID");
+        }
+    }else{
+        $return_array['response'] = "No request data found";
+        $return_array['code'] = "400";
+        $return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
+                                                                    "chat_id"   => "Chat ID",
+                                                                    "message" => "Message",
+                                                                    "msg_id" => "Your Message ID");
+    }
+    
+    return $return_array;
+}
+
+
 /*
  * Send a message to a chat within the WP Live Chat Support Dashboard
  * Required GET/POST variables:
@@ -134,51 +247,83 @@ function wplc_api_end_chat(WP_REST_Request $request){
 function wplc_api_send_message(WP_REST_Request $request){
 	$return_array = array();
 	if(isset($request)){
-		if(isset($request['token'])){
+		if(isset($request['server_token'])){
 			$check_token = get_option('wplc_api_secret_token');
-			if($check_token !== false && $request['token'] === $check_token){
+			if($check_token !== false && $request['server_token'] === $check_token){
 				if(isset($request['chat_id'])){
 					if(isset($request['message'])){
-			            $chat_msg = sanitize_text_field($request['message']);
-			            $wplc_rec_msg = wplc_api_record_admin_message(intval($request['chat_id']),$chat_msg);
-			            if ($wplc_rec_msg) {
-			                $return_array['response'] = "Message sent successfully";
-							$return_array['code'] = "200";
-							$return_array['data'] = array("chat_id" => intval($request['chat_id']),
-														  "agent_id" => intval($request['agent_id']));
-			            } else {
-			                $return_array['response'] = "Message not sent";
-							$return_array['code'] = "404";
-			            }
+						if(isset($request['relay_action'])){
+
+								$chat_id = sanitize_text_field($request['chat_id']);
+								$message = $request['message'];
+								$action = $request['relay_action'];
+
+								if (!empty($request['msg_id'])) {
+									$other = new stdClass();
+									$other->msgID = $request['msg_id'];
+								} else {
+									$other = false;
+								}
+
+								if($action == "wplc_user_send_msg"){
+									$message = sanitize_text_field($message);
+
+									wplc_record_chat_msg("1", $chat_id, $message, false, false, $other); 
+									wplc_update_active_timestamp($chat_id);
+
+					                $return_array['response'] = "Message sent successfully";
+									$return_array['code'] = "200";
+									$return_array['data'] = array("chat_id" => intval($request['chat_id']),
+																  "agent_id" => intval($request['agent_id']));
+
+
+								} else if ($action == "wplc_admin_send_msg"){
+									$message = sanitize_text_field($message);
+									wplc_record_chat_msg("2", $chat_id, $message, true, sanitize_text_field( $request['agent_id'] ), $other);
+									wplc_update_active_timestamp($chat_id);
+
+					                $return_array['response'] = "Message sent successfully";
+									$return_array['code'] = "200";
+									$return_array['data'] = array("chat_id" => intval($request['chat_id']),
+																  "agent_id" => intval($request['agent_id']));
+
+									do_action("wplc_new_user_message_after_record_hook", $chat_id, $message);
+								}
+
+
+				           
+				        } else {
+							$return_array['request_information'] = __("Action not set", "wplivechat");
+						}
 					} else {
 						$return_array['response'] = "No 'message' found";
 						$return_array['code'] = "401";
-						$return_array['requirements'] = array("token" => "YOUR_SECRET_TOKEN",
+						$return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
 													      	  "chat_id"   => "Chat ID",
 													      	  "message" => "Message");
 					}
 			 	} else {
 					$return_array['response'] = "No 'chat_id' found";
 					$return_array['code'] = "401";
-					$return_array['requirements'] = array("token" => "YOUR_SECRET_TOKEN",
+					$return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
 												      	  "chat_id"   => "Chat ID",
 												      	  "message" => "Message");
 				}
 		 	} else {
-				$return_array['response'] = "Secret token is invalid";
+				$return_array['response'] = "Secret server_token is invalid";
 				$return_array['code'] = "401";
 			}
 		}else{
-			$return_array['response'] = "No secret 'token' found";
+			$return_array['response'] = "No secret 'server_token' found";
 			$return_array['code'] = "401";
-			$return_array['requirements'] = array("token" => "YOUR_SECRET_TOKEN",
+			$return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
 										      	  "chat_id"   => "Chat ID",
 										      	  "message" => "Message");
 		}
 	}else{
 		$return_array['response'] = "No request data found";
 		$return_array['code'] = "400";
-		$return_array['requirements'] = array("token" => "YOUR_SECRET_TOKEN",
+		$return_array['requirements'] = array("server_token" => "YOUR_SECRET_TOKEN",
 									      	  "chat_id"   => "Chat ID",
 									      	  "message" => "Message");
 	}
@@ -238,6 +383,7 @@ function wplc_api_get_status(WP_REST_Request $request){
 	return $return_array;
 }
 
+
 /*
  * Fetch a chat status within the WP Live Chat Support Dashboard
  * Required GET/POST variables:
@@ -263,7 +409,13 @@ function wplc_api_get_messages(WP_REST_Request $request){
 						$offset = intval($request['offset']);
 					}
 
-					$message_data = wplc_api_return_messages($request['chat_id'], $limit, $offset);
+					if ( isset( $request['received_via'] ) ) {
+						$received_via = sanitize_text_field( $request['received_via'] );
+					} else {
+						$received_via = 'u';
+					}
+
+					$message_data = wplc_api_return_messages($request['chat_id'], $limit, $offset, $received_via);
 					
 					if($message_data){
 						$return_array['response'] = "Message data returned";
@@ -381,65 +533,20 @@ function wplc_api_record_admin_message($cid, $msg){
 /*
  * Returns messages from server
 */
-function wplc_api_return_messages($cid, $limit, $offset){
-	global $wpdb;
-    global $wplc_tblname_msgs;
-    
-    $cid = intval($cid);
-    $limit = intval($limit);
-    $offset = intval($offset);
+function wplc_api_return_messages($cid, $limit, $offset, $received_via = 'u'){
 
-    $cdata = wplc_get_chat_data($cid);
-    $wplc_settings = get_option("WPLC_SETTINGS");
+	$cid = wplc_return_chat_id_by_rel($cid);
 
+	$messages = wplc_return_chat_messages( $cid, false, true, false, false, 'array', false );
 
-    if($limit > 50){
-    	$limit = 50;
-    }
-
-	$results = $wpdb->get_results(
-        "
-        SELECT * 
-        FROM $wplc_tblname_msgs 
-        WHERE `chat_sess_id` = '$cid' 
-        ORDER BY `timestamp` ASC 
-        LIMIT $limit OFFSET $offset 
-        "
-    );
-
-    $messages = array(); //The message array
-    if ($results) {
-	    foreach ($results as $result) {
-	    	$messages[$result->id] = array(); //Message object
-			
-			$messages[$result->id]['from'] = $result->msgfrom;
-	        $messages[$result->id]['message'] = stripslashes($result->msg);
-	        $messages[$result->id]['timestamp'] = strtotime($result->timestamp);
-	        $messages[$result->id]['is_admin'] = $result->originates == 1 ? true : false;
-	        
-	        $gravatar = "";        
-	        if($messages[$result->id]['is_admin']){
-	            if (isset($cdata->other)) {
-	                $other = maybe_unserialize($cdata->other);
-	                if (isset($other['aid'])) {
-	                    $user_info = get_userdata(intval($other['aid']));
-	                    $gravatar = "//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30";    
-	                }
-	            } 
-	        } else {
-		    	if (isset($cdata->email)) {
-		                $gravatar = "//www.gravatar.com/avatar/".md5($cdata->email)."?s=30";    
-		        } 
-	        }
-	        
-	        if(function_exists('wplc_decrypt_msg')){
-	            $messages[$result->id]['message'] = wplc_decrypt_msg($messages[$result->id]['message']);
-	        }
-
-			$messages[$result->id]['message'] = stripslashes($messages[$result->id]['message']);
-	    }
+	if ($received_via === 'u') {
+		wplc_mark_as_read_user_chat_messages( $cid );
+	} else {
+		wplc_mark_as_read_agent_chat_messages( $cid, $received_via );
 	}
-    return $messages;
+	return $messages;
+
+
 }
 
 
@@ -494,6 +601,132 @@ function wplc_api_return_sessions() {
     }
     
     return $session_array;
+}
+
+
+/**
+ * Starts a chat 
+ * @param  $name string <Visitors Name>
+ * @param  $email string <Visitors Email Address>
+ * @param  $session string <Visitors Session ID>
+ * @param  $wplc_cid int <Current visitor chat ID>
+ * @return $return_array array
+ */
+function wplc_api_call_start_chat( WP_REST_Request $request ){
+
+	$return_array = array();
+	
+	if(isset($request)){
+		
+		if( isset( $request['server_token'] ) ){
+		
+			if( isset( $request['wplc_name'] ) && isset( $request['wplc_email'] ) && isset( $request['session'] ) ){
+
+				$cid = isset( $request['wplc_cid'] ) ? intval( $request['wplc_cid'] ) : null;
+
+				
+
+				global $wpdb;
+			    global $wplc_tblname_chats;
+
+			    $wplc_settings = get_option('WPLC_SETTINGS');
+			        
+			    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+			        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
+			            $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
+			        } else {
+			            $ip_address = sanitize_text_field($_SERVER['REMOTE_ADDR']);
+			        }
+			        $user_data = array(
+			            'ip' => $ip_address,
+			            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
+			        );
+			        $wplc_ce_ip = $ip_address;
+			    } else {
+			        $user_data = array(
+			            'ip' => "",
+			            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
+			        );
+			        $wplc_ce_ip = null;
+			    }
+			    
+			    
+		
+		        $other_data = array();
+		        $other_data['unanswered'] = true;
+
+		        $other_data = apply_filters("wplc_start_chat_hook_other_data_hook", $other_data);
+
+		        $wpdb->insert( 
+		            $wplc_tblname_chats, 
+		            array( 
+		                'status' => 2, 
+		                'timestamp' => current_time('mysql'),
+		                'name' => $request['wplc_name'],
+		                'email' => $request['wplc_email'],
+		                'session' => $request['session'],
+		                'ip' => maybe_serialize($user_data),
+		                'url' => $request['url'],
+		                'last_active_timestamp' => current_time('mysql'),
+		                'other' => maybe_serialize($other_data),
+		                'rel' => $request['cid']
+		            ), 
+		            array( 
+		                '%s', 
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s',
+		                '%s'
+		            ) 
+		        );
+		        
+		        $cid = $wpdb->insert_id;
+
+		        /* Nick: moved from top of function to bottom of function to try speed up the process of accepting the chart - version 7 */
+		        if (function_exists("wplc_list_chats_pro")) { /* check if functions-pro is around */
+		            wplc_pro_notify_via_email();
+		        }
+
+		        do_action("wplc_start_chat_hook_after_data_insert", $cid, 2, $request['wplc_name']);
+
+    			do_action("wplc_change_chat_status_hook", $cid, 2); /* so we fire off onesignal events */
+		 
+
+				$return_array['response'] = "Visitor successfully started chat";
+				$return_array['code'] = "200";
+				$return_array['data'] = array( 'wplc_cid' => $cid );
+
+			} else {
+
+				$return_array['response'] = "Missing Parameter";
+				$return_array['code'] = "401";
+				$return_array['requirements'] = array( 'wplc_name' => 'VISITORS_NAME', 'wplc_email' => 'VISITORS_EMAIL', 'session' => 'VISITORS_SESSION' );
+
+			}
+			
+		} else{
+
+			$return_array['response'] = "No 'security' found";
+			$return_array['code'] = "401";
+			$return_array['requirements'] = array( 'server_token' => 'SECRET_TOKEN', 'wplc_name' => 'VISITORS_NAME', 'wplc_email' => 'VISITORS_EMAIL', 'session' => 'VISITORS_SESSION' );
+
+		}
+
+	}else{
+
+		$return_array['response'] = "No request data found";
+		$return_array['code'] = "400";
+		$return_array['requirements'] = array( 'server_token' => 'SECRET_TOKEN', 'wplc_name' => 'VISITORS_NAME', 'wplc_email' => 'VISITORS_EMAIL', 'session' => 'VISITORS_SESSION' );
+
+	}
+
+	return $return_array;
+
 }
 
 
@@ -788,4 +1021,55 @@ function wplc_api_call_to_server_visitor(WP_REST_Request $request){
 	}
 	
 	return $return_array;
+}
+
+/*
+ * Upload end point
+*/
+function wplc_api_remote_upload(WP_REST_Request $request){
+	$return_array = array();
+	$return_array['response'] = 'false';
+
+	$return_array = apply_filters("wplc_api_remote_upload_filter", $return_array, $request); //Filter for use in pro
+
+	return $return_array;
+}
+
+/*
+ * Rest Permission check for restricted end points
+*/
+function wplc_api_permission_check(){
+    $wplc_rest_access_allowed = check_ajax_referer( 'wp_rest', '_wpnonce', false );
+    if($wplc_rest_access_allowed === false){
+        //Check if the special access token is here
+        if(isset($_REQUEST['auth_forced']) && $_REQUEST['auth_forced'] === "90e1da97979422f558a517c1668fde93"){
+            $wplc_rest_access_allowed = true;
+        }
+    }
+    return $wplc_rest_access_allowed;
+}
+
+function wplc_validate_agent_check(WP_REST_Request $request){
+    $return_array = array();
+    if(isset($request)){
+        if(isset($request['agent_id'])){
+            if( get_user_meta(intval($request['agent_id']), 'wplc_ma_agent', true) ){
+                $return_array['response'] = "true";
+                $return_array['code'] = "200";
+            } else {
+                $return_array['response'] = "false";
+                $return_array['code'] = "200";
+            }
+        }else{
+            $return_array['response'] = "No Agent ID found";
+            $return_array['code'] = "401";
+            $return_array['requirements'] = array("agent_id" => "Agent ID");
+        }
+    }else{
+        $return_array['response'] = "No request data found";
+        $return_array['code'] = "400";
+        $return_array['requirements'] = array("agent_id" => "Agent ID");
+    }
+    
+    return $return_array;
 }

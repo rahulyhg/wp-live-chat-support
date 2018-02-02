@@ -5,11 +5,10 @@ function wplc_survey_filter_control_setting_tabs($tab_array) {
     $tab_array['survey'] = array(
       "href" => "#tabs-survey",
       "icon" => 'fa fa-comment',
-      "label" => __("Surveys","wplivechat")
+      "label" => __("Surveys & Lead Forms","wplivechat")
     );
     return $tab_array;
 }
-
 
 
 add_action("wplc_hook_settings_page_more_tabs","wplc_survey_hook_control_settings_page_more_tabs");
@@ -18,25 +17,25 @@ function wplc_survey_hook_control_settings_page_more_tabs() {
     $wplc_settings = get_option('WPLC_SETTINGS');
   ?>
  <div id="tabs-survey">            
-    <h3><?php _e("Surveys", "wplivechat") ?></h3>
-    <table class='form-table wp-list-table widefat fixed striped pages'>
+    <h3><?php _e("Surveys & Lead Forms", "wplivechat") ?></h3>
+    <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages'>
         <tr>
-            <td width='300' valign='top'><?php _e("Enable Surveys", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Enable surveys within your live chat box, either before or after a live chat session.', 'wplivechat'); ?>"></i></td> 
+            <td width='300' valign='top'><?php _e("Enable Surveys & Lead Forms", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Enable surveys and lead forms within your live chat box, either before or after a live chat session.', 'wplivechat'); ?>"></i></td> 
             <td>
                 <input type="checkbox" name="wplc_enable_surveys" id="wplc_enable_surveys" value="1" <?php if(isset($wplc_survey_data['wplc_enable_surveys']) && $wplc_survey_data['wplc_enable_surveys'] == 1){ echo 'checked'; } ?>/>
             </td>
         </tr>
         <tr>
-            <td>Select a survey:</td>
+            <td>Select a survey: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Choosing a survey will reset the lead form selection: the items are alternatives, if you select a survey no lead form can be selected.', 'wplivechat'); ?>"></i></td>
             <td><?php
-                $surveys = wplc_return_nimble_surveys();
+                $surveys = wplc_return_nimble_surveys_forms('return_surveys');
                 $link1 = sprintf( __( 'No surveys created. Please <a href="%s" target="_BLANK" title="NimbleSquirrel">create a survey and then refresh this page.</a>', 'wplivechat' ),
                     'http://app.nimblesquirrel.com/?utm_source=wplc&utm_medium=click&utm_campaign=no_surveys'
                 );
                 if( $surveys ){
                     $surveys = json_decode( $surveys );
                     if( $surveys ){
-                        echo "<select name='nimble_survey'>";
+                        echo "<select name='nimble_survey' id='nimble_survey'>";
                         echo "<option value='0'>".__('Select a survey', 'nimble-squirrel')."</option>";                                             
                         $cnt = 0;
                         foreach( $surveys as $survey ){
@@ -63,7 +62,39 @@ function wplc_survey_hook_control_settings_page_more_tabs() {
             ?></td>
         </tr>
         <tr>
-            <td><?php _e("Display survey","wplivechat"); ?></td>
+            <td>Select a lead form: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Choosing a lead form will reset the survey selection: the items are alternatives, if you select a lead form no survey can be selected.', 'wplivechat'); ?>"></i></td>
+            <td><?php
+                $lead_forms = wplc_return_nimble_surveys_forms('return_leads');
+                $link1 = sprintf( __( 'No lead forms created. Please <a href="%s" target="_BLANK" title="NimbleSquirrel">create a lead form and then refresh this page.</a>', 'wplivechat' ),
+                    'http://app.nimblesquirrel.com/?utm_source=wplc&utm_medium=click&utm_campaign=no_surveys'
+                );
+                if( $lead_forms ){
+                    $lead_forms = json_decode( $lead_forms );
+                    if( $lead_forms ){
+                        echo "<select name='nimble_lead_form' id='nimble_lead_form'>";
+                        echo "<option value='0'>".__('Select a lead form', 'nimble-squirrel')."</option>";                                             
+                        $cnt = 0;
+                        foreach( $lead_forms as $lead_form ){
+                            $nimble_user_id = $lead_form->uid;
+                            if (isset($lead_form->name)) {
+                                $cnt++;
+                                if( isset( $wplc_survey_data['lead_form'] ) && $wplc_survey_data['lead_form'] == $lead_form->id ){ $sel = 'selected'; } else { $sel = ''; }
+                                echo "<option value='".$lead_form->id."' $sel>".$lead_form->name."</option>";
+                            }
+                        }
+                        echo "</select>";
+                        if ($cnt == 0) { echo "<p>".$link1."</p>";   }
+                    } else {
+                        echo "<p>".$link1."</p>";
+                    }
+                } else {
+                    echo "<p>".$link1."</p>";
+                }
+        ?>      
+            </td>
+        </tr>
+        <tr>
+            <td><?php _e("Display survey/form","wplivechat"); ?></td>
             <td>
                 <select name='survey_display'>
                     <option value='1' <?php if (isset($wplc_survey_data['survey_display']) && $wplc_survey_data['survey_display'] == "1") { echo 'selected'; }?>><?php _e("Before chat","wplivechat"); ?></option>
@@ -85,8 +116,14 @@ function wplc_survey_hook_control_settings_page_more_tabs() {
         </tr>
     </table>
 </div>
-  <?php
+
+<?php
+
+    global $wplc_version;
+    wp_register_script('wplc-lead-form-script', plugins_url('/js/wplc_lead_forms.js', __DIR__),array('jquery'),$wplc_version);
+    wp_enqueue_script('wplc-lead-form-script');
 }
+
 
 add_action('wplc_hook_admin_settings_save','wplc_survey_save_settings');
 function wplc_survey_save_settings() {
@@ -100,6 +137,11 @@ function wplc_survey_save_settings() {
             $wplc_survey_data['survey'] = esc_attr($_POST['nimble_survey']);
         } else {
             $wplc_survey_data['survey'] = null;
+        }
+        if (isset($_POST['nimble_lead_form']) && $_POST['nimble_lead_form'] !== '0') {
+            $wplc_survey_data['lead_form'] = esc_attr($_POST['nimble_lead_form']);
+        } else {
+            $wplc_survey_data['lead_form'] = null;
         }
         if (isset($_POST['survey_user']) && $_POST['survey_user'] !== '0') {
             $wplc_survey_data['survey_user'] = esc_attr($_POST['survey_user']);
@@ -117,7 +159,8 @@ function wplc_survey_save_settings() {
     }
 }
 
-function wplc_return_nimble_surveys() {
+
+function wplc_return_nimble_surveys_forms($action) {
     $nimble_api = 'http://nimblesquirrel.com/api/wordpress.php';
 
     $response = wp_remote_post( $nimble_api, 
@@ -125,7 +168,7 @@ function wplc_return_nimble_surveys() {
             'method' => 'POST',
             'body' => array( 
                 'wordpress_plugin' => 1,
-                'action' => 'return_surveys',
+                'action' => $action,
                 'siteurl' => site_url()
             )
         )
@@ -139,6 +182,7 @@ function wplc_return_nimble_surveys() {
        return $response['body'];
     }
 }
+
 
 add_filter("wplc_filter_live_chat_box_pre_layer1","wplc_filter_control_live_chat_box_pre_layer1",10,1);
 function wplc_filter_control_live_chat_box_pre_layer1($content) {
@@ -158,6 +202,9 @@ function wplc_is_survey_enabled() {
     $cnt = 0;
     if (isset($wplc_survey_data['wplc_enable_surveys']) && $wplc_survey_data['wplc_enable_surveys'] == "1") { $cnt++; }
     if (isset($wplc_survey_data['survey']) && $wplc_survey_data['survey'] !== null) { $cnt++; }
+    if (isset($wplc_survey_data['lead_form']) && $wplc_survey_data['lead_form'] !== null) { $cnt++; }
+
+    $cnt = apply_filter('wplc_filter_list_chats_actions');
 
     if ($cnt >= 2) { return true; }
     else { return false; }
@@ -173,12 +220,14 @@ function wplc_nimble_load_scripts() {
 
         if( isset( $settings['survey_user'] ) ){ $ns_id = $settings['survey_user']; } else { $ns_id = ''; }
         if( isset( $settings['survey'] ) ){ $ns_sid = $settings['survey']; } else { $ns_sid = ''; }
+        if( isset( $settings['lead_form'] ) ){ $ns_lfid = $settings['lead_form']; } else { $ns_lfid = ''; }
 
-        wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/nimblesquirrel.js', array(), '1.0.0', true );
+        //wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/nimblesquirrel.js', array(), '1.0.0', true );
+        wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/v2.0/nimblesquirrel.js', array(), '1.0.0', true );
         wp_localize_script( 'nimble-squirrel-user-script', 'ns_id', $ns_id );
 
 
-        if (isset($wplc_settings['wplc_newtheme'])) { $wplc_newtheme = $wplc_settings['wplc_newtheme']; } else { $wplc_newtheme == 'theme-1'; }
+        if (isset($wplc_settings['wplc_newtheme'])) { $wplc_newtheme = $wplc_settings['wplc_newtheme']; } else { $wplc_newtheme == 'theme-2'; }
         if (isset($wplc_newtheme)) {
             if($wplc_newtheme == 'theme-1') {
                 if( isset( $settings['survey_display']) && $settings['survey_display'] == '1' ) {
@@ -195,7 +244,6 @@ function wplc_nimble_load_scripts() {
                     $clear_div = '0';
                     $hide_div = 'wp-live-chat-2-inner';
                     wp_localize_script( 'nimble-squirrel-user-script', 'ns_hide_div', $hide_div );
-
                 }
             }
             else if($wplc_newtheme == 'theme-2') {
@@ -219,7 +267,14 @@ function wplc_nimble_load_scripts() {
         
 
         wp_localize_script( 'nimble-squirrel-user-script', 'ns_hide_min', '1'  );
-        wp_localize_script( 'nimble-squirrel-user-script', 'ns_sid', $ns_sid );
+
+        if ( '' != $ns_sid ) {
+            wp_localize_script( 'nimble-squirrel-user-script', 'ns_sid', $ns_sid );
+        }
+        else {
+            wp_localize_script( 'nimble-squirrel-user-script', 'ns_lfid', $ns_lfid );
+        }
+
         wp_localize_script( 'nimble-squirrel-user-script', 'ns_clear_div', $clear_div );
         
 
@@ -281,13 +336,13 @@ function wplc_admin_survey_layout() {
     update_option("wplc_seen_surveys",true);
     $settings = get_option('WPLC_SURVEY_SETTINGS');
 
-    echo"<div class=\"wrap\">";
-    echo "<h1>" . __("WP Live Chat Surveys with Nimble Squirrel", "wplivechat") . "</h1>";
+    echo"<div class=\"wrap wplc_wrap\">";
+    echo "<h1>" . __("WP Live Chat Surveys & Lead Forms with Nimble Squirrel", "wplivechat") . "</h1>";
     echo "<div style='width:100%; display:block; overflow:auto; background-color:#FFF; padding:10px; border-radius:10px;'>";
 
 
     if( isset( $settings['wplc_enable_surveys'] ) && intval($settings['wplc_enable_surveys']) == 1 ){
-        echo "<h2>".__("Surveys","wplivechat")."</h2>";
+        echo "<h2>".__("Surveys & Lead Forms","wplivechat")."</h2>";
         echo "<p>".__("To view your responses, click the button below and log in to your NimbleSquirrel account.","wplivechat")."</p>";
         echo "<a href='http://app.nimblesquirrel.com/?utm_source=wplc&utm_medium=click&utm_campaign=view_responses' target='_BLANK' class='button button-primary'>View your responses</a>";
         echo "<p>&nbsp;</p>";

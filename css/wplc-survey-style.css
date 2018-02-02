@@ -11,9 +11,9 @@ html #nimblesquirrel_main { border-bottom: initial;}
 
 
 
-.nimblesquirrel_radio { width: auto !important; }
-
-
+#nimblesquirrel_div {
+    width: 100% !important;
+}
 
 .nps_score { width: 18px !important; }
 
