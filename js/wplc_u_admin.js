@@ -17,6 +17,10 @@ var wplc_notification_icon_url = wplc_notification_icon;
 
 var wplc_poll_delay = 1500;
 
+var bleeper_favico_noti = '../wp-content/plugins/wp-live-chat-support/images/48px_n.png';
+var bleeper_favico = '../wp-content/plugins/wp-live-chat-support/images/48px.png';
+
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -58,6 +62,7 @@ function wplc_notify_agent() {
     
 
 }
+
 function wplc_call_to_server(data) {
     if(typeof wplc_pro_admin_long_poll_data !== "undefined" && typeof wplc_pro_admin_long_poll_data === "function"){
         data = wplc_pro_admin_long_poll_data(data);
@@ -405,6 +410,9 @@ if (update === false) {
 }
 
 
+
+
+
 jQuery(document).ready(function () {
     jQuery('body').on("click", "a", function (event) {
         if (jQuery(this).hasClass('wplc_open_chat')) {
@@ -457,6 +465,30 @@ jQuery(document).ready(function () {
     } else {
         wplc_call_to_server(data);
     }
+
+
+    jQuery("body").on("click", ".wplc_delete_message", function(e){
+
+        var message_id = jQuery(this).attr('mid');
+
+        var data = {
+            action: 'delete_offline_message',
+            security: wplc_ajax_nonce,
+            mid: message_id
+        }
+
+        jQuery.post( wplc_ajaxurl, data, function( response ){
+
+            if( response ){
+
+                jQuery('#record_'+message_id).fadeOut(700);
+
+            }
+
+
+        });
+
+    });
 
 
     jQuery("body").on("change","#wplc_environment", function() {
@@ -532,6 +564,3 @@ jQuery(window).ready(function(){
     }
 
 });
-
-
-

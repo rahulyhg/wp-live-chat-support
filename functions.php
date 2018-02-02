@@ -1,12 +1,12 @@
 <?php
-$wplc_basic_plugin_url = site_url()."/wp-content/plugins/wp-live-chat-support/";
+$wplc_basic_plugin_url = WPLC_BASIC_PLUGIN_URL;
 
 function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     global $wpdb;
     global $wplc_tblname_chats;
-    
+
     $wplc_settings = get_option('WPLC_SETTINGS');
-    
+
 
 
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
@@ -29,12 +29,12 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     }
 
 
-    /* user types 
+    /* user types
      * 1 = new
      * 2 = returning
      * 3 = timed out
      */
-    
+
      $other = array(
          "user_type" => 1
      );
@@ -46,15 +46,15 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
      }
 
     $other = apply_filters("wplc_log_user_on_page_insert_other_data_filter", $other);
-    
-    $wplc_chat_session_data = array( 
-            'status' => '5', 
+
+    $wplc_chat_session_data = array(
+            'status' => '5',
             'timestamp' => current_time('mysql'),
             'name' => $name,
             'email' => $email,
             'session' => $session,
             'ip' => maybe_serialize($user_data),
-            'url' => sanitize_text_field($_SERVER['HTTP_REFERER']), 
+            'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
             'last_active_timestamp' => current_time('mysql'),
             'other' => maybe_serialize($other),
     );
@@ -62,8 +62,8 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     $wplc_chat_session_data = apply_filters("wplc_log_user_on_page_insert_filter", $wplc_chat_session_data);
 
     /* Omitted from inser call as this defaults to string
-    $wplc_chat_session_types = array( 
-            '%s', 
+    $wplc_chat_session_types = array(
+            '%s',
             '%s',
             '%s',
             '%s',
@@ -78,6 +78,9 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     $wpdb->insert($wplc_tblname_chats, $wplc_chat_session_data);
     $lastid = $wpdb->insert_id;
 
+    do_action("wplc_log_user_on_page_after_hook", $lastid, $wplc_chat_session_data);
+
+
     return $lastid;
 
 }
@@ -85,9 +88,9 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
     global $wpdb;
     global $wplc_tblname_chats;
     $wplc_settings = get_option('WPLC_SETTINGS');
-     
+
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
-        
+
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
@@ -104,26 +107,26 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
         );
     }
 
-    
 
-    $query = $wpdb->update( 
-        $wplc_tblname_chats, 
-        array( 
+
+    $query = $wpdb->update(
+        $wplc_tblname_chats,
+        array(
             'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
             'last_active_timestamp' => current_time('mysql'),
             'ip' => maybe_serialize($user_data),
             'status' => $status,
             'session' => $session,
-        ), 
-        array('id' => $cid), 
-        array( 
+        ),
+        array('id' => $cid),
+        array(
             '%s',
             '%s',
             '%s',
             '%d',
             '%s'
-        ), 
-        array('%d') 
+        ),
+        array('%d')
     );
 
 
@@ -133,9 +136,62 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
 }
 
 
-function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
+function wplc_record_chat_msg($from, $cid, $msg, $rest_check = false, $aid = false, $other = false) {
     global $wpdb;
     global $wplc_tblname_msgs;
+
+
+    if( ! filter_var($cid, FILTER_VALIDATE_INT) ) {
+
+        /**
+         * We need to identify if this CID is a node CID, and if so, return the WP CID from the wplc_chat_msgs table
+         */
+        $cid = wplc_return_chat_id_by_rel($cid);
+    }
+
+    /**
+     * check if this CID even exists, if not, create it
+     *
+     * If it doesnt exist, it most likely is an agent-to-agent chat that we now need to save.
+     */
+
+    global $wplc_tblname_chats;
+    $results = $wpdb->get_results("SELECT * FROM $wplc_tblname_chats WHERE `rel` = '".$cid."' OR `id` = '".$cid."' LIMIT 1");
+    if (!$results) {
+        /* it doesnt exist, lets put it in the table */
+
+        $wpdb->insert(
+            $wplc_tblname_chats,
+            array(
+                'status' => 3,
+                'timestamp' => current_time('mysql'),
+                'name' => 'agent-to-agent chat',
+                'email' => 'none',
+                'session' => '1',
+                'ip' => '0',
+                'url' => '',
+                'last_active_timestamp' => current_time('mysql'),
+                'other' => '',
+                'rel' => $cid,
+            ),
+            array(
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+                '%s'
+            )
+        );
+
+
+        $cid = $wpdb->insert_id;
+    }
+
 
     if ($from == "2" && $rest_check == false) {
         $wplc_current_user = get_current_user_id();
@@ -144,7 +200,7 @@ function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
         /*
           -- modified in in 6.0.04 --
 
-          if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
+          if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){
          */  } else { return "security issue"; }
     }
 
@@ -156,45 +212,70 @@ function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
     }
     else {
         $fromname = apply_filters("wplc_filter_admin_name","Admin");
+
         //$fromemail = "SET email";
         $orig = '1';
     }
+
+    $msg_id = '';
     
+    if ($other !== false) {
+        if (!empty($other->msgID)) {
+            $msg_id = $other->msgID;
+        } else {
+            $msg_id = '';
+        }
+    }
+
+
     $orig_msg = $msg;
 
     $msg = apply_filters("wplc_filter_message_control",$msg);
 
-    $wplc_current_user = get_current_user_id();
-    if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
-        $other_data = array('aid'=>$wplc_current_user);
+    if (!$aid) {
+        $wplc_current_user = get_current_user_id();
+        
+        if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
+            $other_data = array('aid'=>$wplc_current_user);
+        } else {
+            $other_data = '';
+        }
     } else {
-        $other_data = '';
+        if( get_user_meta( $aid, 'wplc_ma_agent', true ) ){
+            $other_data = array('aid'=>$aid);
+        } else {
+            $other_data = '';
+        }
     }
-    
 
 
-    $wpdb->insert( 
-    	$wplc_tblname_msgs, 
-    	array( 
-                'chat_sess_id' => $cid, 
+
+
+
+    $wpdb->insert(
+        $wplc_tblname_msgs,
+        array(
+                'chat_sess_id' => $cid,
                 'timestamp' => current_time('mysql'),
                 'msgfrom' => $fromname,
                 'msg' => $msg,
                 'status' => 0,
                 'originates' => $orig,
-                'other' => maybe_serialize( $other_data )
-    	), 
-    	array( 
-                '%s', 
+                'other' => maybe_serialize( $other_data ),
+                'rel' => $msg_id
+        ),
+        array(
+                '%s',
                 '%s',
                 '%s',
                 '%s',
                 '%d',
                 '%s',
+                '%s',
                 '%s'
-    	) 
+        )
     );
-    
+
     $data = array(
         'cid' => $cid,
         'from' => $from,
@@ -204,8 +285,8 @@ function wplc_record_chat_msg($from,$cid,$msg,$rest_check = false) {
     do_action("wplc_hook_message_sent",$data);
 
     wplc_update_active_timestamp(sanitize_text_field($cid));
-    
-    
+
+
     return true;
 
 }
@@ -221,16 +302,16 @@ function wplc_update_active_timestamp($cid) {
 //        LIMIT 1
 //        "
 //    );
-    $wpdb->update( 
-        $wplc_tblname_chats, 
-        array( 
+    $wpdb->update(
+        $wplc_tblname_chats,
+        array(
             'last_active_timestamp' => current_time('mysql')
-        ), 
-        array('id' => $cid), 
-        array('%s'), 
-        array('%d') 
+        ),
+        array('id' => $cid),
+        array('%s'),
+        array('%d')
     );
-    
+
     //wplc_change_chat_status(sanitize_text_field($cid),3);
     return true;
 
@@ -249,6 +330,34 @@ function wplc_return_chat_name($cid) {
     );
     foreach ($results as $result) {
         return $result->name;
+    }
+
+}
+
+
+/**
+ * Find out if we are dealing with a NODE CID and convert it to the WP CID.
+ *
+ * If it cannot find a relative, then simply return the original CID parsed through.
+ *
+ * @param  string|int $rel The CId to compare
+ * @return string|int      The suggested CID
+ */
+function wplc_return_chat_id_by_rel($rel) {
+    global $wpdb;
+    global $wplc_tblname_chats;
+
+    $results = $wpdb->get_results("SELECT * FROM $wplc_tblname_chats WHERE `rel` = '$rel' LIMIT 1");
+    if ($results) {
+        foreach ($results as $result) {
+            if (isset($result->id)) {
+                return $result->id;
+            } else {
+                return $rel;
+            }
+        }
+    } else {
+        return $rel;
     }
 
 }
@@ -272,42 +381,42 @@ function wplc_list_chats() {
     global $wpdb;
     global $wplc_tblname_chats;
     $status = 3;
-    $wplc_c = 0;    
+    $wplc_c = 0;
     $results = $wpdb->get_results(
         "
-	SELECT *
-	FROM $wplc_tblname_chats
+    SELECT *
+    FROM $wplc_tblname_chats
         WHERE `status` = 3 OR `status` = 2 OR `status` = 10
         ORDER BY `timestamp` ASC
 
-	"
+    "
     );
-    
-        $table = "<div class='wplc_chats_container'>";    
-            
+
+        $table = "<div class='wplc_chats_container'>";
+
     if (!$results) {
         $table.= "<p>".__("No chat sessions available at the moment","wplivechat")."</p>";
     } else {
         $table .= "<h2>".__('Active Chats', 'wplivechat')."</h2>";
-        
+
         foreach ($results as $result) {
             unset($trstyle);
             unset($actions);
             $wplc_c++;
 
-            
+
             global $wplc_basic_plugin_url;
             $user_data = maybe_unserialize($result->ip);
             $user_ip = $user_data['ip'];
             $browser = wplc_return_browser_string($user_data['user_agent']);
             $browser_image = wplc_return_browser_image($browser,"16");
-            
+
             if($user_ip == ""){
                 $user_ip = __('IP Address not recorded', 'wplivechat');
             } else {
                 $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."' target='_BLANK'>".$user_ip."</a>";
-            } 
-            
+            }
+
             if ($result->status == 2) {
                 $url = admin_url( 'admin.php?page=wplivechat-menu&action=ac&cid='.$result->id);
                 $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Accept Chat","wplivechat")."</a>";
@@ -318,14 +427,14 @@ function wplc_list_chats() {
                 $url = admin_url( 'admin.php?page=wplivechat-menu&action=ac&cid='.$result->id);
                 $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat Window","wplivechat")."</a>";
                 $trstyle = "style='background-color:#F7FCFE; height:30px;'";
-                $icon = "<i class=\"fa fa-check-circle wplc_active\" title='".__('Chat Active', 'wplivechat')."' alt='".__('Chat Active', 'wplivechat')."'></i><div class='wplc_icon_message'>".__('This chat is active', 'wplivechat')."</div>";                        
+                $icon = "<i class=\"fa fa-check-circle wplc_active\" title='".__('Chat Active', 'wplivechat')."' alt='".__('Chat Active', 'wplivechat')."'></i><div class='wplc_icon_message'>".__('This chat is active', 'wplivechat')."</div>";
             }
-            
-            
+
+
             /* if ($wplc_c>1) { $actions = wplc_get_msg(); } */
-            
+
            $trstyle = "";
-            
+
             $table .= "
                 <div class='wplc_single_chat' id='record_".$result->id."' $trstyle> 
                     <div class='wplc_chat_section section_1'>
@@ -434,7 +543,7 @@ function wplc_time_ago($time_ago)
     }
 }
 
-add_filter("wplc_filter_list_chats_actions","wplc_filter_control_list_chats_actions",15,3); 
+add_filter("wplc_filter_list_chats_actions","wplc_filter_control_list_chats_actions",15,3);
 /**
  * Only allow agents access
  * @return void
@@ -444,7 +553,7 @@ add_filter("wplc_filter_list_chats_actions","wplc_filter_control_list_chats_acti
  */
 function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
     $aid = apply_filters("wplc_filter_aid_in_action","");
-    
+
     $wplc_current_user = get_current_user_id();
 
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
@@ -457,11 +566,11 @@ function wplc_filter_control_list_chats_actions($actions,$result,$post_data) {
         else if (intval($result->status) == 3 || intval($result->status) == 10) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
             $url = admin_url( 'admin.php?page=wplivechat-menu'.$url_params);
-	        if ( ! function_exists("wplc_pro_version_control") || !isset( $result->agent_id ) || $wplc_current_user == $result->agent_id ) { //Added backwards compat checks
-		        $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
-	        } else {
-		        $actions = "<span class=\"wplc-chat-in-progress\">" . __( "In progress with another agent", "wplivechat" ) . "</span>";
-	        }
+            if ( ! function_exists("wplc_pro_version_control") || !isset( $result->agent_id ) || $wplc_current_user == $result->agent_id ) { //Added backwards compat checks
+                $actions = "<a href=\"".$url."\" class=\"wplc_open_chat button button-primary\" window-title=\"WP_Live_Chat_".$result->id."\">".__("Open Chat","wplivechat")."</a>";
+            } else {
+                $actions = "<span class=\"wplc-chat-in-progress\">" . __( "In progress with another agent", "wplivechat" ) . "</span>";
+            }
         }
         else if (intval($result->status) == 2) {
             $url_params = "&action=ac&cid=".$result->id.$aid;
@@ -483,68 +592,68 @@ function wplc_list_chats_new($post_data) {
 
     global $wpdb;
     global $wplc_tblname_chats;
-	
-	$data_array = array();
-    $id_list = array();
-	
-    $status = 3;
-    $wplc_c = 0;    
 
-	// Retrieve count of users in same department or in no department
-	$user_id = get_current_user_id();
-	$user_department = get_user_meta($user_id ,"wplc_user_department", true);
-	
-	$wplc_chat_count_sql = "SELECT COUNT(*) FROM $wplc_tblname_chats WHERE status IN (3,2,10,5,8,9,12)";
-	if($user_department > 0)
-		$wplc_chat_count_sql .= " AND (department_id=0 OR department_id=$user_department)";
-	$data_array['visitor_count'] = $wpdb->get_var($wplc_chat_count_sql);
-	
-	// Retrieve data
+    $data_array = array();
+    $id_list = array();
+
+    $status = 3;
+    $wplc_c = 0;
+
+    // Retrieve count of users in same department or in no department
+    $user_id = get_current_user_id();
+    $user_department = get_user_meta($user_id ,"wplc_user_department", true);
+
+    $wplc_chat_count_sql = "SELECT COUNT(*) FROM $wplc_tblname_chats WHERE status IN (3,2,10,5,8,9,12)";
+    if($user_department > 0)
+        $wplc_chat_count_sql .= " AND (department_id=0 OR department_id=$user_department)";
+    $data_array['visitor_count'] = $wpdb->get_var($wplc_chat_count_sql);
+
+    // Retrieve data
     $wplc_chat_sql = "SELECT * FROM $wplc_tblname_chats WHERE (`status` = 3 OR `status` = 2 OR `status` = 10 OR `status` = 5 or `status` = 8 or `status` = 9 or `status` = 12)";
     $wplc_chat_sql .= apply_filters("wplc_alter_chat_list_sql_before_sorting", "");
-	
+
     $wplc_chat_sql .= " ORDER BY `timestamp` ASC";
 
     $results = $wpdb->get_results($wplc_chat_sql);
 
-    	
+
     if($results) {
-        
-        
+
+
         foreach ($results as $result) {
             unset($trstyle);
             unset($actions);
-            
-            
-            
+
+
+
 
             global $wplc_basic_plugin_url;
             $user_data = maybe_unserialize($result->ip);
             $user_ip = $user_data['ip'];
             $browser = wplc_return_browser_string($user_data['user_agent']);
             $browser_image = wplc_return_browser_image($browser,"16");
-            
+
             if($user_ip == ""){
                 $user_ip = __('IP Address not recorded', 'wplivechat');
             } else {
                 $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."' target='_BLANK'>".$user_ip."</a>";
-            } 
+            }
 
 
             $actions = apply_filters("wplc_filter_list_chats_actions","",$result,$post_data);
-            
-            
+
+
             $other_data = maybe_unserialize($result->other);
-            
-            
-            
+
+
+
            $trstyle = "";
-            
+
            $id_list[intval($result->id)] = true;
-           
+
            $data_array[$result->id]['name'] = $result->name;
            $data_array[$result->id]['email'] = $result->email;
-           
+
            $data_array[$result->id]['status'] = $result->status;
            $data_array[$result->id]['action'] = $actions;
            $data_array[$result->id]['timestamp'] = wplc_time_ago($result->timestamp);
@@ -554,25 +663,25 @@ function wplc_list_chats_new($post_data) {
            } else {
                $data_array[$result->id]['type'] = __("Returning","wplivechat");
            }
-           
+
            $data_array[$result->id]['image'] = "<img src=\"//www.gravatar.com/avatar/".md5($result->email)."?s=30&d=mm\"  class='wplc-user-message-avatar' />";
            $data_array[$result->id]['data']['browsing'] = $result->url;
            $path = parse_url($result->url, PHP_URL_PATH);
-           
+
            if (strlen($path) > 20) {
                 $data_array[$result->id]['data']['browsing_nice_url'] = substr($path,0,20).'...';
-           } else { 
+           } else {
                $data_array[$result->id]['data']['browsing_nice_url'] = $path;
            }
-           
+
            $data_array[$result->id]['data']['browser'] = "<img src='" . $wplc_basic_plugin_url . "/images/$browser_image' alt='$browser' title='$browser' /> ";
            $data_array[$result->id]['data']['ip'] = $user_ip;
            $data_array[$result->id]['other'] = $other_data;
         }
-		
+
         $data_array['ids'] = $id_list;
     }
-	
+
     return json_encode($data_array);
 }
 
@@ -581,13 +690,13 @@ function wplc_list_chats_new($post_data) {
 function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = false) {
     global $wpdb;
     global $wplc_tblname_msgs;
-    
-    if (!$wplc_settings) { 
+
+    if (!$wplc_settings) {
         $wplc_settings = get_option("WPLC_SETTINGS");
     }
 
     if(isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1){ $display_name = 1; } else { $display_name = 0; }
-            
+
     $sql = "SELECT * FROM $wplc_tblname_msgs WHERE `chat_sess_id` = '$cid' AND `status` = '0' AND (`originates` = '1' OR `originates` = '0') ORDER BY `timestamp` ASC";
     $results = $wpdb->get_results($sql);
     if (!$cdata) {
@@ -625,23 +734,23 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
             } else {
                 $other = maybe_unserialize($cdata->other);
                 if (isset($other['aid'])) {
-                    
+
 
                     $user_info = get_userdata(intval($other['aid']));
-                    
-                    $image = "<img src='//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30'  class='wplc-admin-message-avatar' />";    
+
+                    $image = "<img src='//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30'  class='wplc-admin-message-avatar' />";
                 } else {
 
-                    
+
                     $image = "";
                     if(1 == 1) {
 
                     } else {
-                        
+
                         $image = "";
                     }
                 }
-                
+
             }
 
             $from = apply_filters("wplc_filter_admin_name",$from, $cid);
@@ -649,7 +758,7 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
 
         }
         else if (intval($result->originates) == 0) {
-            /* 
+            /*
             system notifications
             from version 7
              */
@@ -658,12 +767,12 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
         }
         else {
 
-            /* 
+            /*
              removed in 7.1.00
             $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
-            
+
             if(isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != ""){ $wplc_user_gravatar = md5(strtolower(trim(sanitize_text_field($_COOKIE['wplc_email'])))); } else { $wplc_user_gravatar = ""; }
-        
+
             if($wplc_user_gravatar != ""){
                 $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30'  class='wplc-user-message-avatar' />";
             } else {
@@ -671,18 +780,18 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
             }
             */
         }
-        
+
         if (!$system_notification) {
             /* this is a normal message */
             if(function_exists('wplc_encrypt_decrypt_msg')){
                 $msg = wplc_encrypt_decrypt_msg($msg);
             }
-       
+
             $msg_array = maybe_unserialize( $msg );
 
             if( is_array( $msg_array ) ){
                 $msg = $msg_array['m'];
-            }             
+            }
 
             $msg = stripslashes($msg);
 
@@ -693,12 +802,12 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
             $msg_hist[$id]['msg'] = $msg;
             $msg_hist[$id]['originates'] = intval($result->originates);
             $msg_hist[$id]['other'] = $other_data;
-                
+
             /*
                 removed this in 7.1.00 as the JS now handles this
             if($display_name){
                 $msg_hist[$id]['msg'] = "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$image <strong>$from </strong> $msg</span><br /><div class='wplc-clear-float-message'></div>";
-            } else {            
+            } else {
                 $msg_hist[$id]['msg'] = "<span class='wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4'>$msg</span><div class='wplc-clear-float-message'></div>";
             }*/
         } else {
@@ -708,10 +817,10 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
             $msg_hist[$id]['msg'] = $msg;
             $msg_hist[$id]['other'] = $other_data;
             $msg_hist[$id]['originates'] = intval($result->originates);
-        }   
+        }
 
-        
-        
+
+
 
     }
 
@@ -772,52 +881,54 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
                 $wplc_welcome = __('Welcome. How may I help you?', 'wplivechat');
                 if(isset($wplc_settings['wplc_using_localization_plugin']) && $wplc_settings['wplc_using_localization_plugin'] == 1){ $wplc_using_locale = true; } else { $wplc_using_locale = false; }
                 if (!isset($wplc_settings['wplc_user_welcome_chat']) || $wplc_settings['wplc_user_welcome_chat'] == "") { $wplc_settings['wplc_user_welcome_chat'] = $wplc_welcome; }
-                $text2 = ($wplc_using_locale ? $wplc_welcome : stripslashes($wplc_settings['wplc_user_welcome_chat']));  
+                $text2 = ($wplc_using_locale ? $wplc_welcome : stripslashes($wplc_settings['wplc_user_welcome_chat']));
 
                 $chat_id = sanitize_text_field($id);
                 $chat_msg = sanitize_text_field($text2);
                 $wplc_rec_msg = wplc_record_chat_msg("2",$chat_id,$chat_msg);
 
                 */
-               
-               
+
+
             }
 
             $other['aid'] = $aid;
         }
     }
 
-        
 
 
-    if ($aid > 0) { 
-        $wpdb->update( 
-            $wplc_tblname_chats, 
-            array( 
+
+    if ($aid > 0) {
+        $wpdb->update(
+            $wplc_tblname_chats,
+            array(
                 'status' => $status,
-                'other' => maybe_serialize($other)
-            ), 
-            array('id' => $id), 
+                'other' => maybe_serialize($other),
+                'agent_id' => $aid
+            ),
+            array('id' => $id),
             array(
                 '%d',
-                '%s'
-                ), 
-            array('%d') 
-        );        
+                '%s',
+                '%d'
+                ),
+            array('%d')
+        );
     } else {
-        $wpdb->update( 
-            $wplc_tblname_chats, 
-            array( 
+        $wpdb->update(
+            $wplc_tblname_chats,
+            array(
                 'status' => $status
-            ), 
-            array('id' => $id), 
-            array('%d'), 
-            array('%d') 
+            ),
+            array('id' => $id),
+            array('%d'),
+            array('%d')
         );
     }
 
     do_action("wplc_change_chat_status_hook", $id, $status);
-    
+
     return true;
 
 }
@@ -826,17 +937,17 @@ function wplc_change_chat_status($id,$status,$aid = 0) {
 function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wplc_settings = false, $cdata = false, $display = 'string', $only_read_message = false) {
     global $wpdb;
     global $wplc_tblname_msgs;
-    
+
 
     if (!$wplc_settings) {
         $wplc_settings = get_option("WPLC_SETTINGS");
     }
 
     if(isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1){ $display_name = 1; } else { $display_name = 0; }
-           
+
     $results = wplc_get_chat_messages($cid, $only_read_message, $wplc_settings);
     if (!$results) { return; }
-   
+
     if (!$cdata) {
         $cdata = wplc_get_chat_data($cid,__LINE__);
     }
@@ -849,7 +960,14 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
         $system_notification = false;
 
         $from = $result->msgfrom;
-        $id = $result->id;
+
+
+        /* added a control here to see if we should use the NODE ID instead of the SQL ID */
+        if (empty($result->rel)) {
+            $id = $result->id;
+        } else {
+            $id = $result->rel;
+        }
         $msg = $result->msg;
 
 
@@ -858,63 +976,23 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
 
         $timestamp = strtotime( $result->timestamp );
         $other_data['datetime'] = $timestamp;
+        $other_data['datetimeUTC'] = strtotime( get_gmt_from_date( $result->timestamp ) );
         $nice_time = date("d M Y H:i:s",$timestamp);
-        
 
-        
-        
-        $image = "";        
+
+
+
+        $image = "";
         if($result->originates == 1){
-            /* message from admin to user */
-
-            /* removed in 7.1.00
-            $class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
-            if(function_exists("wplc_pro_get_admin_picture")){
-                $src = wplc_pro_get_admin_picture();
-                if($src){
-                    $image = "<img src=".$src." width='20px' id='wp-live-chat-2-img'/>";
-                }
-            } else {
-                if (isset($cdata->other)) {
-                    $other = maybe_unserialize($cdata->other);
-                    if (isset($other['aid'])) {
-
-                        $user_info = get_userdata(intval($other['aid']));
-                        
-                        $image = "<img src='//www.gravatar.com/avatar/".md5($user_info->user_email)."?s=30'  class='wplc-admin-message-avatar' />";    
-                    } else {
-                        
-                        $image = "";
-                    }
-                } else {
-                    $image = "";
-                }
-                
-            }
-
-            $from = apply_filters("wplc_filter_admin_from", $from, $cid);
-            */
-
 
         } else if ($result->originates == 2){
-            /* message from user to admin */
-            
-            /* removed in 7.1.00
-            $class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
-            
-            if(isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != ""){ $wplc_user_gravatar = md5(strtolower(trim(sanitize_text_field($_COOKIE['wplc_email'])))); } else { $wplc_user_gravatar = ""; }
-        
-            if($wplc_user_gravatar != ""){
-                $image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30'  class='wplc-user-message-avatar' />";
-            } else {
-                $image = "";
-            }*/
+
 
         } else if ($result->originates == 0 || $result->originates == 3) {
 
             $system_notification = true;
             $cuid = get_current_user_id();
-            $is_agent = get_user_meta(esc_html( $cuid ), 'wplc_ma_agent', true); 
+            $is_agent = get_user_meta(esc_html( $cuid ), 'wplc_ma_agent', true);
             if ($is_agent && $result->originates == 3 ) {
                 /* this user is an agent and the notification is meant for an agent, therefore display it */
                 $display_notification = true;
@@ -934,60 +1012,39 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
         }
 
         if (!$system_notification) {
-        
+
             if(function_exists('wplc_encrypt_decrypt_msg')){
                 $msg = wplc_encrypt_decrypt_msg($msg);
-            }                    
+            }
 
             $msg = apply_filters("wplc_filter_message_control_out",$msg);
-            
+
             if( is_serialized( $msg ) ){
-                $msg_array = maybe_unserialize( $msg );            
-                
+                $msg_array = maybe_unserialize( $msg );
+
                 if( is_array( $msg_array ) ){
                     $msg = $msg_array['m'];
                 } else {
                     $msg = $msg;
-                }       
-                
+                }
+
                 $msg = stripslashes($msg);
-            }       
-            
+            }
+
+            if ( isset( $result->afrom ) && intval( $result->afrom ) > 0 ) { $msg_array[$id]['afrom'] = intval( $result->afrom ); $other_data['aid'] = intval( $result->afrom ); }
+            if ( isset( $result->ato ) && intval( $result->ato ) > 0 ) { $msg_array[$id]['ato'] = intval( $result->ato ); }
+
             $msg_array[$id]['msg'] = $msg;
             $msg_hist .= $msg;
             $msg_array[$id]['originates'] = $result->originates;
             $msg_array[$id]['other'] = $other_data;
 
-            /*
-            removed in 7.1.00
-            if($display_name){
-                if ($html) {
-                    $str = "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$image <strong>$from </strong> $msg</span><br /><div class='wplc-clear-float-message'></div>";
-                    $msg_array[$id]['msg'] = $msg;
-                    $msg_hist .= $msg;
 
-                } else {
-                    $str = "($timeshow) $from: $msg\r\n";
-                    $msg_array[$id]['msg'] = $msg;
-                    $msg_hist .= $msg;
-                }
-            } else {
-                if ($html) {
-                    $str = "<span class='chat_time wplc-color-4'>$timeshow</span> <span class='$class'>$msg</span><br /><div class='wplc-clear-float-message'></div>";    
-                    $msg_array[$id]['msg'] = $msg;
-                    $msg_hist .= $msg;
-                } else {
-                    $str = "($timeshow) $msg\r\n";
-                    $msg_array[$id]['msg'] = $msg;
-                    $msg_hist .= $str;
-                }
-                
-            }*/
         } else {
             /* this is a system notification */
             if ($display_notification) {
                 $str = "<span class='chat_time wplc-color-4'>".$nice_time."</span> <span class='wplc_system_notification wplc-color-4'>".$msg."</span>";
-                
+
                 if ( !isset( $msg_array[$id] ) ) { $msg_array[$id] = array(); }
                 $msg_array[$id]['msg'] = $str;
                 $msg_array[$id]['other'] = $other_data;
@@ -998,47 +1055,109 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
         }
 
     }
-    
+
     if ($display == 'string') { return $msg_hist; } else { return $msg_array; }
 
 
 }
 
+/**
+ * Mark a message as 'read'
+ *
+ * Sets the 'status' of the message to 1 in the message table
+ *
+ * @param  [int] $mid Message ID - Unique
+ * @return bool
+ */
+function wplc_mark_message_as_read( $mid ) {
+    global $wpdb;
+    global $wplc_tblname_msgs;
 
+    $wpdb->update(
+            $wplc_tblname_msgs,
+            array(
+                'status' => 1
+            ),
+            array('id' => $mid),
+            array('%d'),
+            array('%d')
+        );
+    return true;
+}
+
+
+/**
+ * Mark all messages sent by an AGENT as read (a user has read them)
+ *
+ * @param  int      $cid    Chat ID
+ * @return string           "ok"
+ */
 function wplc_mark_as_read_user_chat_messages($cid) {
     global $wpdb;
     global $wplc_tblname_msgs;
 
-    $results = $wpdb->get_results(
-        "
-            SELECT *
+    $results = $wpdb->get_results("SELECT *
             FROM $wplc_tblname_msgs
             WHERE `chat_sess_id` = '$cid' AND `status` = '0' AND (`originates` = 1 OR `originates` = 0)
-            ORDER BY `timestamp` DESC
-
-        "
-    );
+            ORDER BY `timestamp` DESC");
 
 
     foreach ($results as $result) {
         $id = $result->id;
-        
-        $wpdb->update( 
-            $wplc_tblname_msgs, 
-            array( 
+
+        $wpdb->update(
+            $wplc_tblname_msgs,
+            array(
                 'status' => 1
-            ), 
-            array('id' => $id), 
-            array('%d'), 
-            array('%d') 
+            ),
+            array('id' => $id),
+            array('%d'),
+            array('%d')
         );
-        
-        
+
+
     }
     return "ok";
 
 
 }
+/**
+ * Mark all messages sent by a USER as read (an agent has read them)
+ *
+ * @param  int      $cid    Chat ID
+ * @return string           "ok"
+ */
+function wplc_mark_as_read_agent_chat_messages($cid, $aid) {
+    global $wpdb;
+    global $wplc_tblname_msgs;
+
+    $results = $wpdb->get_results("SELECT *
+            FROM $wplc_tblname_msgs
+            WHERE `chat_sess_id` = '$cid' AND `ato` = '".intval( $aid )."'
+            ORDER BY `timestamp` DESC");
+
+
+    foreach ($results as $result) {
+        $id = $result->id;
+
+        $wpdb->update(
+            $wplc_tblname_msgs,
+            array(
+                'status' => 1
+            ),
+            array('id' => $id),
+            array('%d'),
+            array('%d')
+        );
+
+
+    }
+    return "ok";
+
+
+}
+
+
 //here
 function wplc_return_admin_chat_messages($cid) {
     $wplc_current_user = get_current_user_id();
@@ -1046,22 +1165,22 @@ function wplc_return_admin_chat_messages($cid) {
         /*
           -- modified in in 6.0.04 --
 
-          if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
+          if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){
          */
         $wplc_settings = get_option("WPLC_SETTINGS");
 
         if(isset($wplc_settings['wplc_display_name']) && $wplc_settings['wplc_display_name'] == 1){ $display_name = 1; } else { $display_name = 0; }
-                
+
         global $wpdb;
         global $wplc_tblname_msgs;
-            
+
         /**
          * `Originates` - codes:
          *     0 - System notification to be delivered to users
          *     1 - Message from an agent
          *     2 - Message from a user
          *     3 - System notification to be delivered to agents
-         * 
+         *
          */
         $results = $wpdb->get_results("SELECT * FROM $wplc_tblname_msgs WHERE `chat_sess_id` = '$cid' AND `status` = '0' AND (`originates` = '2' OR `originates` = '3') ORDER BY `timestamp` ASC");
 
@@ -1084,7 +1203,7 @@ function wplc_return_admin_chat_messages($cid) {
             $other_data['datetime'] = $timestamp;
 
             if (intval($result->originates) == 3) {
-                /* 
+                /*
                 system notifications
                 from version 7
                  */
@@ -1095,18 +1214,18 @@ function wplc_return_admin_chat_messages($cid) {
 
 
             }
-            
+
             if (!$system_notification) {
                 /* this is a normal message */
                 if(function_exists('wplc_encrypt_decrypt_msg')){
                     $msg = wplc_encrypt_decrypt_msg($msg);
                 }
-           
+
                 $msg_array = maybe_unserialize( $msg );
 
                 if( is_array( $msg_array ) ){
                     $msg = $msg_array['m'];
-                }             
+                }
 
                 $msg = stripslashes($msg);
 
@@ -1125,10 +1244,10 @@ function wplc_return_admin_chat_messages($cid) {
                 $msg_hist[$id]['msg'] = $msg;
                 $msg_hist[$id]['other'] = $other_data;
                 $msg_hist[$id]['originates'] = intval($result->originates);
-            }   
+            }
 
-            
-            
+
+
 
         }
 
@@ -1136,39 +1255,40 @@ function wplc_return_admin_chat_messages($cid) {
     }
 
 
-        
+
     else {
         return "security issue";
     }
 
 
 }
-function wplc_mark_as_read_admin_chat_messages($mid) {
+
+/**
+ * Mark all messages sent by a USER as read (an agent has read them)
+ *
+ * @param  int      $cid    Chat ID
+ * @return string           "ok"
+ */
+function wplc_mark_as_read_admin_chat_messages( $mid ) {
     $wplc_current_user = get_current_user_id();
 
     if( get_user_meta( $wplc_current_user, 'wplc_ma_agent', true ) ){
-    /*
-      -- modified in in 6.0.04 --
-
-      if(current_user_can('wplc_ma_agent') || current_user_can('manage_options')){   
-     */
-
         global $wpdb;
         global $wplc_tblname_msgs;
 
-        $wpdb->update( 
-            $wplc_tblname_msgs, 
-            array( 
+        $wpdb->update(
+            $wplc_tblname_msgs,
+            array(
                 'status' => 1
-            ), 
-            array('id' => $mid), 
-            array('%d'), 
-            array('%d') 
+            ),
+            array('id' => $mid),
+            array('%d'),
+            array('%d')
         );
 
     } else { return "security issue"; }
 
-
+    return "ok";
 }
 
 
@@ -1233,11 +1353,12 @@ function wplc_return_status($status) {
     if($status == 9){
         return __("User is browsing but doesn't want to chat", "wplivechat");
     }
-    
+
 }
 
 add_filter("wplc_filter_mail_body","wplc_filter_control_mail_body",10,2);
 function wplc_filter_control_mail_body($header,$msg) {
+    $primary_bg_color = apply_filters("wplc_mailer_bg_color", "#ec822c"); //Default orange
     $body = '
 <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">      
     <html>
@@ -1246,7 +1367,7 @@ function wplc_filter_control_mail_body($header,$msg) {
 
 
 
-        <table id="" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ec822c;">
+        <table id="" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ' . $primary_bg_color . ';">
         <tbody>
           <tr>
             <td width="100%" style="padding: 30px 20px 100px 20px;">
@@ -1303,6 +1424,36 @@ function wplc_filter_control_mail_body($header,$msg) {
 }
 
 
+add_filter("wplc_mailer_bg_color","wplc_fitler_mailer_bg_color",10,1);
+function wplc_fitler_mailer_bg_color($default_color) {
+    $wplc_settings = get_option('WPLC_SETTINGS');
+
+    if (isset($wplc_settings['wplc_theme'])) {
+        $wplc_theme = $wplc_settings['wplc_theme'];
+    }
+
+    if (isset($wplc_theme)) {
+        if($wplc_theme == 'theme-1') {
+            $default_color = "#DB0000";
+        } else if ($wplc_theme == 'theme-2'){
+            $default_color = "#000000";
+        } else if ($wplc_theme == 'theme-3'){
+            $default_color = "#B97B9D";
+        } else if ($wplc_theme == 'theme-4'){
+            $default_color = "#1A14DB";
+        } else if ($wplc_theme == 'theme-5'){
+            $default_color = "#3DCC13";
+        } else if ($wplc_theme == 'theme-6'){
+            //Check what color is selected in palette
+            if (isset($wplc_settings["wplc_settings_color1"])) {
+                $default_color = "#" . $wplc_settings["wplc_settings_color1"];
+            }
+        }
+    }
+
+    return $default_color;
+}
+
 /**
  * Send an email to the admin based on the settings in the settings page
  * @param  string $reply_to      email of the user
@@ -1313,7 +1464,9 @@ function wplc_filter_control_mail_body($header,$msg) {
  * @since  5.1.00
  */
 function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
-    
+
+    $upload_dir = wp_upload_dir();
+
     $wplc_pro_settings = get_option("WPLC_SETTINGS");
     if(isset($wplc_pro_settings['wplc_pro_chat_email_address'])){
         $email_address = $wplc_pro_settings['wplc_pro_chat_email_address'];
@@ -1321,8 +1474,8 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
         $email_address = get_option('admin_email');
     }
 
-    $email_address = explode(',', $email_address);  
-    
+    $email_address = explode(',', $email_address);
+
     if(get_option("wplc_mail_type") == "wp_mail" || !get_option('wplc_mail_type')){
         $headers[] = 'Content-type: text/html';
         $headers[] = 'Reply-To: '.$reply_to_name.'<'.$reply_to.'>';
@@ -1331,7 +1484,7 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
                 /* Send offline message to each email address */
                 $overbody = apply_filters("wplc_filter_mail_body",$subject,$msg);
                 if (!wp_mail($email, $subject, $overbody, $headers)) {
-                    $handle = fopen("wp_livechat_error_log.txt", 'a');
+                    $handle = fopen($upload_dir['basedir'].'/wp_livechat_error_log.txt', 'a');
                     $error = date("Y-m-d H:i:s") . " WP-Mail Failed to send \n";
                     @fwrite($handle, $error);
                 }
@@ -1340,7 +1493,7 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
 //        $to = $wplc_pro_settings['wplc_pro_chat_email_address'];
         return;
     } else {
-    
+
 
 
         //require 'phpmailer/PHPMailerAutoload.php';
@@ -1353,7 +1506,7 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
             //Create a new PHPMailer instance
 
             global $phpmailer;
-     
+
             // (Re)create it, if it's gone missing
             if ( ! ( $phpmailer instanceof PHPMailer ) ) {
                 require_once ABSPATH . WPINC . '/class-phpmailer.php';
@@ -1391,7 +1544,7 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
             $mail->ClearCustomHeaders();
             $mail->ClearReplyTos();
 
-            
+
             //Whether to use SMTP authentication
             $mail->SMTPAuth = true;
             //Username to use for SMTP authentication
@@ -1418,9 +1571,9 @@ function wplcmail($reply_to,$reply_to_name,$subject,$msg) {
 
             //send the message, check for errors
             if (!$mail->send()) {
-                $handle = fopen("wp_livechat_error_log.txt", 'a');
+                $handle = fopen($upload_dir['basedir'].'/wp_livechat_error_log.txt', 'a');
                 $error = date("Y-m-d H:i:s")." ".$mail->ErrorInfo." \n";
-                @fwrite($handle, $error); 
+                @fwrite($handle, $error);
             }
             return;
         }
@@ -1440,7 +1593,7 @@ function wplc_send_offline_msg($name,$email,$msg,$cid) {
     __("Email", "wplivechat").": $email\n".
     __("Message", "wplivechat").": $msg\n\n".
     __("Via WP Live Chat Support", "wplivechat");
-    wplcmail($email,$name, $subject, $msg);    
+    wplcmail($email,$name, $subject, $msg);
     return;
 }
 
@@ -1456,9 +1609,9 @@ function wplc_send_offline_msg($name,$email,$msg,$cid) {
 function wplc_store_offline_message($name, $email, $message){
     global $wpdb;
     global $wplc_tblname_offline_msgs;
-    
+
     $wplc_settings = get_option('WPLC_SETTINGS');
-        
+
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -1479,7 +1632,7 @@ function wplc_store_offline_message($name, $email, $message){
         'ip' => sanitize_text_field($offline_ip_address),
         'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
     );
-    
+
     $rows_affected = $wpdb->insert( $wplc_tblname_offline_msgs, $ins_array );
     return;
 }
@@ -1488,7 +1641,7 @@ function wplc_store_offline_message($name, $email, $message){
 */
 function wplc_send_welcome($cid,$wplc_settings) {
 
-    if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); } 
+    if (!isset($wplc_settings['wplc_welcome_msg'])) { $wplc_settings['wplc_welcome_msg'] = __("Please standby for an agent. While you wait for the agent you may type your message.","wplivechat"); }
     $mdata = array(
         'msg' => $wplc_settings['wplc_welcome_msg']
     );
@@ -1502,10 +1655,10 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
 
     global $wpdb;
     global $wplc_tblname_chats;
-  
+
 
     $wplc_settings = get_option('WPLC_SETTINGS');
-        
+
     if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -1524,16 +1677,16 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
         );
         $wplc_ce_ip = null;
     }
-    
+
     if(function_exists('wplc_ce_activate')){
         /* Log the chat for statistical purposes as well */
         if(function_exists('wplc_ce_record_initial_chat')){
             wplc_ce_record_initial_chat($name, $email, $cid, $wplc_ce_ip, sanitize_text_field($_SERVER['HTTP_REFERER']));
-        }                    
+        }
     }
-    
-    if ($cid != null) { 
-        /* change from a visitor to a chat */ 
+
+    if ($cid != null) {
+        /* change from a visitor to a chat */
 
         /**
          * This helps us identify if this user needs to be answered. The user can start typing so long but an agent still needs to answer the chat
@@ -1547,21 +1700,21 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
 
             $other_data = apply_filters("wplc_start_chat_hook_other_data_hook", $other_data);
             if (!isset($other_data['welcome'])) {
-                //wplc_send_welcome($cid,$wplc_settings);                
+                //wplc_send_welcome($cid,$wplc_settings);
                 $other_data['welcome'] = true;
             }
 
         } else {
-            //wplc_send_welcome($cid,$wplc_settings);                
+            //wplc_send_welcome($cid,$wplc_settings);
             $other_data = array();
             $other_data['welcome'] = true;
 
         }
 
 
-        $wpdb->update( 
-            $wplc_tblname_chats, 
-            array( 
+        $wpdb->update(
+            $wplc_tblname_chats,
+            array(
                 'status' => 2,
                 'timestamp' => current_time('mysql'),
                 'name' => $name,
@@ -1571,9 +1724,9 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
                 'last_active_timestamp' => current_time('mysql'),
                 'other' => maybe_serialize($other_data)
-            ), 
-            array('id' => $cid), 
-            array( 
+            ),
+            array('id' => $cid),
+            array(
                 '%d',
                 '%s',
                 '%s',
@@ -1583,27 +1736,27 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 '%s',
                 '%s',
                 '%s'
-            ), 
-            array('%d') 
+            ),
+            array('%d')
         );
-        
+
         do_action("wplc_hook_initiate_chat",array("cid" => $cid, "name" => $name, "email" => $email));
 
         do_action("wplc_start_chat_hook_after_data_insert", $cid);
         return $cid;
     }
-    else { 
+    else {
         $other_data = array();
         $other_data['unanswered'] = true;
 
         $other_data = apply_filters("wplc_start_chat_hook_other_data_hook", $other_data);
-        
 
 
-        $wpdb->insert( 
-            $wplc_tblname_chats, 
-            array( 
-                'status' => 2, 
+
+        $wpdb->insert(
+            $wplc_tblname_chats,
+            array(
+                'status' => 2,
                 'timestamp' => current_time('mysql'),
                 'name' => $name,
                 'email' => $email,
@@ -1612,9 +1765,9 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 'url' => sanitize_text_field($_SERVER['HTTP_REFERER']),
                 'last_active_timestamp' => current_time('mysql'),
                 'other' => maybe_serialize($other_data)
-            ), 
-            array( 
-                '%s', 
+            ),
+            array(
+                '%s',
                 '%s',
                 '%s',
                 '%s',
@@ -1623,10 +1776,10 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
                 '%s',
                 '%s',
                 '%s'
-            ) 
+            )
         );
-        
-        
+
+
         $lastid = $wpdb->insert_id;
 
 
@@ -1663,9 +1816,9 @@ function wplc_update_chat_statuses() {
         $timestamp = strtotime($result->last_active_timestamp);
         $datenow = current_time('timestamp');
         $difference = $datenow - $timestamp;
-        
 
-        
+
+
         if (intval($result->status) == 2) {
             if ($difference >= 30) { // 60 seconds max
                 wplc_change_chat_status($id,12);
@@ -1738,7 +1891,7 @@ function wplc_convert_array_to_string($array){
 
 function wplc_return_browser_image($string,$size) {
     switch($string) {
-        
+
         case "Internet Explorer":
             return "internet-explorer_".$size."x".$size.".png";
             break;
@@ -1759,10 +1912,10 @@ function wplc_return_browser_image($string,$size) {
             break;
         default:
             return "web_".$size."x".$size.".png";
-            break;       
+            break;
     }
-    
-    
+
+
 }
 function wplc_return_browser_string($user_agent) {
 if(strpos($user_agent, 'MSIE') !== FALSE)
@@ -1770,7 +1923,7 @@ if(strpos($user_agent, 'MSIE') !== FALSE)
  elseif(strpos($user_agent, 'Trident') !== FALSE) //For Supporting IE 11
     return 'Internet Explorer';
 elseif(strpos($user_agent, 'Edge') !== FALSE)
-	return 'Internet Explorer';
+    return 'Internet Explorer';
  elseif(strpos($user_agent, 'Firefox') !== FALSE)
    return 'Mozilla Firefox';
  elseif(strpos($user_agent, 'Chrome') !== FALSE)
@@ -1787,35 +1940,36 @@ elseif(strpos($user_agent, 'Edge') !== FALSE)
 
 function wplc_error_directory() {
     $upload_dir = wp_upload_dir();
-    
+
     if (is_multisite()) {
         if (!file_exists($upload_dir['basedir'].'/wp-live-chat-support')) {
             wp_mkdir_p($upload_dir['basedir'].'/wp-live-chat-support');
             $content = "Error log created";
-            $fp = @fopen($upload_dir['basedir'].'/wp-live-chat-support'."/error_log.txt","w+");
+            $fp = @fopen($upload_dir['basedir'].'/wp-live-chat-support/error_log.txt','w+');
             @fwrite($fp,$content);
         }
     } else {
-        if (!file_exists(ABSPATH.'wp-content/uploads/wp-live-chat-support')) {
-            wp_mkdir_p(ABSPATH.'wp-content/uploads/wp-live-chat-support');
+        if (!file_exists($upload_dir['basedir'] .'/wp-live-chat-support')) {
+            wp_mkdir_p($upload_dir['basedir'] . '/wp-live-chat-support');
             $content = "Error log created";
-            $fp = @fopen(ABSPATH.'wp-content/uploads/wp-live-chat-support'."/error_log.txt","w+");
+            $fp = @fopen($upload_dir['basedir'] . '/wp-live-chat-support/error_log.txt','w+');
             @fwrite($fp,$content);
         }
-        
+
     }
     return true;
-    
+
 }
 
 function wplc_error_log($error) {
-    return;    
+    return;
+    $upload_dir = wp_upload_dir();
     $content = "\r\n[".date("Y-m-d")."] [".date("H:i:s")."]".$error;
-    $fp = @fopen(ABSPATH.'/wp-content/uploads/wp-live-chat-support'."/error_log.txt","a+");
+    $fp = @fopen($upload_dir['basedir'].'/wp-live-chat-support/error_log.txt','a+');
     @fwrite($fp,$content);
     @fclose($fp);
-    
-    
+
+
 }
 function Memory_Usage($decimals = 2) {
     $result = 0;
@@ -1850,14 +2004,15 @@ function wplc_get_memory_usage() {
     $size = memory_get_usage(true);
     $unit=array('b','kb','mb','gb','tb','pb');
     return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-    
+
 }
 function wplc_record_mem() {
+    $upload_dir = wp_upload_dir();
     $data = array(
         'date' => current_time('mysql'),
         'php_mem' => wplc_get_memory_usage()
     );
-    $fp = @fopen(ABSPATH.'/wp-content/uploads/wp-live-chat-support'."/mem_usag.csv","a+");
+    $fp = @fopen($upload_dir['basedir'].'/wp-live-chat-support'."/mem_usag.csv","a+");
     fputcsv($fp, $data);
     fclose($fp);
 }
@@ -1879,7 +2034,7 @@ function wplc_admin_display_missed_chats() {
                 $delete_sql = "DELETE FROM $wplc_tblname_chats WHERE `id` = '".intval( sanitize_text_field( $_GET['cid'] ) )."' LIMIT 1";
 
                 $wpdb->query($delete_sql);
-                if ($wpdb->last_error) { 
+                if ($wpdb->last_error) {
                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
                         ".__("Error: Could not delete chat", "wplivechat")."<br>
                       </div>";
@@ -1887,13 +2042,13 @@ function wplc_admin_display_missed_chats() {
                      echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
                         ".__("Chat Deleted", "wplivechat")."<br>
                       </div>";
-                } 
+                }
 
             } else {
                 //Prompt
                 echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
                         ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_missed_cid&cid=".intval( sanitize_text_field( $_GET['cid'] ) )."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wplivechat")."</a>
+                        <a class='button' href='?page=wplivechat-menu-missed-chats&wplc_action=remove_missed_cid&cid=".$_GET['cid']."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-missed-chats'>".__("No", "wplivechat")."</a>
                       </div>";
             }
         }
@@ -1966,7 +2121,7 @@ function wplc_is_user_banned_basic(){
                 } else {
                     $ip_address = $_SERVER['REMOTE_ADDR'];
                 }
-                
+
                 if(isset($ip_address)){
                     if($ip == $ip_address){
                         $banned++;
@@ -1988,9 +2143,9 @@ function wplc_is_user_banned_basic(){
 
 
 function wplc_return_animations_basic(){
-    
+
     $wplc_settings = get_option("WPLC_SETTINGS");
-    
+
     if ($wplc_settings["wplc_settings_align"] == 1) {
         $original_pos = "bottom_left";
         //$wplc_box_align = "left:100px; bottom:0px;";
@@ -2047,7 +2202,7 @@ function wplc_return_animations_basic(){
             $wplc_starting_point = 'margin-bottom: 0px; left: -999px;';
             $wplc_animation = 'animation-2-l';
         } else if ($original_pos == 'right'){
-            $wplc_starting_point = 'margin-bottom: 0px; right: -999px;';               
+            $wplc_starting_point = 'margin-bottom: 0px; right: -999px;';
             $wplc_animation = 'animation-2-r';
         }
 
@@ -2093,7 +2248,7 @@ function wplc_return_animations_basic(){
         $animation_data['box_align'] =  $wplc_box_align;
 
     } else {
-        
+
         if($original_pos == 'bottom_right'){
             $wplc_starting_point = 'margin-bottom: 0; right: 20px; display: none;';
         } else if ($original_pos == 'bottom_left'){
@@ -2103,9 +2258,9 @@ function wplc_return_animations_basic(){
         } else if ($original_pos == 'right'){
             $wplc_starting_point = 'margin-bottom: 100px; right: 0px; display: none;';
         }
-        
+
         $wplc_animation = 'none';
-        
+
         $animation_data['animation'] = $wplc_animation;
         $animation_data['starting_point'] = $wplc_starting_point;
         $animation_data['box_align'] =  $wplc_box_align;
@@ -2122,7 +2277,7 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
     $elem_trig_id = isset($wplc_settings['wplc_elem_trigger_id']) ? $wplc_settings['wplc_elem_trigger_id'] : "";
 
     echo "<tr>
-            <td width='300'>
+            <td width='350'>
             ".__("Open chat window via", "wplivechat").":
             </td>
             <td>
@@ -2139,4 +2294,44 @@ function wplc_advanced_settings_above_performance_control($wplc_settings){
             </td>
           </tr>
          ";
+}
+
+/**
+ * Reverse of wplc_return_chat_id_by_rel
+ */
+function wplc_return_chat_rel_by_id($cid) {
+    global $wpdb;
+    global $wplc_tblname_chats;
+
+    $results = $wpdb->get_results("SELECT * FROM $wplc_tblname_chats WHERE `id` = '$cid' LIMIT 1");
+    if ($results) {
+        foreach ($results as $result) {
+            if (isset($result->rel)) {
+                return $result->rel;
+            } else {
+                return $cid;
+            }
+        }
+    } else {
+        return $cid;
+    }
+
+}
+
+/*
+ * Returns total message count for a chat
+*/
+function wplc_return_message_count_by_cid($cid) {
+    global $wpdb;
+    global $wplc_tblname_msgs;
+
+    $sql = "SELECT `id` FROM $wplc_tblname_msgs WHERE `chat_sess_id` = '$cid'";
+    $results = $wpdb->get_results($sql);
+
+    $message_count = 0;
+    foreach ($results as $result) {
+        $message_count ++;
+    }
+
+    return $message_count;
 }

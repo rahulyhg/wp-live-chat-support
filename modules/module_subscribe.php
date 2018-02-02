@@ -5,8 +5,8 @@
  * @param array   $links
  * @return array
  */
-add_filter( 'network_admin_plugin_action_links_wp-live-chat-support/wp-live-chat-support.php', 'wplc_plugin_action_links' );
-add_filter( 'plugin_action_links_wp-live-chat-support/wp-live-chat-support.php', 'wplc_plugin_action_links' );
+add_filter( 'network_admin_plugin_action_links_' . WPLC_PLUGIN, 'wplc_plugin_action_links' );
+add_filter( 'plugin_action_links_' . WPLC_PLUGIN, 'wplc_plugin_action_links' );
 function wplc_plugin_action_links( $links ) {
     
     array_unshift( $links,
@@ -65,7 +65,7 @@ function wplc_plugin_row_js(){
 add_filter( 'plugin_row_meta', 'wplc_plugin_row', 4, 10 );
 function wplc_plugin_row( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 
-    if ( $plugin_file == "wp-live-chat-support/wp-live-chat-support.php") {
+    if ( $plugin_file == WPLC_PLUGIN ) {
         $check = get_user_meta(get_current_user_id(),"wplc_subscribed");
         
         $wplc_current_user = get_current_user_id();

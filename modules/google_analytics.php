@@ -10,10 +10,10 @@ function wplc_hook_settings_page_ga_integration() {
 	$wplc_ga_data = get_option("WPLC_GA_SETTINGS"); 
     ?>
 	<h4><?php _e("Google Analytics Integration", "wplivechat") ?></h4>
-	<table class="wp-list-table widefat fixed striped pages">
+	<table class="wp-list-table widefat wplc_list_table fixed striped pages">
 		<tbody>
 			<tr>
-				<td width="300" valign="top">
+				<td width="350" valign="top">
 				  <label for="wplc_enable_ga"><?php _e("Enable Google Analytics Integration","wplivechat"); ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="When enabled we will send custom events to your Google Analytics account for events such as when a user starts a chat, sends an offline message, closes a chat, etc."></i></label>
 				</td>
 				<td valign="top">

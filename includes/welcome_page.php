@@ -1,7 +1,7 @@
 <?php //global $wpgmza_global_array; ?>
 <div class="wrap about-wrap">
 <p>&nbsp;</p>
-<h1 style='margin-right: 0;'><?php _e("Welcome to WP Live Chat Support v7","wplivechat"); ?> <div class="wplc-badge" style=' float: right; display: block; max-width: 20%; margin-left: 15%;'><img src='<?php echo plugins_url( "/wp-live-chat-support/images/wplc-logo.png" ); ?>' /></div></h1>
+<h1 style='margin-right: 0;'><?php _e("Welcome to WP Live Chat Support v8","wplivechat"); ?> <div class="wplc-badge" style=' float: right; display: block; max-width: 20%; margin-left: 15%;'><img src='<?php echo WPLC_BASIC_PLUGIN_URL . "images/wplc-logo.png"; ?>' /></div></h1>
 
 <div class="about-text"><?php _e("WP Live Chat Support is the most cost effective, feature rich, amazingly supported and most positively reviewed live chat plugin on WordPress!","wplivechat"); ?></div>
 
@@ -30,38 +30,57 @@
 
 </h2>
 <?php if( !isset( $_GET['action'] ) || ( isset( $_GET['action'] ) && $_GET['action'] == 'welcome' ) ){ ?>
-<h2>What's new in Version 7?</h2>
+<h2>What's new in Version 8?</h2>
+<center><img src='<?php echo WPLC_BASIC_PLUGIN_URL; ?>/images/performance.png' style='width:300px;' /></center>
 <div class="feature-section three-col">
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-server" aria-hidden="true"></i><br/><h4><?php _e("Light Weight Message Delivery","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-bolt" aria-hidden="true"></i><br/><h4><?php _e("Incredibly fast server","wplivechat"); ?></h4></div>
         
         <p style='text-align: center;'><?php _e("Use our server to handle the load and save 1000%+ on server resources!","wplivechat"); ?></p>        
     </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-hourglass-half" aria-hidden="true"></i><br/><h4><?php _e("Chat to an agent without waiting","wplivechat"); ?></h4></div>        
-        <p style='text-align: center;'><?php _e("Visitors can now send messages before an agent has accepted a chat, allowing them to give detailed information to the agent before the agent joins.","wplivechat"); ?></p>        
+        <div style='text-align: center;' ><i class="fa-4x fa fa-dashboard" aria-hidden="true"></i><br/><h4><?php _e("New Dashboard","wplivechat"); ?></h4></div>        
+        <p style='text-align: center;'><?php _e("Handle all your chats in one area, on any admin page.","wplivechat"); ?></p>        
     </div>   
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-mail-forward" aria-hidden="true"></i><br/><h4><?php _e("Redirect to a page when the chat has ended","wplivechat"); ?></h4></div>        
-        <p style='text-align: center;'><?php _e("Redirect your visitors to a new page after a chat has ended. ","wplivechat"); ?></p>        
+        <div style='text-align: center;' ><i class="fa-4x fa fa-smile-o" aria-hidden="true"></i><br/><h4><?php _e("Emojis!","wplivechat"); ?></h4></div>        
+        <p style='text-align: center;'><?php _e("Add a touch of your own personality with emojis!","wplivechat"); ?></p>        
     </div>
 </div>
 
+<h2>New Pro features</h2>
 <div class="feature-section three-col">
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-pie-chart" aria-hidden="true"></i><br/><h4><?php _e("Google Analytics Integration","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-commenting-o" aria-hidden="true"></i><br/><h4><?php _e("Typing Preview","wplivechat"); ?></h4></div>
         
-        <p style='text-align: center;'><?php _e("Keep track of your visitor's events with our new Google Analytics Integration","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("See what your customers are typing before they even send it!","wplivechat"); ?></p>        
     </div>
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-keyboard-o" aria-hidden="true"></i><br/><h4><?php _e("Typing Indicator","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-users" aria-hidden="true"></i><br/><h4><?php _e("Multiple Agents Per Chat","wplivechat"); ?></h4></div>
         
-        <p style='text-align: center;'><?php _e("See as and when both parties are typing when using our Node Server (beta).","wplivechat"); ?></p>        
+        <p style='text-align: center;'><?php _e("More than one agent can join and be involved in a chat.","wplivechat"); ?></p>        
     </div>    
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-envelope" aria-hidden="true"></i><br/><h4><?php _e("Customizable Offline Message Forms","wplivechat"); ?></h4></div>
+        <div style='text-align: center;' ><i class="fa-4x fa fa-random" aria-hidden="true"></i><br/><h4><?php _e("Agent to Agent Chat","wplivechat"); ?></h4></div>
         
-        <p style='text-align: center;'><?php echo sprintf( __( "Build your own offline message form using <a href='%s' target='_BLANK'>Contact Form Ready</a>'s drag and drop form builder.","wplivechat"), 'https://wordpress.org/plugins/contact-form-ready/' ); ?></p>        
+        <p style='text-align: center;'><?php _e( "Chat directly to other agents on our new dashboard.","wplivechat"); ?></p>        
+    </div>
+</div>
+<div class="feature-section three-col">
+    <div class="col">
+        <div style='text-align: center;' ><i class="fa-4x fa fa-eraser" aria-hidden="true"></i><br/><h4><?php _e("Edit Messages","wplivechat"); ?></h4></div>
+        
+        <p style='text-align: center;'><?php _e("Simply press the UP arrow or use the EDIT link to edit a message that you have already sent.","wplivechat"); ?></p>        
+    </div>
+    <div class="col">
+        <div style='text-align: center;' ><i class="fa-4x fa fa-heartbeat" aria-hidden="true"></i><br/><h4><?php _e("Event Monitoring","wplivechat"); ?></h4></div>
+        
+        <p style='text-align: center;'><?php _e("Know exactly what the user is doing in real time.","wplivechat"); ?></p>        
+    </div>    
+    <div class="col">
+        <div style='text-align: center;' ><i class="fa-4x fa fa-apple" aria-hidden="true"></i><br/><h4><?php _e("iOS app","wplivechat"); ?></h4></div>
+        
+        <p style='text-align: center;'><?php _e( "The new iOS app is finally here!","wplivechat"); ?></p>        
     </div>
 </div>
 

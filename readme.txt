@@ -4,6 +4,7 @@ Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 3.8
 Tested up to: 4.9
+Requires PHP: 5.3
 Stable tag: trunk
 License: GPLv2
 
@@ -228,6 +229,53 @@ It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02
 It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+= 8.0.03 - 2018-01-30 - Medium priority =
+* Fixed a CSS bug
+* Corrected a bug with the default theme not being set correctly.
+
+= 8.0.02 - 2018-01-29 =
+* Fixed a PHP warning
+* Modified rest_url filter to no longer use anonymous function
+* Fixed styling conflicts between our settings and other pages in WordPress admin 
+* Fixed issues with file uploads (Bleeper core)
+* Fixed hints in settings area
+* Fixed links in chat bubbles not being clearly visible
+* Fixed assets loading on all admin pages when option is disabled
+* Fixed the bug that caused issues if your folder name was not wp-live-chat-support
+* Fixed issue where inactive chat status is not removed when new message from that chat is received
+* Welcome page styling fixed
+
+= 8.0.01 =
+* Massive improvements to the performance of the plugin
+* New, modern dashboard
+* The dashboard can now be added to all admin pages
+* Dynamic visitor filtering
+* Improved REST API Security
+* OS identification
+* Better Browser identification
+* Mobile/desktop identification
+* Country identification (API)
+* Inline link handling
+* Security patches
+* Gutenberg support
+* Full WPML Support
+* Showcase user's timezone
+* Emoticons added to the chatbox
+* New API endpoints
+* Refactor JS code – backend and frontend to make use of events
+* Store messages using sessionStorage to avoid unnecessary DB calls
+* Better polling system for visitor tracking
+* Better history UI
+* Support for the new iOS app
+* Support for the new Android App
+* Support for the new Desktop App
+
+= 8.0.00 =
+* Beta release
+
+= 7.1.08 - 2018-01-04 - Low priority =
+* PHP 7 compatibility
 
 = 7.1.07 - 2017-11-06 - High priority =
 * Patched a security exploit found by James @ Pritect, Inc.  Thank you James!

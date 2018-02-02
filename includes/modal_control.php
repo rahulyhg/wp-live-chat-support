@@ -49,8 +49,9 @@ add_action('admin_print_scripts', 'wplc_admin_modal_javascript');
  * @return void
 */
 function wplc_admin_modal_javascript(){
+	global $wplc_version;
 	if(isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu'){
-		wp_register_script('wplc-admin-modal-js', plugins_url('../js/wplc-admin-modal.js', __FILE__));
+		wp_register_script('wplc-admin-modal-js', plugins_url('../js/wplc-admin-modal.js', __FILE__), array(), $wplc_version);
     	wp_enqueue_script('wplc-admin-modal-js');
     }
 }

@@ -144,6 +144,7 @@ final class wplc_update_control {
                     'api_key' => get_option($this->wplc_option)
             ));
             $response = wp_remote_post($this->wplc_api_url, $data_array);
+			
             if (is_array($response)) {
                 if ( $response['response']['code'] == "200" ) {
                     $data = $response['body'];
@@ -178,6 +179,7 @@ final class wplc_update_control {
 
 
         if (function_exists("wplc_build_api_check")) { return wplc_build_api_check($page_content,$data_array); }
+		
         return $page_content;
         
     }

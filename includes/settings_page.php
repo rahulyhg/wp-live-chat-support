@@ -53,7 +53,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
 
 ?>
 <img src='<?php echo WPLC_BASIC_PLUGIN_URL.'images/ajax-loader.gif'; ?>' id='wplc_settings_page_loader' style='display: block; margin: 20px auto;' />
-<div class="wrap" style='display: none;'>
+<div class="wrap wplc_wrap" style='display: none;'>
 
     <style>
         .wplc_light_grey{
@@ -128,10 +128,10 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
        
       </ul>
       <div id="tabs-1">
-          <h3><?php _e("Main Settings",'wplivechat')?></h3>
-          <table class='wp-list-table widefat fixed striped pages' width='700'>
+          <h3><?php _e("General Settings",'wplivechat')?></h3>
+          <table class='wp-list-table wplc_list_table widefat fixed striped pages' width='700'>
               <tr>
-                  <td width='300' valign='top'><?php _e("Chat enabled","wplivechat")?>: </td>
+                  <td width='350' valign='top'><?php _e("Chat enabled","wplivechat")?>: </td>
                   <td>
                       <select id='wplc_settings_enabled' name='wplc_settings_enabled'>
                           <option value="1" <?php if (isset($wplc_settings_enabled[1])) { echo $wplc_settings_enabled[1]; } ?>><?php _e("Yes","wplivechat"); ?></option>
@@ -216,7 +216,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </td>
               </tr>
               <tr>
-                  <td width='300' valign='top'>
+                  <td width='350' valign='top'>
                       <?php _e("Record a visitor's IP Address","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this to enable anonymity for your visitors", "wplivechat") ?>"></i>                  
                   </td>
                   <td valign='top'>
@@ -241,7 +241,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
               </tr>
               <tr>
                   <td width='300' valign='top'>
-                    <?php _e("Enable chat notifications on all admin pages","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This will allow you to receive chat notifications while browsing any admin page.", "wplivechat") ?>"></i>
+                    <?php _e("Enable chat dashboard and notifications on all admin pages","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("This will load the chat dashboard on every admin page.", "wplivechat") ?>"></i>
                   </td>
                   <td valign='top'>
                       <input type="checkbox" value="1" name="wplc_enable_all_admin_pages" <?php if(isset($wplc_settings['wplc_enable_all_admin_pages']) && $wplc_settings['wplc_enable_all_admin_pages'] == 1 ) { echo "checked"; } ?> />
@@ -304,7 +304,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
       </div>
       <div id="tabs-2">
           <h3><?php _e("Chat Window Settings",'wplivechat')?></h3>
-          <table class='wp-list-table widefat fixed striped pages'>
+          <table class='wp-list-table wplc_list_table widefat fixed striped pages'>
               <tr>
                   <td width='300' valign='top'><?php _e("Chat box alignment","wplivechat")?>:</td>
                   <td>
@@ -497,13 +497,34 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <input type="text" name="wplc_redirect_thank_you_url" value="<?php echo (isset($wplc_settings['wplc_redirect_thank_you_url']) ?  urldecode($wplc_settings['wplc_redirect_thank_you_url']) : '' ); ?>" placeholder="<?php _e('Thank You Page URL', 'wplivechat'); ?>" />
                   </td>
               </tr> 
+				<?php
+				if(defined('WPLC_LIVE_CHAT_SUPPORT_PRO_LOADED'))
+				{
+					?>
+					<tr>
+						<td>
+							<?php
+							_e('Disable Emojis', 'wplivechat');
+							?>
+						</td>
+						<td>
+						<input type="checkbox" name="wplc_disable_emojis"
+							<?php
+							if(!empty($wplc_settings['wplc_disable_emojis']))
+								echo 'checked="checked"';
+							?>
+							/>
+					</tr>
+					<?php
+				}
+				?>
           </table>
 
           <?php if(!function_exists("wplc_chat_social_div") && !function_exists("wplc_pro_activate")){ ?>
 
               <h3><?php _e("Social", 'wplivechat') ?></h3>
               <hr>
-              <table class='wp-list-table widefat fixed striped pages' >
+              <table class='wp-list-table wplc_list_table widefat fixed striped pages' >
                   <tbody>
                       <tr>
                           <td width='300' valign='top'><?php _e("Facebook URL", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Link your Facebook page here. Leave blank to hide", "wplivechat") ?>"></i></td> 
@@ -540,7 +561,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
       </div>
                   <div id="tabs-3">
                 <h3><?php _e("Offline Messages", 'wplivechat') ?></h3> 
-                <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+                <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages' width='100%'>
                     <tr>
                         <td width='300'>
 <?php _e("Do not allow users to send offline messages", "wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("The chat window will be hidden when it is offline. Users will not be able to send offline messages to you", "wplivechat") ?>"></i>
@@ -595,7 +616,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                 <h4><?php _e("Email settings", 'wplivechat') ?></h4> 
 
 
-                <table class='form-table wp-list-table widefat fixed striped pages'>
+                <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages'>
                     <tr>
                         <td width='300' valign='top'>
 <?php _e("Email Address", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Email address where offline messages are delivered to. Use comma separated email addresses to send to more than one email address", "wplivechat") ?>"></i>
@@ -617,7 +638,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
 
                 </table>
 
-                <table class='form-table wp-list-table widefat fixed striped pages'>
+                <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages'>
                     <tr>
                         <td width="33%"><?php _e("Sending Method", "wplivechat") ?></td>
                         <td width="33%" style="text-align: center;"><?php _e("WP Mail", "wplivechat") ?></td>
@@ -634,7 +655,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                     </tr>
                 </table>
                 <hr/>
-                <table id="wplc_smtp_details" class='form-table wp-list-table widefat fixed striped pages' width='100%'>
+                <table id="wplc_smtp_details" class='form-table wp-list-table wplc_list_table widefat fixed striped pages' width='100%'>
                     <tr>
                         <td width="300" valign="top">
 <?php _e("Host", "wplivechat") ?>: 
@@ -737,7 +758,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                   }
               </style>
           <h3><?php _e("Styling",'wplivechat')?></h3>
-          <table class='form-table wp-list-table widefat fixed striped pages'>
+          <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages'>
               
 
               <tr style='margin-bottom: 10px;'>
@@ -1009,7 +1030,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
         </div>
         <div id="tabs-7">           
             <h3><?php _e("Blocked Visitors - Based on IP Address", "wplivechat") ?></h3>
-            <table class='form-table wp-list-table widefat fixed striped pages' width='100%'>                       
+            <table class='form-table wp-list-table wplc_list_table widefat fixed striped pages' width='100%'>                       
               <tr>
                 <td>
                   <textarea name="wplc_ban_users_ip" style="width: 50%; min-height: 200px;" placeholder="<?php _e('Enter each IP Address you would like to block on a new line', 'wplivechat'); ?>" autocomplete="false"><?php
