@@ -63,6 +63,7 @@ jQuery(document).ready(function() {
         if (e.status === "active") {
             jQuery.event.trigger({type: "wplc_open_chat_2", wplc_online: wplc_online});      
         }
+        wplc_clear_system_notification();
     });
 
     /**
@@ -71,11 +72,10 @@ jQuery(document).ready(function() {
      * @return void
      */
     jQuery(document).on("bleeper_disconnected", function() {
+        console.log('disconnected');
         if(typeof wplc_error_messages !== "undefined" && typeof wplc_error_messages['disconnected_message'] !== "undefined"){
             var the_message = wplc_generate_system_notification_object(wplc_error_messages['disconnected_message'], {}, 0);
-            wplc_push_message_to_chatbox(the_message,'u', function() {
-                wplc_scroll_to_bottom();    
-            });
+            wplc_display_system_notification(the_message);
         }
     });
 
@@ -215,7 +215,7 @@ jQuery(document).ready(function() {
     jQuery(document).on("bleeper_agent_joined", function(e) {
         if (typeof e.ndata !== "undefined" && typeof e.ndata === "object") {
             if (typeof agent_joined[parseInt(e.ndata.agent)] === "undefined") {
-                the_message = wplc_generate_system_notification_object(e.ndata.agent_name+" has joined.", {}, 0);
+                the_message = wplc_generate_system_notification_object(e.ndata.agent_name+bleeper_localized_strings[0], {}, 0);
                 wplc_push_message_to_chatbox(the_message,'u', function() {
                     wplc_scroll_to_bottom();    
                 });
@@ -232,7 +232,7 @@ jQuery(document).ready(function() {
      */
     jQuery(document).on("bleeper_agent_left", function(e) {
         if (typeof e.ndata !== "undefined" && typeof e.ndata === "object") {
-            the_message = wplc_generate_system_notification_object(e.ndata.agent_name+" has left.", {}, 0);
+            the_message = wplc_generate_system_notification_object(e.ndata.agent_name+bleeper_localized_strings[1], {}, 0);
             if (typeof agent_joined[parseInt(e.ndata.agent)] !== "undefined" && agent_joined[parseInt(e.ndata.agent)] === true) {
                 agent_joined[parseInt(e.ndata.agent)] = undefined;
                 wplc_push_message_to_chatbox(the_message,'u', function() {
@@ -246,7 +246,7 @@ jQuery(document).ready(function() {
 
     jQuery(document).on("bleeper_chat_ended_notification", function(e) {
         if (typeof e.ndata !== "undefined" && typeof e.ndata === "object") {
-            the_message = wplc_generate_system_notification_object(e.ndata.agent_name+" has ended the chat.", {}, 0);
+            the_message = wplc_generate_system_notification_object(e.ndata.agent_name+bleeper_localized_strings[2], {}, 0);
             wplc_push_message_to_chatbox(the_message,'u', function() {
                 wplc_scroll_to_bottom();    
             });
@@ -264,7 +264,7 @@ jQuery(document).ready(function() {
      * @return void
      */
     jQuery(document).on("bleeper_agent_disconnected", function(e) {
-        the_message = wplc_generate_system_notification_object(e.ndata.agent_name+" has disconnected.", {}, 0);
+        the_message = wplc_generate_system_notification_object(e.ndata.agent_name+bleeper_localized_strings[3], {}, 0);
             if (typeof agent_joined[parseInt(e.ndata.aid)] !== "undefined" && agent_joined[parseInt(e.ndata.aid)] === true) {
                 agent_joined[parseInt(e.ndata.aid)] = undefined;
                 wplc_push_message_to_chatbox(the_message,'u', function() {

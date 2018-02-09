@@ -1,3 +1,4 @@
+
 var wplc_upsell_events_array = [];
 var wplc_new_chat_ringer_dismissed = false;
 
@@ -17,6 +18,7 @@ jQuery("#toolbar-item-open-bleeper").hide();
 
 
 jQuery(document).ready(function(){
+  
   if ( typeof bleeper_in_dashboard !== "undefined" && bleeper_in_dashboard === "0") {
 
     jQuery(".nifty_top_wrapper").hide();
@@ -31,7 +33,27 @@ jQuery(document).ready(function(){
         
     }).done(function(response){
       jQuery(response).insertAfter("#bleeper_content_wrapper");
-      jQuery.event.trigger({type: "bleeper_dom_ready"});
+
+      /* find closest server */
+      bleeper_ping_servers(function(lowest_ping_index) {
+          
+          if(typeof bleeper_end_point_override !== "undefined"){
+            /* use the override if we have set it */
+            node_uri = bleeper_end_point_override; //Override
+          } else {
+            if (typeof bleeper_server_location !== "undefined") {
+              // use this as the user selected the server in the settings
+              node_uri = bleeper_server_list[parseInt(bleeper_server_location)];
+            } else {
+              // use the fastest server instead
+              node_uri = bleeper_server_list[lowest_ping_index];
+            }
+          }
+          if (window.console) { console.log("[Bleeper] Connecting to "+node_uri); }
+          jQuery.event.trigger({type: "bleeper_dom_ready"});
+          
+      });
+      
 
       if ( typeof bleeper_in_dashboard !== "undefined" && bleeper_in_dashboard === "0") {
     
@@ -93,7 +115,7 @@ jQuery(document).on("bleeper_limited", function(e){
     if(is_limited === "true" || is_limited === true){
       jQuery("#wplc_limited_container").fadeIn();
     } else {
-      //console.log("not_limited");
+      //not limited
     }
   }
 });
