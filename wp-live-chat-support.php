@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 8.0.03
+  Version: 8.0.04
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,7 +11,12 @@
  */
 
 /**
- *	
+ *
+ * 8.0.04 - 2018-02-xx
+ * Allowed strings from the front end to be translated
+ * Fixed the iPhone Safari display bug (zomming in to the chat box)
+ * Added support for the agent to detect and connect to the closes chat server
+ * 
  * 8.0.03 - 2018-01-30 - Medium priority
  * Fixed a CSS bug
  * Corrected a bug with the default theme not being set correctly.
@@ -594,7 +599,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.03";
+$wplc_version = "8.0.04";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -1158,7 +1163,8 @@ function wplc_push_js_to_front_basic() {
 	    } else {
 	    	$bleeper_url = BLEEPER_NODE_SERVER_URL;
 	    }
-		wp_register_script('wplc-node-server-script', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", array('jquery'), $wplc_version);
+		//wp_register_script('wplc-node-server-script', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", array('jquery'), $wplc_version);
+		wp_register_script('wplc-node-server-script', "https://bleeper.io/app/assets/js/vendor/socket.io/socket.io.slim.js", array('jquery'), $wplc_version);
 
 
 		//wp_register_script('wplc-node-server-script', 'http://localhost:3000/socket.io/socket.io.js', array('jquery'), $wplc_version);
@@ -1175,6 +1181,17 @@ function wplc_push_js_to_front_basic() {
                 wp_localize_script('wplc-server-script', 'bleeper_user_ip_address', $ip_address);
             }
         }
+
+		$wplc_server_location = get_option( "wplc_server_location" );
+        if( $wplc_server_location !== false && $wplc_server_location !== "" && $wplc_server_location !== "auto" ){
+        	if ( $wplc_server_location === "us1") { $wplc_server_location = "0"; }
+        	else if ( $wplc_server_location === "us2") { $wplc_server_location = "3"; }
+        	else if ( $wplc_server_location === "eu1") { $wplc_server_location = "1"; }
+        	else if ( $wplc_server_location === "eu2") { $wplc_server_location = "2"; }
+        	else { $wplc_server_location = "0"; }
+        	wp_localize_script( 'wplc-server-script', 'bleeper_server_location', $wplc_server_location );
+        }
+
 
         $wplc_end_point_override = get_option("wplc_end_point_override");
         if($wplc_end_point_override !== false && $wplc_end_point_override !== ""){
@@ -1329,7 +1346,7 @@ function wplc_push_js_to_front_basic() {
         'server_connection_lost' => __("Connection to server lost. Please reload this page. Error: ", "wplivechat"),
         'chat_ended_by_operator' => ( empty( $wplc_settings['wplc_text_chat_ended'] ) ) ? __("The chat has been ended by the operator.", "wplivechat") : esc_attr( $wplc_settings['wplc_text_chat_ended'] ) ,
         'empty_message' => __( "Please enter a message", "wplivechat" ),
-        'disconnected_message' => __("You have been disconnected", "wplivechat"),
+        'disconnected_message' => __("Disconnected, attempting to reconnect...", "wplivechat"),
     );
 
     $wplc_error_messages = apply_filters( "wplc_user_error_messages_filter", $wplc_error_messages );
@@ -1379,6 +1396,16 @@ function wplc_push_js_to_front_basic() {
     wp_localize_script('wplc-user-script', 'wplc_localized_string_is_typing', $agent . __(" is typing...","wplivechat"));
     wp_localize_script('wplc-user-script', 'wplc_localized_string_is_typing_single', __(" is typing...","wplivechat"));
 
+    $bleeper_string_array = array(
+    	__(" has joined.","wplivechat"),
+    	__(" has left.","wplivechat"),
+    	__(" has ended the chat.", "wplivechat"),
+    	__(" has disconnected.", "wplivechat"),
+    	__("(edited)", "wplivechat"),
+    	__("Type here","wplivechat")
+    );
+
+	wp_localize_script('wplc-user-script', 'bleeper_localized_strings', $bleeper_string_array );
 
     if( isset( $wplc_settings['wplc_elem_trigger_id'] ) && trim( $wplc_settings['wplc_elem_trigger_id'] ) !== "" ) {
     	if( isset( $wplc_settings['wplc_elem_trigger_action'] ) ){

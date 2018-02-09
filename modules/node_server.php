@@ -483,7 +483,8 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 
 
 
-		wp_register_script('wplc-admin-js-sockets', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", false, $wplc_version, false);
+		wp_register_script('wplc-admin-js-sockets', "https://bleeper.io/app/assets/js/vendor/socket.io/socket.io.slim.js", false, $wplc_version, false);
+		//wp_register_script('wplc-admin-js-sockets', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", false, $wplc_version, false);
 		//wp_register_script('wplc-admin-js-sockets', "http://localhost:3000/socket.io/socket.io.js", false, $wplc_version, false);
 		wp_enqueue_script('wplc-admin-js-sockets');
 
@@ -638,6 +639,18 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
             wp_localize_script( 'wplc-admin-js-agent', 'bleeper_ringer_count', "" . $wplc_ringer_count );
         }
 
+        
+        $wplc_server_location = get_option( "wplc_server_location" );
+        if( $wplc_server_location !== false && $wplc_server_location !== "" && $wplc_server_location !== "auto" ){
+        	if ( $wplc_server_location === "us1") { $wplc_server_location = "0"; }
+        	else if ( $wplc_server_location === "us2") { $wplc_server_location = "3"; }
+        	else if ( $wplc_server_location === "eu1") { $wplc_server_location = "1"; }
+        	else if ( $wplc_server_location === "eu2") { $wplc_server_location = "2"; }
+        	else { $wplc_server_location = "0"; }
+        	wp_localize_script( 'wplc-admin-js-agent', 'bleeper_server_location', $wplc_server_location );
+        }
+
+        /* use the end point override as the final decision for identifying the actual end point override variable */
         $wplc_end_point_override = get_option("wplc_end_point_override");
         if($wplc_end_point_override !== false && $wplc_end_point_override !== ""){
         	wp_localize_script( 'wplc-admin-js-agent', 'bleeper_end_point_override', $wplc_end_point_override );

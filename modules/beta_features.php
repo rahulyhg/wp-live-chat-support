@@ -34,6 +34,10 @@ function wplc_beta_settings_tab_content() {
  }
  $wplc_end_point_override = get_option("wplc_end_point_override");
  $wplc_end_point_override = $wplc_end_point_override === false ? "" : $wplc_end_point_override;
+ $wplc_server_location = get_option("wplc_server_location");
+ $wplc_server_location = $wplc_server_location === false ? "auto" : $wplc_server_location;
+ 
+
  $wplc_new_chat_ringer_count = 5;
  if(isset($wplc_settings['wplc_new_chat_ringer_count'])){
     $wplc_new_chat_ringer_count = intval($wplc_settings['wplc_new_chat_ringer_count']);
@@ -54,6 +58,21 @@ function wplc_beta_settings_tab_content() {
            <td valign="top">
              <input type="checkbox" value="1" name="wplc_use_node_server" <?php /*if (function_exists("wplc_cloud_load_updates")) { echo 'disabled="disabled" readonly="readonly"'; } */ ?> <?php if (isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == '1') { echo "checked"; } ?>> 
              <small><em><?php _e("Disabling this will revert the chat dashboard back to the legacy version.", "wplivechat"); ?></em></small>
+           </td>
+         </tr>
+         <tr>
+           <td width="250" valign="top">
+             <label for="wplc_server_location"><?php _e("Server location","wplivechat"); ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Select a server location that is near to you.', 'wplivechat'); ?>"></i></label>
+           </td>
+           <td valign="top">
+             <select name='wplc_server_location'>
+              <option value='auto' <?php if (isset($wplc_server_location) && $wplc_server_location === "auto") { echo "selected"; } ?>><?php _e("Automatic (suggested)"); ?></option>
+              <option value='us1' <?php if (isset($wplc_server_location) && $wplc_server_location === "us1") { echo "selected"; } ?>><?php echo sprintf(__("United States - %s","wplivechat"), "#1"); ?></option>
+              <option value='us2' <?php if (isset($wplc_server_location) && $wplc_server_location === "us2") { echo "selected"; } ?>><?php echo sprintf(__("United States - %s","wplivechat"), "#2"); ?></option>
+              <option value='eu1' <?php if (isset($wplc_server_location) && $wplc_server_location === "eu1") { echo "selected"; } ?>><?php echo sprintf(__("Europe - %s","wplivechat"), "#1"); ?></option>
+              <option value='eu2' <?php if (isset($wplc_server_location) && $wplc_server_location === "eu2") { echo "selected"; } ?>><?php echo sprintf(__("Europe - %s","wplivechat"), "#2"); ?></option>
+            </select>
+
            </td>
          </tr>
          <tr>
@@ -124,6 +143,10 @@ function wplc_beta_settings_save_hooked($wplc_data){
   if (isset($_POST['wplc_end_point_override'])) { 
     update_option("wplc_end_point_override", esc_attr($_POST['wplc_end_point_override']));
   }
+  if (isset($_POST['wplc_server_location'])) { 
+    update_option("wplc_server_location", esc_attr($_POST['wplc_server_location']));
+  }
+
   if (isset($_POST['wplc_new_chat_ringer_count'])) { 
     $wplc_data['wplc_new_chat_ringer_count'] = intval($_POST['wplc_new_chat_ringer_count']); 
   }

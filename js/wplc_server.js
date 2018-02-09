@@ -984,6 +984,20 @@ var wplc_generate_system_notification_object = function(msg,other,originates) {
     return the_message;
 }
 
+function wplc_display_system_notification(message) {
+    message_output = '<div id="bleeper_notification_message" class="wplc-color-bg-1 wplc-color-2">' + message.msg + '</div>';
+    
+    if (jQuery('#bleeper_notification_message').length == 0) {
+        jQuery('#wp-live-chat-4').prepend(message_output);
+    }
+}
+
+function wplc_clear_system_notification() {
+    if (jQuery('#bleeper_notification_message').length !== 0) {
+        jQuery('#bleeper_notification_message').remove();
+    }
+}
+
 /*
  * Updates the message element with a new message.
  * - mid: Message ID which is appended to class selector as .message_{mid}

@@ -230,10 +230,6 @@ It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 
 
 == Changelog ==
 
-= 8.0.03 - 2018-01-30 - Medium priority =
-* Fixed a CSS bug
-* Corrected a bug with the default theme not being set correctly.
-
 = 8.0.02 - 2018-01-29 =
 * Fixed a PHP warning
 * Modified rest_url filter to no longer use anonymous function
