@@ -77,7 +77,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
         if (isset($wplc_settings["wplc_settings_color3"])) { $wplc_settings_color3 = $wplc_settings["wplc_settings_color3"]; } else { $wplc_settings_color3 = "EEEEEE"; }
         if (isset($wplc_settings["wplc_settings_color4"])) { $wplc_settings_color4 = $wplc_settings["wplc_settings_color4"]; } else { $wplc_settings_color4 = "666666"; }
         if (isset($wplc_settings["wplc_environment"])) { $wplc_environment[intval($wplc_settings["wplc_environment"])] = "SELECTED"; }
-
+        if (isset($wplc_settings["wplc_preferred_gif_provider"])) { $wplc_preferred_gif_provider[intval($wplc_settings["wplc_preferred_gif_provider"])] = "SELECTED"; }
+        
         if(get_option("WPLC_HIDE_CHAT") == true) { $wplc_hide_chat = "checked"; } else { $wplc_hide_chat = ""; };
         
      ?>
@@ -555,6 +556,50 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </tbody>
               </table>
           <?php } ?>
+
+          <!-- GIF Integration -->
+          <h3><?php _e("GIF Integration", 'wplivechat') ?></h3>
+          <hr>
+          <table class='wp-list-table wplc_list_table widefat fixed striped pages'>
+              <tbody>
+                  <tr>
+                      <td width='300' valign='top'>
+                          <?php _e("Enable GIF Integration", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("If you enable GIF Integration you're going to be able to send GIFs by typing commands such as '/gif happy' when writing a message.", "wplivechat") ?>"></i>
+                      </td>
+                      <td>
+                          <input id="wplc_is_gif_integration_enabled" name="wplc_is_gif_integration_enabled" type="checkbox" value="1" <?php echo (isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == 1 ? "checked" : "" ); ?> />
+                      </td>
+                  </tr>
+                  <tr>
+                      <td width='300' valign='top'>
+                          <?php _e("Select a GIF provider", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("A GIF provider is the source of the GIFs that are going to show when you type a command like '/gif happy' on a message.", "wplivechat") ?>"></i>
+                      </td>
+                      <td>
+                          <select id='wplc_preferred_gif_provider' name='wplc_preferred_gif_provider'>
+                              <option value="1" <?php if (isset($wplc_preferred_gif_provider[1])) { echo $wplc_preferred_gif_provider[1]; } ?>><?php _e("Giphy","wplivechat"); ?></option>
+                              <option value="2" <?php if (isset($wplc_preferred_gif_provider[2])) { echo $wplc_preferred_gif_provider[2]; } ?>><?php _e("Tenor","wplivechat"); ?></option>
+                          </select>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td width='300' valign='top'>
+                          <?php _e("Giphy API key", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("The API key created for you when you register an app on Giphy", "wplivechat") ?>"></i>
+                      </td>
+                      <td>
+                          <input id='wplc_giphy_api_key' name="wplc_giphy_api_key" type="text" value="<?php echo (isset($wplc_settings['wplc_giphy_api_key']) ?  urldecode($wplc_settings['wplc_giphy_api_key']) : '' ); ?>" placeholder="<?php _e('Giphy API key', 'wplivechat'); ?>" />
+                      </td>
+                  </tr>
+                  <tr>
+                      <td width='300' valign='top'>
+                          <?php _e("Tenor API key", "wplivechat") ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("The API key created for you when you register an app on Tenor", "wplivechat") ?>"></i>
+                      </td>
+                      <td>
+                          <input id='wplc_tenor_api_key' name="wplc_tenor_api_key" type="text" value="<?php echo (isset($wplc_settings['wplc_tenor_api_key']) ?  urldecode($wplc_settings['wplc_tenor_api_key']) : '' ); ?>" placeholder="<?php _e('Tenor API key', 'wplivechat'); ?>" />
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+          <!-- ./GIF Integration -->
 
           <?php do_action('wplc_hook_admin_settings_chat_box_settings_after'); ?>
 
