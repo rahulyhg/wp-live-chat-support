@@ -11,7 +11,9 @@
  */
 
 /**
- *
+ * 8.0.05 - 2018-02-12 - Medium priority
+ * GIF integration support (Giphy, Tenor)
+ * 
  * 8.0.04 - 2018-02-12 - Low priority
  * Allowed strings from the front end to be translated
  * Fixed the iPhone Safari display bug (zooming in to the chat box)
@@ -644,6 +646,8 @@ add_action( 'wp_ajax_nopriv_wplc_user_send_offline_message', 'wplc_action_callba
 add_action( 'wp_ajax_wplc_user_send_offline_message', 'wplc_action_callback' );
 add_action( 'wp_ajax_delete_offline_message', 'wplc_action_callback' );
 add_action( 'wp_ajax_wplc_a2a_dismiss', 'wplc_action_callback' );
+add_action( 'wp_ajax_wplc_search_gif', 'wplc_search_gif' );
+add_action( 'wp_ajax_nopriv_my_action', 'wplc_search_gif');
 add_action( 'init', 'wplc_version_control' );
 add_action( "activated_plugin", "wplc_redirect_on_activate" );
 add_action( 'wp_footer', 'wplc_display_box' );
@@ -824,6 +828,11 @@ function wplc_version_control() {
         if (!isset($wplc_settings['wplc_settings_fill'])) { $wplc_settings["wplc_settings_fill"] = "ed832f"; }
 
         if (!isset($wplc_settings['wplc_settings_font'])) { $wplc_settings["wplc_settings_font"] = "FFFFFF"; }
+
+        if (!isset($wplc_settings['wplc_preferred_gif_provider'])) { $wplc_settings["wplc_preferred_gif_provider"] = 1; }
+        if (!isset($wplc_settings['wplc_giphy_api_key'])) { $wplc_settings["wplc_giphy_api_key"] = ""; }
+        if (!isset($wplc_settings['wplc_tenor_api_key'])) { $wplc_settings["wplc_tenor_api_key"] = ""; }
+        
         wplc_handle_db();
         update_option("wplc_current_version", $wplc_version);
 
@@ -922,6 +931,81 @@ function wplc_action_callback() {
         do_action("wplc_hook_action_callback");
     }
     die(); // this is required to return a proper result
+}
+
+/**
+ * Searches for a gif in the selected GIF provider
+ */
+function wplc_search_gif() {
+    // Clean the input coming from the client side
+    $search_term = sanitize_text_field($_POST["search_term"]);
+
+    // Get the necessary parameters to build the url
+    $wplc_settings = get_option("WPLC_SETTINGS");
+
+    if (isset($wplc_settings['wplc_preferred_gif_provider'])) {
+        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
+    } else {
+        $wplc_selected_gif_provider_idx = '1';
+    }
+
+    $gif_provider_url = GIF_PROVIDERS[$wplc_selected_gif_provider_idx];
+
+    switch ($wplc_selected_gif_provider_idx) {
+
+        // Giphy
+        case '1':
+
+            if (isset($wplc_settings['wplc_giphy_api_key'])) {
+                $gif_provider_url .= "/v1/gifs/search";
+                $wplc_selected_gif_provider_key = $wplc_settings['wplc_giphy_api_key'];
+
+                $params = array(
+                    'api_key'=> $wplc_selected_gif_provider_key,
+                    'q' => $search_term,
+                    'limit' => 10,
+                    'offset' => 0,
+                    'rating' => 'G',
+                    'lan' => 'en'
+                );
+
+                $gif_provider_url = add_query_arg($params, esc_url_raw($gif_provider_url));
+            }
+
+            break;
+
+        // Tenor
+        case '2':
+
+    		if (isset($wplc_settings['wplc_tenor_api_key'])) {
+                $gif_provider_url .= "/v1/search";
+                $wplc_selected_gif_provider_key = $wplc_settings['wplc_tenor_api_key'];
+
+                $params = array(
+                    'q' => $search_term,
+                    'key'=> $wplc_selected_gif_provider_key,
+                    'limit' => 10,
+                    'anon_id' => '3a76e56901d740da9e59ffb22b988242'
+                );
+
+                $gif_provider_url = add_query_arg($params, esc_url_raw($gif_provider_url));
+            }
+
+    		break;
+    }
+
+    $response = wp_remote_get(esc_url_raw($gif_provider_url));
+    $response_code = wp_remote_retrieve_response_code($response);
+    $response_message = wp_remote_retrieve_response_message($response);
+
+    if (is_wp_error($response)) {
+        die($response_message);
+        exit;
+    } else {
+        $body = wp_remote_retrieve_body($response);
+        die($body);
+        exit;
+    }
 }
 
 function wplc_feedback_page_include() {
@@ -1322,6 +1406,29 @@ function wplc_push_js_to_front_basic() {
 		wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
 	}
 
+    // Localize variables for the GIF Integration
+    if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
+        $wplc_is_gif_integration_enabled = true;
+    } else {
+        $wplc_is_gif_integration_enabled = false;
+    }
+    
+    if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
+        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
+    } else {
+        $wplc_selected_gif_provider_idx = '0';
+    }
+    
+    $wplc_gif_integration_details = array( 
+        'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
+        'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
+        'available_gif_providers' => GIF_PROVIDERS
+    );
+    
+    wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
+    wp_enqueue_script('my-wplc-u-admin-gif-integration');
+    wp_localize_script('my-wplc-u-admin-gif-integration', 'wplc_gif_integration_details', $wplc_gif_integration_details );
+    
     /**
      * Create a JS object for all Agent ID's and Gravatar MD5's
      */
@@ -3685,11 +3792,32 @@ function wplc_return_admin_chat_javascript($cid) {
 	wp_enqueue_script('wplc-admin-chat-js');
 	wp_localize_script( 'wplc-admin-chat-js', 'wplc_show_chat_detail', $wplc_chat_detail );
 
+    // Localize variables for the GIF Integration
+    if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
+        $wplc_is_gif_integration_enabled = true;
+    } else {
+        $wplc_is_gif_integration_enabled = false;
+    }
 
+    if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
+        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
+    } else {
+        $wplc_selected_gif_provider_idx = '0';
+    }
 
+    $wplc_gif_integration_details = array(
+        'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
+        'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
+        'available_gif_providers' => GIF_PROVIDERS
+    );
+
+    wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
+    wp_enqueue_script('my-wplc-u-admin-gif-integration');
+    wp_localize_script('my-wplc-u-admin-gif-integration', 'wplc_gif_integration_details', $wplc_gif_integration_details );
+    
 	if (!empty( $wplc_agent_data ) ) {
 		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', $wplc_agent_data->display_name );
-		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', md5( $wplc_agent_data->user_email ) );
+        wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', md5( $wplc_agent_data->user_email ) );
 	} else {
 		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', '' );
 		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', '' );
@@ -4090,7 +4218,9 @@ function wplc_add_user_stylesheet() {
         wp_register_style( 'wplc-gutenberg-template-styles-user', plugins_url( '/includes/blocks/wplc-chat-box/wplc_gutenberg_template_styles.css', __FILE__ ) );
         wp_enqueue_style( 'wplc-gutenberg-template-styles-user' );
 
-
+        // GIF integration styles - user
+        wp_register_style( 'wplc-gif-integration-user', plugins_url( '/includes/gif/wplc-chat-box/wplc_gif_integration.css', __FILE__ ) );
+        wp_enqueue_style( 'wplc-gif-integration-user' );
     }
     if(function_exists('wplc_ce_activate')){
         if(function_exists('wplc_ce_load_user_styles')){
@@ -4194,7 +4324,7 @@ function wplc_add_admin_stylesheet() {
         wp_register_style( 'wplc-gutenberg-template-styles', plugins_url( '/includes/blocks/wplc-chat-box/wplc_gutenberg_template_styles.css', __FILE__ ) );
         wp_enqueue_style( 'wplc-gutenberg-template-styles' );
 
-    	wp_register_style( 'wplc-admin-styles', plugins_url( '/css/admin_styles.css', __FILE__ ), false, $wplc_version );
+        wp_register_style( 'wplc-admin-styles', plugins_url( '/css/admin_styles.css', __FILE__ ), false, $wplc_version );
         wp_enqueue_style( 'wplc-admin-styles' );
 
         // Old admin chat style
@@ -4209,7 +4339,10 @@ function wplc_add_admin_stylesheet() {
         }
     }
 
-
+    // Gif Integration styles - admin
+    wp_register_style( 'wplc-gif-integration', plugins_url( '/includes/gif/wplc-chat-box/wplc_gif_integration.css', __FILE__ ) );
+    wp_enqueue_style( 'wplc-gif-integration' );
+    
     // This loads the chat styling on all admin pages as we are using the popout dashboard
     if ( isset( $wplc_settings['wplc_use_node_server'] ) && ( $wplc_settings['wplc_use_node_server'] == 1 ) && ( isset( $wplc_settings['wplc_enable_all_admin_pages'] ) && $wplc_settings['wplc_enable_all_admin_pages'] === '1') ) {
 
@@ -4648,6 +4781,11 @@ function wplc_head_basic() {
 
         if (isset($_POST['wplc_redirect_to_thank_you_page'])) { $wplc_data['wplc_redirect_to_thank_you_page'] = esc_attr($_POST['wplc_redirect_to_thank_you_page']); }
         if (isset($_POST['wplc_redirect_thank_you_url'])) { $wplc_data['wplc_redirect_thank_you_url'] = urlencode(str_replace("https:", "", str_replace("http:", "", $_POST['wplc_redirect_thank_you_url']) ) ); }
+
+        if (isset($_POST['wplc_is_gif_integration_enabled'] )){ $wplc_data['wplc_is_gif_integration_enabled'] = esc_attr($_POST['wplc_is_gif_integration_enabled']); }
+        if (isset($_POST['wplc_preferred_gif_provider'])) { $wplc_data['wplc_preferred_gif_provider'] = esc_attr($_POST['wplc_preferred_gif_provider']); }
+        if (isset($_POST['wplc_giphy_api_key'])) { $wplc_data['wplc_giphy_api_key'] = esc_attr($_POST['wplc_giphy_api_key']); }
+        if (isset($_POST['wplc_tenor_api_key'])) { $wplc_data['wplc_tenor_api_key'] = esc_attr($_POST['wplc_tenor_api_key']); }
 
 		$wplc_data['wplc_disable_emojis'] = !empty($_POST['wplc_disable_emojis']);
 
