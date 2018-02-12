@@ -128,6 +128,7 @@ function wplc_survey_hook_control_settings_page_more_tabs() {
 add_action('wplc_hook_admin_settings_save','wplc_survey_save_settings');
 function wplc_survey_save_settings() {
     if (isset($_POST['wplc_save_settings'])) {
+        
         if (isset($_POST['wplc_enable_surveys'])) {
             $wplc_survey_data['wplc_enable_surveys'] = esc_attr($_POST['wplc_enable_surveys']);
         } else {
@@ -153,6 +154,7 @@ function wplc_survey_save_settings() {
         } else {
             $wplc_survey_data['survey_display'] = "1";
         }
+
         
         update_option('WPLC_SURVEY_SETTINGS', $wplc_survey_data);
 
@@ -215,15 +217,19 @@ add_action('wp_enqueue_scripts', 'wplc_nimble_load_scripts' , 99 );
 function wplc_nimble_load_scripts() {
     $settings = get_option('WPLC_SURVEY_SETTINGS');
     $wplc_settings = get_option('WPLC_SETTINGS');
-
+    
     if( isset( $settings['wplc_enable_surveys'] ) && intval($settings['wplc_enable_surveys']) == 1 && !isset($_COOKIE['ns_participated'])){
+
+
 
         if( isset( $settings['survey_user'] ) ){ $ns_id = $settings['survey_user']; } else { $ns_id = ''; }
         if( isset( $settings['survey'] ) ){ $ns_sid = $settings['survey']; } else { $ns_sid = ''; }
         if( isset( $settings['lead_form'] ) ){ $ns_lfid = $settings['lead_form']; } else { $ns_lfid = ''; }
 
         //wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/nimblesquirrel.js', array(), '1.0.0', true );
-        wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/v2.0/nimblesquirrel.js', array(), '1.0.0', true );
+        
+        
+        wp_enqueue_script( 'nimble-squirrel-user-script', 'https://nimblesquirrel.com/api/v2.0/nimblesquirrel.js', array(), '1.0.0', true );
         wp_localize_script( 'nimble-squirrel-user-script', 'ns_id', $ns_id );
 
 

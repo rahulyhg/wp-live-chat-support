@@ -12,10 +12,10 @@
 
 /**
  *
- * 8.0.04 - 2018-02-xx
+ * 8.0.04 - 2018-02-12 - Low priority
  * Allowed strings from the front end to be translated
- * Fixed the iPhone Safari display bug (zomming in to the chat box)
- * Added support for the agent to detect and connect to the closes chat server
+ * Fixed the iPhone Safari display bug (zooming in to the chat box)
+ * Added support for the agent to detect and connect to the closest chat server
  * 
  * 8.0.03 - 2018-01-30 - Medium priority
  * Fixed a CSS bug
