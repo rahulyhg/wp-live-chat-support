@@ -506,9 +506,14 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
      * @return void
      */
     jQuery(document).on("bleeper_add_agent", function(e) {
-        
+
+        var custom_header_data = wplc_head_data;
+        if  (typeof bleeper_agent_name !== 'undefined'){
+            custom_header_data.name = bleeper_agent_name;
+        }
+
         socket.emit('add agent', e.ndata);
-        socket.emit('custom data',{action:'send_custom_header',chatid:e.ndata.chatid,agentid:e.ndata.agent,ndata:wplc_head_data});
+        socket.emit('custom data',{action:'send_custom_header',chatid:e.ndata.chatid,agentid:e.ndata.agent,ndata:custom_header_data});
 
 
     });

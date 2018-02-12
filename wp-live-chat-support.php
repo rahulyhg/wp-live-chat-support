@@ -14,6 +14,7 @@
  * 8.0.05 - 2018-02-12 - Medium priority
  * GIF integration support (Giphy, Tenor)
  * Fixed get correct rest api endpoint urls
+ * Fixed chat box header not respecting Use WordPress name instead option
  * 
  * 8.0.04 - 2018-02-12 - Low priority
  * Allowed strings from the front end to be translated
