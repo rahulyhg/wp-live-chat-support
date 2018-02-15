@@ -12,12 +12,6 @@ define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");
 define("BLEEPER_NODE_END_POINTS_ROUTE", "api/v1/");
 define("BLEEPER_NODE_END_POINT_TOKEN", "zf6fe1399sdfgsdfg02ad09ab6a8cb7345s");
 
-// GIF Integration Providers
-define("GIF_PROVIDERS", array(
-	"1" => "https://api.giphy.com",
-	"2" => "https://api.tenor.com"
-));
-
 add_action("wplc_activate_hook", "wplc_node_server_token_check", 10);
 add_action("wplc_update_hook", "wplc_node_server_token_check", 10);
 /**
@@ -549,7 +543,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
  		$wplc_gif_integration_details = array(
  			'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
  			'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
- 			'available_gif_providers' => GIF_PROVIDERS
+ 			'available_gif_providers' => getAvailableGifProviders()
  		);
 
  		wp_localize_script('my-wplc-u-admin-gif-integration', "wplc_gif_integration_details", $wplc_gif_integration_details); 
@@ -1228,4 +1222,11 @@ function wplc_admin_remote_dashboard_dynamic_translation_handler(){
     wp_localize_script('wplc-admin-dynamic-translation', 'wplc_dynamic_translation_array', $wplc_dynamic_translation_array);
     wp_enqueue_script('wplc-admin-dynamic-translation');
 
+}
+
+function getAvailableGifProviders(){
+	return array(
+		"1" => "https://api.giphy.com",
+		"2" => "https://api.tenor.com"
+	);
 }

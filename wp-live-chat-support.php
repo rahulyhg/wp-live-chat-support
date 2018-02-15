@@ -949,7 +949,8 @@ function wplc_search_gif() {
         $wplc_selected_gif_provider_idx = '1';
     }
 
-    $gif_provider_url = GIF_PROVIDERS[$wplc_selected_gif_provider_idx];
+    $available_providers = getAvailableGifProviders();
+    $gif_provider_url = $available_providers[$wplc_selected_gif_provider_idx];
 
     switch ($wplc_selected_gif_provider_idx) {
 
@@ -1422,7 +1423,7 @@ function wplc_push_js_to_front_basic() {
     $wplc_gif_integration_details = array( 
         'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
         'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => GIF_PROVIDERS
+        'available_gif_providers' => getAvailableGifProviders()
     );
     
     wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
@@ -3808,7 +3809,7 @@ function wplc_return_admin_chat_javascript($cid) {
     $wplc_gif_integration_details = array(
         'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
         'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => GIF_PROVIDERS
+        'available_gif_providers' => getAvailableGifProviders()
     );
 
     wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
