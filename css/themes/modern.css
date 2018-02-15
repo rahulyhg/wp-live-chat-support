@@ -1177,3 +1177,10 @@ div#bleeper_chat_ended {
     opacity: .8;
   }
 }
+/* iPhone fix */
+@media screen and (max-height: 675px){
+    #wp-live-chat-2 { 
+        bottom: 70px;
+    }
+
+}
