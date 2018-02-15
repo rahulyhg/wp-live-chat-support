@@ -15,6 +15,8 @@
  * GIF integration support (Giphy, Tenor)
  * Fixed get correct rest api endpoint urls
  * Fixed chat box header not respecting Use WordPress name instead option
+ * Fixes CSS issue in dashboard with the action column
+ * Fixes chat history styling
  * 
  * 8.0.04 - 2018-02-12 - Low priority
  * Allowed strings from the front end to be translated
