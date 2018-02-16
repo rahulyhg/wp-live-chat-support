@@ -12,7 +12,8 @@
 
 /**
  * 8.0.05 - 2018-02-12 - Medium priority
- * GIF integration support (Giphy, Tenor)
+ * Chat minimize is now respected by auto popup
+ * GIF integration support (Giphy, Tenor) (Now PHP 5+ Compatible by serializing constant array)
  * Fixed get correct rest api endpoint urls
  * Fixed chat box header not respecting Use WordPress name instead option
  * Fixes CSS issue in dashboard with the action column
@@ -953,7 +954,7 @@ function wplc_search_gif() {
         $wplc_selected_gif_provider_idx = '1';
     }
 
-    $gif_provider_url = GIF_PROVIDERS[$wplc_selected_gif_provider_idx];
+    $gif_provider_url = unserialize(GIF_PROVIDERS)[$wplc_selected_gif_provider_idx];
 
     switch ($wplc_selected_gif_provider_idx) {
 
@@ -1426,7 +1427,7 @@ function wplc_push_js_to_front_basic() {
     $wplc_gif_integration_details = array( 
         'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
         'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => GIF_PROVIDERS
+        'available_gif_providers' => unserialize(GIF_PROVIDERS)
     );
     
     wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
@@ -3812,7 +3813,7 @@ function wplc_return_admin_chat_javascript($cid) {
     $wplc_gif_integration_details = array(
         'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
         'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => GIF_PROVIDERS
+        'available_gif_providers' => unserialize(GIF_PROVIDERS)
     );
 
     wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
