@@ -147,11 +147,15 @@ jQuery(document).ready(function() {
             if (jQuery(this).hasClass('active')) {
                 jQuery(this).removeClass('active');
                 jQuery.event.trigger({type: "wplc_minimize_chat"});
+
+                Cookies.set('wplc_minimize', "yes", { expires: 1, path: '/' });
                 
             } else {
                 //jQuery(this).addClass('active');
                 jQuery.event.trigger({type: "wplc_open_chat"});
                 jQuery("#wp-live-chat-minimize").show();
+
+                Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
 
             }
 

@@ -343,6 +343,8 @@ jQuery(document).ready(function() {
                 jQuery("#wp-live-chat-2").fadeOut("fast");
                 jQuery(this).removeClass('active');
                 jQuery.event.trigger({type: "wplc_minimize_chat"});
+
+                Cookies.set('wplc_minimize', "yes", { expires: 1, path: '/' });
                 
             } else {
                 jQuery("#wplc_hovercard").fadeIn('fast');
@@ -353,6 +355,8 @@ jQuery(document).ready(function() {
                 if (parseInt(wplc_chat_status) == 3 || parseInt(wplc_chat_status) == 2 || parseInt(wplc_chat_status) == 0 || parseInt(wplc_chat_status) == 12 || parseInt(wplc_chat_status) == 10 || nc_status === 'active') {
                     jQuery("#speeching_button").click();
                 }
+
+                Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
 
             }
 

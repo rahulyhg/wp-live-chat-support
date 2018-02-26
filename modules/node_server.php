@@ -12,6 +12,12 @@ define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");
 define("BLEEPER_NODE_END_POINTS_ROUTE", "api/v1/");
 define("BLEEPER_NODE_END_POINT_TOKEN", "zf6fe1399sdfgsdfg02ad09ab6a8cb7345s");
 
+// GIF Integration Providers
+define("GIF_PROVIDERS", serialize (array(
+	"1" => "https://api.giphy.com",
+	"2" => "https://api.tenor.com"
+)));
+
 add_action("wplc_activate_hook", "wplc_node_server_token_check", 10);
 add_action("wplc_update_hook", "wplc_node_server_token_check", 10);
 /**
@@ -524,6 +530,30 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		wp_register_script('my-wplc-admin-chatbox-ui-events', plugins_url('../js/wplc_u_admin_chatbox_ui_events.js', __FILE__), array('jquery'), $wplc_version, true);
 		wp_enqueue_script('my-wplc-admin-chatbox-ui-events'); 
 		
+		wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('../js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
+ 		wp_enqueue_script('my-wplc-u-admin-gif-integration');
+
+ 		// Localize variables for the GIF Integration
+ 		if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
+			$wplc_is_gif_integration_enabled = true;
+ 		} else {
+ 			$wplc_is_gif_integration_enabled = false;
+ 		}
+
+ 		if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
+ 			$wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
+ 		} else {
+ 			$wplc_selected_gif_provider_idx = '0';
+ 		}
+
+ 		$wplc_gif_integration_details = array(
+ 			'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
+ 			'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
+ 			'available_gif_providers' => unserialize(GIF_PROVIDERS)
+ 		);
+
+ 		wp_localize_script('my-wplc-u-admin-gif-integration', "wplc_gif_integration_details", $wplc_gif_integration_details); 
+		
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
 	    if(!$wplc_node_token){
 	        if(function_exists("wplc_node_server_token_regenerate")){
@@ -583,7 +613,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
         } else {
             wp_localize_script('wplc-admin-js-agent', 'bleeper_pro_auth', 'false');
         }
-        wp_localize_script('wplc-admin-js-agent', 'bleeper_agent_verification_end_point', get_rest_url() . "wp_live_chat_support/v1/validate_agent");
+        wp_localize_script('wplc-admin-js-agent', 'bleeper_agent_verification_end_point', rest_url('wp_live_chat_support/v1/validate_agent'));
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_disable_mongo', "true");
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_disable_add_message', "true");
 		wp_localize_script('wplc-admin-js-agent', 'wplc_nonce', wp_create_nonce("wplc"));
@@ -612,8 +642,8 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
         if(class_exists("WP_REST_Request")) {
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_enabled', '1');
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
-            wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_endpoint', site_url().'/wp-json/wp_live_chat_support/v1');
-            wp_localize_script('wplc-admin-js-agent', 'bleeper_override_upload_url', site_url().'/wp-json/wp_live_chat_support/v1/remote_upload');
+            wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_endpoint', rest_url('wp_live_chat_support/v1'));
+            wp_localize_script('wplc-admin-js-agent', 'bleeper_override_upload_url', rest_url('wp_live_chat_support/v1/remote_upload'));
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_nonce', wp_create_nonce( 'wp_rest' ));
 
         } else {
