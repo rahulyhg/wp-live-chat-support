@@ -317,11 +317,11 @@ jQuery(document).ready(function() {
                         if(typeof e.ndata.pretty_name !== "undefined"){
                             var link_url = e.ndata.pretty_name + " - " + e.ndata.direction;
                             
-                            var notice = "<span>";
+                            var notice = "<span> ";
                             notice += (typeof e.ndata.agent_name !== "undefined" ? e.ndata.agent_name : "Agent") + " "; 
                             notice += (typeof bleeper_direct_to_page_localized_notice !== "undefined" ? bleeper_direct_to_page_localized_notice : "would like to direct you to the following page: ");
                             notice += link_url;
-                            notice += "</span>";
+                            notice += " </span>";
 
                             the_message = {};
                             the_message.msg = notice;
