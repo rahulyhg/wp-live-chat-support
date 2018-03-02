@@ -12,11 +12,6 @@ define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");
 define("BLEEPER_NODE_END_POINTS_ROUTE", "api/v1/");
 define("BLEEPER_NODE_END_POINT_TOKEN", "zf6fe1399sdfgsdfg02ad09ab6a8cb7345s");
 
-// GIF Integration Providers
-define("GIF_PROVIDERS", serialize (array(
-	"1" => "https://api.giphy.com",
-	"2" => "https://api.tenor.com"
-)));
 
 add_action("wplc_activate_hook", "wplc_node_server_token_check", 10);
 add_action("wplc_update_hook", "wplc_node_server_token_check", 10);
@@ -530,28 +525,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		wp_register_script('my-wplc-admin-chatbox-ui-events', plugins_url('../js/wplc_u_admin_chatbox_ui_events.js', __FILE__), array('jquery'), $wplc_version, true);
 		wp_enqueue_script('my-wplc-admin-chatbox-ui-events'); 
 		
-		wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('../js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
- 		wp_enqueue_script('my-wplc-u-admin-gif-integration');
 
- 		// Localize variables for the GIF Integration
- 		if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
-			$wplc_is_gif_integration_enabled = true;
- 		} else {
- 			$wplc_is_gif_integration_enabled = false;
- 		}
-
- 		if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
- 			$wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
- 		} else {
- 			$wplc_selected_gif_provider_idx = '0';
- 		}
-
- 		$wplc_gif_integration_details = array(
- 			'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
- 			'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
- 			'available_gif_providers' => unserialize(GIF_PROVIDERS)
- 		);
- 		wp_localize_script('my-wplc-u-admin-gif-integration', "wplc_gif_integration_details", $wplc_gif_integration_details);
 
 		$wplc_et_ajax_nonce = wp_create_nonce( "wplc_et_nonce" );
 		wp_register_script( 'wplc_transcript_admin', plugins_url( '../js/wplc_transcript.js', __FILE__ ), null, '', true );

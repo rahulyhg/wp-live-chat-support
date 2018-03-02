@@ -38,11 +38,14 @@
 .wplc-gif-integration-search-box {
     display: block;
     position: absolute;
-    bottom: 60px;
-    width: 100%;
+    bottom: 66px;
+    width: 70%;
+    margin-left:15%;
     height: 300px;
     background: #fafafa;
     z-index: 100000000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 .wplc-gif-integration-search-box.show {
     animation-name: present-gif-search-box;
@@ -204,7 +207,7 @@
 
 .wplc-gif-integration-search-box .gif-sb-header .gif-sb-search-term {
     top: -1px;
-    width: calc(100% - 100px);
+    width: 80%;
     height: 38px;
     margin-bottom: 0px !important;
     padding-left: 10px !important;
@@ -214,9 +217,10 @@
 .wplc-gif-integration-search-box .gif-sb-header .gif-sb-confirm-search,
 .wplc-gif-integration-search-box .gif-sb-header .gif-sb-confirm-search:hover {
     top: 0px;
-    width: 50px;
+    width: 10%;
+    text-align:center;
     height: 40px;
-    padding-left: 12px;
+    
     padding-top: 6px;
     border-radius: 3px;
     color: #f0f0f0 !important;
@@ -238,9 +242,9 @@
 .wplc-gif-integration-search-box .gif-sb-header .gif-sb-close:hover {
     top: 4px;
     left: 1px;
-    width: 49px;
+    width: 10%;
     height: 40px;
-    padding-left: 18px;
+    text-align:center;
     padding-top: 10px;
     border-radius: 3px;
 }
@@ -336,7 +340,7 @@
 }
 #chat_area .wplc-gif-integration-search-box .gif-sb-header .gif-sb-confirm-search,
 #chat_area .wplc-gif-integration-search-box .gif-sb-header .gif-sb-confirm-search:hover {
-    padding-left: 14px;
+    
     padding-top: 9px;
 }
 #chat_area .wplc-gif-integration-search-box .gif-sb-header .gif-sb-close, 
