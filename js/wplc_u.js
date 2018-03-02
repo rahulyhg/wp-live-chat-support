@@ -190,7 +190,8 @@ jQuery(document).ready(function() {
                     nc.type = "text/javascript";
                     nc.async = true;
                     nc.src = "https://bleeper.io/app/assets/js/bleeper-dev.js";
-                        document.getElementsByTagName("head")[0].appendChild(nc);
+
+                    document.getElementsByTagName("head")[0].appendChild(nc);
 
                 }
 

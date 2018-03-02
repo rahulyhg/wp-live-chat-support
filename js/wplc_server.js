@@ -421,7 +421,12 @@ function wplc_rest_api(type, wplc_send_data, wplc_send_timeout, next) {
 	//Send the data to the Async
 	if(typeof wplc_restapi_enabled !== "undefined" && parseInt(wplc_restapi_enabled) === 1 && typeof wplc_restapi_endpoint !== "undefined"){
 		//REST API is ready to rumble
-		wplc_send_url = wplc_restapi_endpoint + "/" + type;
+		
+		let anti_cache = Date.now();
+
+		wplc_send_url = wplc_restapi_endpoint + "/" + type + "?nocache="+anti_cache;
+
+
 
 		var prepared_data = wplc_send_data;
 
