@@ -525,8 +525,21 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		wp_register_script('my-wplc-admin-chatbox-ui-events', plugins_url('../js/wplc_u_admin_chatbox_ui_events.js', __FILE__), array('jquery'), $wplc_version, true);
 		wp_enqueue_script('my-wplc-admin-chatbox-ui-events'); 
 		
-		
-		
+
+
+		$wplc_et_ajax_nonce = wp_create_nonce( "wplc_et_nonce" );
+		wp_register_script( 'wplc_transcript_admin', plugins_url( '../js/wplc_transcript.js', __FILE__ ), null, '', true );
+		$wplc_transcript_localizations = array(
+			'ajax_nonce'          => $wplc_et_ajax_nonce,
+			'string_loading'      => __( "Sending transcript...", "wplivechat" ),
+			'string_title'        => __( "Sending Transcript", "wplivechat" ),
+			'string_close'        => __( "Close", "wplivechat" ),
+			'string_chat_emailed' => __( "The chat transcript has been emailed.", "wplivechat" ),
+			'string_error1'       => sprintf( __( "There was a problem emailing the chat. Please <a target='_BLANK' href='%s'>contact support</a>.", "wplivechat" ), "http://wp-livechat.com/contact-us/?utm_source=plugin&utm_medium=link&utm_campaign=error_emailing_chat" )
+		);
+		wp_localize_script( 'wplc_transcript_admin', 'wplc_transcript_nonce', $wplc_transcript_localizations );
+		wp_enqueue_script( 'wplc_transcript_admin' );
+
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
 	    if(!$wplc_node_token){
 	        if(function_exists("wplc_node_server_token_regenerate")){
