@@ -48,7 +48,7 @@ WPLC_U_Admin_GIF_Integration.prototype = {
     },
 
     IMAGES: {
-        ICO_CONFIRM_SEARCH: "OK",
+        ICO_CONFIRM_SEARCH: "Search",
         ICO_CLOSE_SEARCH: "X",
         LOADING: "https://media.tenor.com/images/d6cd5151c04765d1992edfde14483068/tenor.gif"
     },

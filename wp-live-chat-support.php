@@ -13,7 +13,7 @@
 /**
  * 8.0.05 - 2018-02-12 - Medium priority
  * Chat minimize is now respected by auto popup
- * GIF integration support (Giphy, Tenor) (Now PHP 5+ Compatible by serializing constant array)
+ * GIF integration support (Giphy, Tenor)
  * Fixed get correct rest api endpoint urls
  * Fixed chat box header not respecting Use WordPress name instead option
  * Fixes CSS issue in dashboard with the action column
@@ -636,6 +636,7 @@ require_once (plugin_dir_path(__FILE__) . "modules/api/wplc-api.php");
 require_once (plugin_dir_path(__FILE__) . "modules/beta_features.php");
 require_once (plugin_dir_path(__FILE__) . "modules/node_server.php");
 require_once (plugin_dir_path(__FILE__) . "modules/module_subscribe.php");
+require_once (plugin_dir_path(__FILE__) . "modules/module_gif.php");
 require_once (plugin_dir_path(__FILE__) . "includes/update_control.class.php");
 require_once (plugin_dir_path(__FILE__) . "modules/webhooks_manager.php");
 
@@ -653,8 +654,6 @@ add_action( 'wp_ajax_nopriv_wplc_user_send_offline_message', 'wplc_action_callba
 add_action( 'wp_ajax_wplc_user_send_offline_message', 'wplc_action_callback' );
 add_action( 'wp_ajax_delete_offline_message', 'wplc_action_callback' );
 add_action( 'wp_ajax_wplc_a2a_dismiss', 'wplc_action_callback' );
-add_action( 'wp_ajax_wplc_search_gif', 'wplc_search_gif' );
-add_action( 'wp_ajax_nopriv_my_action', 'wplc_search_gif');
 add_action( 'init', 'wplc_version_control' );
 add_action( "activated_plugin", "wplc_redirect_on_activate" );
 add_action( 'wp_footer', 'wplc_display_box' );
@@ -940,81 +939,6 @@ function wplc_action_callback() {
     die(); // this is required to return a proper result
 }
 
-/**
- * Searches for a gif in the selected GIF provider
- */
-function wplc_search_gif() {
-    // Clean the input coming from the client side
-    $search_term = sanitize_text_field($_POST["search_term"]);
-
-    // Get the necessary parameters to build the url
-    $wplc_settings = get_option("WPLC_SETTINGS");
-
-    if (isset($wplc_settings['wplc_preferred_gif_provider'])) {
-        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
-    } else {
-        $wplc_selected_gif_provider_idx = '1';
-    }
-
-
-    $gif_provider_url = unserialize(GIF_PROVIDERS)[$wplc_selected_gif_provider_idx];
-
-    switch ($wplc_selected_gif_provider_idx) {
-
-        // Giphy
-        case '1':
-
-            if (isset($wplc_settings['wplc_giphy_api_key'])) {
-                $gif_provider_url .= "/v1/gifs/search";
-                $wplc_selected_gif_provider_key = $wplc_settings['wplc_giphy_api_key'];
-
-                $params = array(
-                    'api_key'=> $wplc_selected_gif_provider_key,
-                    'q' => $search_term,
-                    'limit' => 10,
-                    'offset' => 0,
-                    'rating' => 'G',
-                    'lan' => 'en'
-                );
-
-                $gif_provider_url = add_query_arg($params, esc_url_raw($gif_provider_url));
-            }
-
-            break;
-
-        // Tenor
-        case '2':
-
-    		if (isset($wplc_settings['wplc_tenor_api_key'])) {
-                $gif_provider_url .= "/v1/search";
-                $wplc_selected_gif_provider_key = $wplc_settings['wplc_tenor_api_key'];
-
-                $params = array(
-                    'q' => $search_term,
-                    'key'=> $wplc_selected_gif_provider_key,
-                    'limit' => 10,
-                    'anon_id' => '3a76e56901d740da9e59ffb22b988242'
-                );
-
-                $gif_provider_url = add_query_arg($params, esc_url_raw($gif_provider_url));
-            }
-
-    		break;
-    }
-
-    $response = wp_remote_get(esc_url_raw($gif_provider_url));
-    $response_code = wp_remote_retrieve_response_code($response);
-    $response_message = wp_remote_retrieve_response_message($response);
-
-    if (is_wp_error($response)) {
-        die($response_message);
-        exit;
-    } else {
-        $body = wp_remote_retrieve_body($response);
-        die($body);
-        exit;
-    }
-}
 
 function wplc_feedback_page_include() {
     include 'includes/feedback-page.php';
@@ -1414,28 +1338,7 @@ function wplc_push_js_to_front_basic() {
 		wp_localize_script( 'wplc-user-script', 'wplc_show_chat_detail', $wplc_chat_detail );
 	}
 
-    // Localize variables for the GIF Integration
-    if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
-        $wplc_is_gif_integration_enabled = true;
-    } else {
-        $wplc_is_gif_integration_enabled = false;
-    }
     
-    if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
-        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
-    } else {
-        $wplc_selected_gif_provider_idx = '0';
-    }
-    
-    $wplc_gif_integration_details = array( 
-        'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
-        'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => unserialize(GIF_PROVIDERS)
-    );
-    
-    wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
-    wp_enqueue_script('my-wplc-u-admin-gif-integration');
-    wp_localize_script('my-wplc-u-admin-gif-integration', 'wplc_gif_integration_details', $wplc_gif_integration_details );
     
     /**
      * Create a JS object for all Agent ID's and Gravatar MD5's
@@ -3800,28 +3703,7 @@ function wplc_return_admin_chat_javascript($cid) {
 	wp_enqueue_script('wplc-admin-chat-js');
 	wp_localize_script( 'wplc-admin-chat-js', 'wplc_show_chat_detail', $wplc_chat_detail );
 
-    // Localize variables for the GIF Integration
-    if( isset($wplc_settings['wplc_is_gif_integration_enabled']) && $wplc_settings['wplc_is_gif_integration_enabled'] == '1' ) {
-        $wplc_is_gif_integration_enabled = true;
-    } else {
-        $wplc_is_gif_integration_enabled = false;
-    }
-
-    if( isset($wplc_settings['wplc_preferred_gif_provider']) ) {
-        $wplc_selected_gif_provider_idx = $wplc_settings['wplc_preferred_gif_provider'];
-    } else {
-        $wplc_selected_gif_provider_idx = '0';
-    }
-
-    $wplc_gif_integration_details = array(
-        'is_gif_integration_enabled' => $wplc_is_gif_integration_enabled,
-        'preferred_gif_provider' => $wplc_selected_gif_provider_idx,
-        'available_gif_providers' => unserialize(GIF_PROVIDERS)
-    );
-
-    wp_register_script('my-wplc-u-admin-gif-integration', plugins_url('/js/wplc_u_admin_gif_integration.js', __FILE__), array('jquery'), $wplc_version, true);
-    wp_enqueue_script('my-wplc-u-admin-gif-integration');
-    wp_localize_script('my-wplc-u-admin-gif-integration', 'wplc_gif_integration_details', $wplc_gif_integration_details );
+    
     
 	if (!empty( $wplc_agent_data ) ) {
 		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', $wplc_agent_data->display_name );
@@ -4084,6 +3966,7 @@ function wplc_add_user_stylesheet() {
 	    $wplc_settings = get_option( 'WPLC_SETTINGS' );
 	    if ( isset( $wplc_settings ) && isset( $wplc_settings['wplc_enable_font_awesome'] ) && '1' === $wplc_settings['wplc_enable_font_awesome'] ) {
 		    wp_register_style( 'wplc-font-awesome', plugins_url( '/css/font-awesome.min.css', __FILE__ ) );
+		    
 		    wp_enqueue_style( 'wplc-font-awesome' );
 	    }
         wp_register_style('wplc-style', plugins_url('/css/wplcstyle.css', __FILE__), array(), $wplc_version);
@@ -4227,7 +4110,7 @@ function wplc_add_user_stylesheet() {
         wp_enqueue_style( 'wplc-gutenberg-template-styles-user' );
 
         // GIF integration styles - user
-        wp_register_style( 'wplc-gif-integration-user', plugins_url( '/includes/gif/wplc-chat-box/wplc_gif_integration.css', __FILE__ ) );
+        wp_register_style( 'wplc-gif-integration-user', plugins_url( '/css/wplc_gif_integration.css', __FILE__ ) );
         wp_enqueue_style( 'wplc-gif-integration-user' );
     }
     if(function_exists('wplc_ce_activate')){
@@ -4318,7 +4201,7 @@ function wplc_add_admin_stylesheet() {
         wp_enqueue_style('wplc-admin-chat-box-style');
     }
 
-    wp_register_style( 'wplc-font-awesome', plugins_url( '/css/font-awesome.min.css', __FILE__ ), false, $wplc_version );
+    wp_register_style( 'wplc-font-awesome', plugins_url('css/font-awesome.min.css', __FILE__ ), false, $wplc_version );
     wp_enqueue_style( 'wplc-font-awesome' );
 
 	if (isset($_GET['page']) && ($_GET['page'] == 'wplivechat-menu' ||  $_GET['page'] == 'wplivechat-menu-api-keys-page' ||  $_GET['page'] == 'wplivechat-menu-extensions-page' || $_GET['page'] == 'wplivechat-menu-settings' || $_GET['page'] == 'wplivechat-menu-offline-messages' || $_GET['page'] == 'wplivechat-menu-history' || $_GET['page'] == 'wplivechat-menu-missed-chats')) {
@@ -4348,7 +4231,7 @@ function wplc_add_admin_stylesheet() {
     }
 
     // Gif Integration styles - admin
-    wp_register_style( 'wplc-gif-integration', plugins_url( '/includes/gif/wplc-chat-box/wplc_gif_integration.css', __FILE__ ) );
+    wp_register_style( 'wplc-gif-integration', plugins_url( '/css/wplc_gif_integration.css', __FILE__ ) );
     wp_enqueue_style( 'wplc-gif-integration' );
     
     // This loads the chat styling on all admin pages as we are using the popout dashboard
