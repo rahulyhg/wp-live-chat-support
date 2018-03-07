@@ -4786,9 +4786,7 @@ function wplc_head_basic() {
         update_option('wplc_mail_username', $_POST['wplc_mail_username']);
         update_option('wplc_mail_password', $_POST['wplc_mail_password']);
 
-        echo "<div class='updated wplc_settings_save_notice' style='display: none;'>";
-        _e("Your settings have been saved.", "wplivechat");
-        echo "</div>";
+        add_action( 'admin_notices', 'wplc_save_settings_action' );
     }
     if (isset($_POST['action']) && $_POST['action'] == "wplc_submit_find_us") {
         if (function_exists('curl_version')) {
@@ -4832,6 +4830,12 @@ function wplc_head_basic() {
         }
     }
 }
+
+function wplc_save_settings_action() { ?>
+    <div class='notice notice-success is-dismissible updated wplc_settings_save_notice'>
+		<?php _e("Your settings have been saved.", "wplivechat"); ?>
+    </div>
+<?php }
 
 add_action('wp_logout', 'wplc_logout');
 /**
