@@ -38,3 +38,58 @@
     background-color: transparent !important;
     color: #333 !important;
 }
+
+.messageBody {
+    color: #444;
+}
+
+.wplc-user-message, .wplc-admin-message {
+    display: block;
+    clear: both;
+    position: relative;
+    overflow: hidden;
+    float: left;
+    padding: 10px;
+}
+
+.wplc-user-message.wplc-color-bg-1,
+.wplc-admin-message.wplc-color-bg-4 {
+    background-color: transparent !important;
+}
+
+.admin_chat_box {
+    overflow: scroll;
+}
+
+.admin_chat_box_inner .timedate {float: right;}
+
+.wplc-msg-content {
+    float: left;
+}
+
+.admin_chat_box_inner {
+    height: 100% !important;
+    width: 100%;
+}
+
+.wplc-chat-person-name {
+    color: #444;
+}
+
+.admin_chat_box_inner .timedate {
+    float: right;
+    clear: none !important;
+    top: 10px;
+}
+
+.wplc-admin-message .wplc-msg-content span {
+    color: #000;
+}
+
+.wplc-user-message .wplc-msg-content span {
+    color: #666;
+}
+
+.wplc-chat-person-name {
+    font-weight: bold;
+}
