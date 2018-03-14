@@ -247,7 +247,33 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   <td valign='top'>
                       <input type="checkbox" value="1" name="wplc_enable_all_admin_pages" <?php if(isset($wplc_settings['wplc_enable_all_admin_pages']) && $wplc_settings['wplc_enable_all_admin_pages'] == 1 ) { echo "checked"; } ?> />
                   </td>
-              </tr>              
+              </tr>
+              <tr>
+                  <td width='200' valign='top'>
+			          <?php _e( "Enable Voice Notes on admin side", "wplivechat" ); ?>: <i
+                              class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip"
+                              title="<?php _e( "Enabling this will allow you to record the voice during the chat and send it to visitor once you hold on CTRL + SPACE in main chat window", "wplivechat" ) ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1"
+                             name="wplc_enable_voice_notes_on_admin" <?php if ( isset( $wplc_settings['wplc_enable_voice_notes_on_admin'] ) && $wplc_settings['wplc_enable_voice_notes_on_admin'] == 1 ) {
+				          echo "checked";
+			          } ?> />
+                  </td>
+              </tr>
+              <tr>
+                  <td width='200' valign='top'>
+			          <?php _e( "Enable Voice Notes on visitor side", "wplivechat" ); ?>: <i
+                              class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip"
+                              title="<?php _e( "Enabling this will allow the visitors to record the voice during the chat and send it to agent once they hold on CTRL + SPACE", "wplivechat" ) ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1"
+                             name="wplc_enable_voice_notes_on_visitor" <?php if ( isset( $wplc_settings['wplc_enable_voice_notes_on_visitor'] ) && $wplc_settings['wplc_enable_voice_notes_on_visitor'] == 1 ) {
+				          echo "checked";
+			          } ?> />
+                  </td>
+              </tr>
               <?php if (!function_exists("wplc_pro_activate")) { ?>
 
               <tr>

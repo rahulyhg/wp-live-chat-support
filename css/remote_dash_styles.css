@@ -1252,3 +1252,31 @@ span.wplc_system_notification {
     color: #fff !important;
     text-decoration: underline !important;
 }
+
+.wplc-voice-notes {
+    display: none;
+    width: 100%;
+    position: fixed;
+    right: 0;
+    bottom: -100px;
+    left: 0;
+    z-index: 10000;
+    transition: bottom .3s;
+    padding: 20px;
+    background: rgba(0,0,0,.8);
+    color: #ccc;
+}
+
+.wplc-voice-notes.is-active {
+    display: block;
+    bottom: 0;
+}
+
+.wplc-voice-notes__close {
+    float: right;
+    position: relative;
+    right: 70px;
+    bottom: 0;
+    font-size: 19px !important;
+    cursor: pointer;
+}

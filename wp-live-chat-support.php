@@ -1247,6 +1247,20 @@ function wplc_push_js_to_front_basic() {
     wp_register_script('wplc-user-script', plugins_url('/js/wplc_u.js', __FILE__),array('jquery', 'wplc-server-script'),$wplc_version);
 
 
+    // Voice Notes scripts - visitor
+    if ( isset( $wplc_settings['wplc_enable_voice_notes_on_visitor'] ) && ( $wplc_settings['wplc_enable_voice_notes_on_visitor'] === '1' ) ) {
+        wp_register_script( 'wplc-visitor-voice-notes-audio-recorder-wav', plugins_url( '/js/WebAudioRecorderWav.min.js', __FILE__ ), null, '', true );
+        wp_register_script( 'wplc-visitor-voice-notes-audio-recorder', plugins_url( '/js/WebAudioRecorder.min.js', __FILE__ ), null, '', true );
+        wp_register_script( 'wplc-visitor-voice-notes', plugins_url( '/js/wplc_visitor_voice_notes.js', __FILE__ ), array( 'wplc-visitor-voice-notes-audio-recorder-wav', 'wplc-visitor-voice-notes-audio-recorder' ), '', true );
+        wp_localize_script( 'wplc-visitor-voice-notes', 'wplc_visitor_voice', array(
+            'plugin_url' => __( plugins_url( '/js/', __FILE__ ), 'wplivechat' ),
+            'str_delete' => __( 'Delete', 'wplivechat' ),
+            'str_save' => __( 'Save...', 'wplivechat' ),
+            'ajax_url' => admin_url( 'admin-ajax.php' )
+        ) );
+        wp_enqueue_script( 'wplc-visitor-voice-notes' );
+    }
+
     /**
      * No longer in use as of 6.2.11 as using the minified file causes issues on sites that are minified.
      * @deprecated 6.2.11
@@ -2988,6 +3002,7 @@ function wplc_admin_output_js() {
 	      );
 	      wp_localize_script('wplc-admin-js', 'wplc_admin_strings', $wpc_ma_js_strings);
 
+
 	    }
 	}
 }
@@ -4112,6 +4127,7 @@ function wplc_add_user_stylesheet() {
         // GIF integration styles - user
         wp_register_style( 'wplc-gif-integration-user', plugins_url( '/css/wplc_gif_integration.css', __FILE__ ) );
         wp_enqueue_style( 'wplc-gif-integration-user' );
+
     }
     if(function_exists('wplc_ce_activate')){
         if(function_exists('wplc_ce_load_user_styles')){
@@ -4286,6 +4302,7 @@ $gutenberg_default_html = '<!-- Default HTML -->
         wp_enqueue_script('wplc-gutenberg');
         wp_localize_script( 'wplc-gutenberg', 'default_html', $gutenberg_default_html );
     }
+
 }
 
 /**
@@ -4723,7 +4740,10 @@ function wplc_head_basic() {
         if(isset($_POST['wplc_elem_trigger_type'])){ $wplc_data['wplc_elem_trigger_type'] = esc_attr($_POST['wplc_elem_trigger_type']); } else { $wplc_data['wplc_elem_trigger_type'] = "0";}
         if(isset($_POST['wplc_elem_trigger_id'])){ $wplc_data['wplc_elem_trigger_id'] = esc_attr($_POST['wplc_elem_trigger_id']); } else { $wplc_data['wplc_elem_trigger_id'] = ""; }
 
-        if(isset($_POST['wplc_agent_select']) && $_POST['wplc_agent_select'] != "") {
+	    if(isset($_POST['wplc_enable_voice_notes_on_admin'])){ $wplc_data['wplc_enable_voice_notes_on_admin'] = esc_attr($_POST['wplc_enable_voice_notes_on_admin']); } else { $wplc_data['wplc_enable_voice_notes_on_admin'] = "0"; }
+	    if(isset($_POST['wplc_enable_voice_notes_on_visitor'])){ $wplc_data['wplc_enable_voice_notes_on_visitor'] = esc_attr($_POST['wplc_enable_voice_notes_on_visitor']); } else { $wplc_data['wplc_enable_voice_notes_on_visitor'] = "0"; }
+
+	    if(isset($_POST['wplc_agent_select']) && $_POST['wplc_agent_select'] != "") {
             $user_array = get_users(array(
                 'meta_key' => 'wplc_ma_agent',
             ));
@@ -6558,6 +6578,26 @@ function wplc_transcript_admin_javascript() {
 	wp_enqueue_script( 'wplc_transcript_admin' );
 }
 
+add_action( 'wplc_hook_admin_javascript_chat', 'wplc_voice_notes_admin_javascript' );
+function wplc_voice_notes_admin_javascript() {
+	if ( isset( $_GET['page'] ) && $_GET['page'] === 'wplivechat-menu' ) {
+		$wplc_settings = get_option( "WPLC_SETTINGS" );
+		// Voice Notes script - agent
+		if ( isset( $wplc_settings['wplc_enable_voice_notes_on_admin'] ) && ( $wplc_settings['wplc_enable_voice_notes_on_admin'] === '1' ) ) {
+			wp_register_script( 'wplc-user-voice-notes-audio-recorder-wav', plugins_url( '../js/WebAudioRecorderWav.min.js', __FILE__ ), false );
+			wp_register_script( 'wplc-user-voice-notes-audio-recorder', plugins_url( '../js/WebAudioRecorder.min.js', __FILE__ ), false );
+			wp_register_script( 'wplc-user-voice-notes', plugins_url( '../js/wplc_voice_notes.js', __FILE__ ), array( 'wplc-user-voice-notes-audio-recorder-wav', 'wplc-user-voice-notes-audio-recorder' ) );
+			wp_localize_script( 'wplc-user-voice-notes', 'wplc_user_voice', array(
+				'plugin_url' => __( plugins_url( '../js/', __FILE__ ), 'wplivechat' ),
+				'str_delete' => __( 'Delete', 'wplivechat' ),
+				'str_save' => __( 'Save...', 'wplivechat' ),
+				'ajax_url' => admin_url( 'admin-ajax.php' )
+			) );
+			wp_enqueue_script( 'wplc-user-voice-notes' );
+		}
+	}
+}
+
 add_action( 'wp_ajax_wplc_et_admin_email_transcript', 'wplc_transcript_callback' );
 function wplc_transcript_callback() {
 	$check = check_ajax_referer( 'wplc_et_nonce', 'security' );
@@ -6852,4 +6892,41 @@ function wplc_transcript_get_header_text() {
 	} else {
 		return "";
 	}
+}
+
+add_action( 'wplc_admin_remote_dashboard_below', 'wplc_admin_remote_voice_notes' );
+function wplc_admin_remote_voice_notes() { ?>
+    <div class="wplc-voice-notes">
+        <span class="wplc-voice-notes__close fa fa-close"></span>
+        <div id="wplc-voice-notes__recording-list"></div>
+    </div>
+<?php
+}
+
+add_action( 'wp_ajax_nopriv_wplc_save_voice_notes', 'wplc_save_voice_notes_ajax' );
+add_action( 'wp_ajax_wplc_save_voice_notes', 'wplc_save_voice_notes_ajax' );
+function wplc_save_voice_notes_ajax() {
+	if ( isset( $_FILES['file'] ) and ! $_FILES['file']['error'] ) {
+		$upload_dir = wp_upload_dir();
+		$base_dirname = $upload_dir['basedir'] . '/wp_live_chat/';
+		$base_url = $upload_dir['baseurl'] . '/wp_live_chat/';
+
+		if ( ! file_exists( $base_dirname ) ) {
+			@mkdir( $base_dirname );
+		}
+
+		if ( file_exists($base_dirname .  $_FILES['file']['name'] ) ){
+			$fname = rand(0, 200) . "-" . $_FILES['file']['name'];
+		} else {
+			$fname = $_FILES['file']['name'];
+		}
+
+		if ( move_uploaded_file( $_FILES['file']['tmp_name'], $base_dirname . $fname . '.wav' ) ) {
+		    echo $base_url . $fname . '.wav';
+        } else {
+		    echo 0;
+        }
+
+	}
+	exit;
 }

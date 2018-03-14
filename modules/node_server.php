@@ -540,6 +540,23 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		wp_localize_script( 'wplc_transcript_admin', 'wplc_transcript_nonce', $wplc_transcript_localizations );
 		wp_enqueue_script( 'wplc_transcript_admin' );
 
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'wplivechat-menu' ) {
+			$wplc_settings = get_option( "WPLC_SETTINGS" );
+			// Voice Notes script - agent
+			if ( isset( $wplc_settings['wplc_enable_voice_notes_on_admin'] ) && ( $wplc_settings['wplc_enable_voice_notes_on_admin'] === '1' ) ) {
+				wp_register_script( 'wplc-user-voice-notes-audio-recorder-wav', plugins_url( '../js/WebAudioRecorderWav.min.js', __FILE__ ), false );
+				wp_register_script( 'wplc-user-voice-notes-audio-recorder', plugins_url( '../js/WebAudioRecorder.min.js', __FILE__ ), false );
+				wp_register_script( 'wplc-user-voice-notes', plugins_url( '../js/wplc_voice_notes.js', __FILE__ ), array( 'wplc-user-voice-notes-audio-recorder-wav', 'wplc-user-voice-notes-audio-recorder' ) );
+				wp_localize_script( 'wplc-user-voice-notes', 'wplc_user_voice', array(
+					'plugin_url' => __( plugins_url( '../js/', __FILE__ ), 'wplivechat' ),
+					'str_delete' => __( 'Delete', 'wplivechat' ),
+					'str_save' => __( 'Save...', 'wplivechat' ),
+					'ajax_url' => admin_url( 'admin-ajax.php' )
+                ) );
+				wp_enqueue_script( 'wplc-user-voice-notes' );
+			}
+		}
+
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
 	    if(!$wplc_node_token){
 	        if(function_exists("wplc_node_server_token_regenerate")){
