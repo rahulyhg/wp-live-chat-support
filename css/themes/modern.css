@@ -1184,3 +1184,7 @@ div#bleeper_chat_ended {
     }
 
 }
+
+#wplc_chatbox {
+    width: 100%;
+}
