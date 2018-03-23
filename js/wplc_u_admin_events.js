@@ -183,6 +183,12 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
         'aid': '',
         html: agent_to_agent_chat_upsell
       }).appendTo(".online_agent_list");  
+
+
+      jQuery('<div/>', {
+        'class': 'initiate_upsell',
+        html: initiate_chat_upsell
+      }).appendTo(".infoArea"); 
     }
 
     jQuery("#page-wrapper").css("height", (jQuery(window).height() - 100) + "px");
@@ -506,9 +512,14 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
      * @return void
      */
     jQuery(document).on("bleeper_add_agent", function(e) {
-        
+
+        var custom_header_data = wplc_head_data;
+        if  (typeof bleeper_agent_name !== 'undefined'){
+            custom_header_data.name = bleeper_agent_name;
+        }
+
         socket.emit('add agent', e.ndata);
-        socket.emit('custom data',{action:'send_custom_header',chatid:e.ndata.chatid,agentid:e.ndata.agent,ndata:wplc_head_data});
+        socket.emit('custom data',{action:'send_custom_header',chatid:e.ndata.chatid,agentid:e.ndata.agent,ndata:custom_header_data});
 
 
     });
@@ -767,6 +778,18 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
 
     });
 
+
+    /**
+     * New visitor
+     * 
+     * @return void
+     */
+    jQuery(document).on("bleeper_new_visitor", function(e) {
+      if (typeof bleeper_enable_visitor_sound !== "undefined" && bleeper_enable_visitor_sound === '1') {
+        bleeper_ping.play();
+      }
+
+    });
 
 
     /**

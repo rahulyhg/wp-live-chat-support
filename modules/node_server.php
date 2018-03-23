@@ -12,6 +12,7 @@ define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");
 define("BLEEPER_NODE_END_POINTS_ROUTE", "api/v1/");
 define("BLEEPER_NODE_END_POINT_TOKEN", "zf6fe1399sdfgsdfg02ad09ab6a8cb7345s");
 
+
 add_action("wplc_activate_hook", "wplc_node_server_token_check", 10);
 add_action("wplc_update_hook", "wplc_node_server_token_check", 10);
 /**
@@ -524,6 +525,21 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		wp_register_script('my-wplc-admin-chatbox-ui-events', plugins_url('../js/wplc_u_admin_chatbox_ui_events.js', __FILE__), array('jquery'), $wplc_version, true);
 		wp_enqueue_script('my-wplc-admin-chatbox-ui-events'); 
 		
+
+
+		$wplc_et_ajax_nonce = wp_create_nonce( "wplc_et_nonce" );
+		wp_register_script( 'wplc_transcript_admin', plugins_url( '../js/wplc_transcript.js', __FILE__ ), null, '', true );
+		$wplc_transcript_localizations = array(
+			'ajax_nonce'          => $wplc_et_ajax_nonce,
+			'string_loading'      => __( "Sending transcript...", "wplivechat" ),
+			'string_title'        => __( "Sending Transcript", "wplivechat" ),
+			'string_close'        => __( "Close", "wplivechat" ),
+			'string_chat_emailed' => __( "The chat transcript has been emailed.", "wplivechat" ),
+			'string_error1'       => sprintf( __( "There was a problem emailing the chat. Please <a target='_BLANK' href='%s'>contact support</a>.", "wplivechat" ), "http://wp-livechat.com/contact-us/?utm_source=plugin&utm_medium=link&utm_campaign=error_emailing_chat" )
+		);
+		wp_localize_script( 'wplc_transcript_admin', 'wplc_transcript_nonce', $wplc_transcript_localizations );
+		wp_enqueue_script( 'wplc_transcript_admin' );
+
 		$wplc_node_token = get_option("wplc_node_server_secret_token");
 	    if(!$wplc_node_token){
 	        if(function_exists("wplc_node_server_token_regenerate")){
@@ -566,7 +582,11 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 
 
 
-
+	    if (isset($wplc_settings['wplc_enable_visitor_sound']) && intval($wplc_settings['wplc_enable_visitor_sound']) == 1) {
+	        wp_localize_script('wplc-admin-js-agent', 'bleeper_enable_visitor_sound', '1');
+	    } else {
+	        wp_localize_script('wplc-admin-js-agent', 'bleeper_enable_visitor_sound', '0');
+	    }
 
 
 
@@ -583,7 +603,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
         } else {
             wp_localize_script('wplc-admin-js-agent', 'bleeper_pro_auth', 'false');
         }
-        wp_localize_script('wplc-admin-js-agent', 'bleeper_agent_verification_end_point', get_rest_url() . "wp_live_chat_support/v1/validate_agent");
+        wp_localize_script('wplc-admin-js-agent', 'bleeper_agent_verification_end_point', rest_url('wp_live_chat_support/v1/validate_agent'));
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_disable_mongo', "true");
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_disable_add_message', "true");
 		wp_localize_script('wplc-admin-js-agent', 'wplc_nonce', wp_create_nonce("wplc"));
@@ -612,8 +632,8 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
         if(class_exists("WP_REST_Request")) {
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_enabled', '1');
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_token', get_option('wplc_api_secret_token'));
-            wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_endpoint', site_url().'/wp-json/wp_live_chat_support/v1');
-            wp_localize_script('wplc-admin-js-agent', 'bleeper_override_upload_url', site_url().'/wp-json/wp_live_chat_support/v1/remote_upload');
+            wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_endpoint', rest_url('wp_live_chat_support/v1'));
+            wp_localize_script('wplc-admin-js-agent', 'bleeper_override_upload_url', rest_url('wp_live_chat_support/v1/remote_upload'));
             wp_localize_script('wplc-admin-js-agent', 'wplc_restapi_nonce', wp_create_nonce( 'wp_rest' ));
 
         } else {
@@ -719,6 +739,17 @@ function wplc_admin_remote_dashboard_localize_upselling_tips(){
 	$tips_array = apply_filters("wplc_admin_remote_dashboard_localize_tips_array", $tips_array);
 
 	wp_localize_script( 'wplc-admin-js-agent', 'agent_to_agent_chat_upsell', sprintf(__('Chat to other agents with the <a href="%s" target="_BLANK">Pro version</a>.' ,'wplivechat'),'https://wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=a2achat'));
+
+	$initiate_upsell = "<i class='fa fa-horn'></i> ".__("With the Pro add-on of WP Live Chat Support, you can", "wplivechat");
+  	$initiate_upsell .= ' <a href="https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=initiate1" title="'.__("see who's online and initiate chats", "wplivechat").'" target=\"_BLANK\">';
+  	$initiate_upsell .= __("initiate chats", "wplivechat");
+  	$initiate_upsell .= '</a> '.__("with your online visitors with the click of a button.", "wplivechat");
+  	$initiate_upsell .= ' <a href="https://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=initiate2" title="'.__("Buy the Pro add-on now.", "wplivechat").'" target=\"_BLANK\">';
+    $initiate_upsell .= '<strong>'.__("Buy the Pro add-on now.", "wplivechat").'</strong></a>';
+
+
+
+	wp_localize_script( 'wplc-admin-js-agent', 'initiate_chat_upsell', $initiate_upsell);
 
 
 	wp_localize_script( 'wplc-admin-js-agent', 'wplc_event_upsell', sprintf( __( 'Get detailed visitor events with the <a target="_BLANK" href="%s">Pro version</a>.', 'wplivechat'), 'https://wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=pro_events' ) );

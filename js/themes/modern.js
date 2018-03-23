@@ -245,37 +245,44 @@ jQuery(document).on("wplc_animation_done", function(e) {
 
 });
 jQuery(document).on( "wplc_open_chat_2", function( e ) {
-    jQuery("#wp-live-chat-1").hide();
-    jQuery("#wp-live-chat-2-inner").hide();
-
-    jQuery("#wp-live-chat-2").show();
-
-    if(!jQuery("#wp-live-chat-header").hasClass("active")){
-       jQuery("#wplc_chatmsg").focus();
-    }
-
-    jQuery("#wp-live-chat-header").addClass("active");
-    jQuery("#wp-live-chat").addClass("mobile-active");
+    
+    wplc_chat_status = Cookies.get('wplc_chat_status');
     
 
-    wplc_chat_status = Cookies.get('wplc_chat_status');
-    if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
-       jQuery("#wp-live-chat-4").show();
-       jQuery("#wplc_social_holder").show();
-       jQuery("#nifty_ratings_holder").show();
-       jQuery.event.trigger({type: "wplc_animation_done"});
-       
-       
+    if (Cookies.get('wplc_minimize') === 'yes') { } else {
+
+        jQuery("#wp-live-chat-1").hide();
+        jQuery("#wp-live-chat-2-inner").hide();
+
+        jQuery("#wp-live-chat-2").show();
+
+        if(!jQuery("#wp-live-chat-header").hasClass("active")){
+           jQuery("#wplc_chatmsg").focus();
+        }
+
+        jQuery("#wp-live-chat-header").addClass("active");
+        jQuery("#wp-live-chat").addClass("mobile-active");
+        
+
+        wplc_chat_status = Cookies.get('wplc_chat_status');
+
+        if (typeof e.wplc_online !== "undefined" && e.wplc_online === true) {
+           jQuery("#wp-live-chat-4").show();
+           jQuery("#wplc_social_holder").show();
+           jQuery("#nifty_ratings_holder").show();
+           jQuery.event.trigger({type: "wplc_animation_done"});
+           
+           
+        }
+        setTimeout(function() {
+            wplc_scroll_to_bottom();
+        },1000);
+
+        jQuery("#wp-live-chat-3").hide();
+        jQuery("#wplc_chatmsg").focus();
+        jQuery("#wp-live-chat-minimize").css("right","23px");
+        Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
     }
-    setTimeout(function() {
-        wplc_scroll_to_bottom();
-    },1000);
-
-    jQuery("#wp-live-chat-3").hide();
-    jQuery("#wplc_chatmsg").focus();
-    jQuery("#wp-live-chat-minimize").css("right","23px");
-    Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
-
 
 
 });
@@ -343,6 +350,8 @@ jQuery(document).ready(function() {
                 jQuery("#wp-live-chat-2").fadeOut("fast");
                 jQuery(this).removeClass('active');
                 jQuery.event.trigger({type: "wplc_minimize_chat"});
+
+                Cookies.set('wplc_minimize', "yes", { expires: 1, path: '/' });
                 
             } else {
                 jQuery("#wplc_hovercard").fadeIn('fast');
@@ -351,8 +360,13 @@ jQuery(document).ready(function() {
                 wplc_chat_status = Cookies.get('wplc_chat_status');
                 nc_status = Cookies.get('nc_status');
                 if (parseInt(wplc_chat_status) == 3 || parseInt(wplc_chat_status) == 2 || parseInt(wplc_chat_status) == 0 || parseInt(wplc_chat_status) == 12 || parseInt(wplc_chat_status) == 10 || nc_status === 'active') {
+                    
+                    jQuery("#bleeper_bell").hide();
+
                     jQuery("#speeching_button").click();
                 }
+
+                //Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
 
             }
 

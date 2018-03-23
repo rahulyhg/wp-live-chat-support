@@ -43,7 +43,7 @@
         <p style='text-align: center;'><?php _e("Handle all your chats in one area, on any admin page.","wplivechat"); ?></p>        
     </div>   
     <div class="col">
-        <div style='text-align: center;' ><i class="fa-4x fa fa-smile-o" aria-hidden="true"></i><br/><h4><?php _e("Emojis!","wplivechat"); ?></h4></div>        
+        <div style='text-align: center;' ><i class="fa-4x far fa-smile" aria-hidden="true"></i><br/><h4><?php _e("Emojis!","wplivechat"); ?></h4></div>        
         <p style='text-align: center;'><?php _e("Add a touch of your own personality with emojis!","wplivechat"); ?></p>        
     </div>
 </div>

@@ -190,7 +190,9 @@ jQuery(document).ready(function() {
                     nc.type = "text/javascript";
                     nc.async = true;
                     nc.src = "https://bleeper.io/app/assets/js/bleeper-dev.js";
-                        document.getElementsByTagName("head")[0].appendChild(nc);
+                    //nc.src = "http://127.0.0.1/nick-bleeper-dev.js";
+
+                    document.getElementsByTagName("head")[0].appendChild(nc);
 
                 }
 
@@ -203,12 +205,14 @@ jQuery(document).ready(function() {
 
                     wplc_call_to_server_chat(data,true,false);
                 }
-
+                
                 if(wplc_cid !== null   && wplc_init_chat_box_check == true && wplc_init_chat_box !== false){
+                    
                     wplc_init_chat_box(wplc_cid,wplc_chat_status);
                 } else {
                     //Node and offline
                     if(typeof wplc_use_node_server !== "undefined" && (wplc_use_node_server === "true" || wplc_use_node_server  === true)){
+
                         wplc_cbox_animation();
                     }
                 }
@@ -807,19 +811,24 @@ function wplc_cbox_animation() {
             break;
     }
 
-    //jQuery("#wp-live-chat").css({ "display" : "block" });
+    //jQuery("#wp-live-chat").css({ "display" : "block" }); 
     if(jQuery("#wp-live-chat").attr('wplc-auto-pop-up') === "1"){
 
-        setTimeout(function(){
-            open_chat(0);
-        },1000);
-        /**
-         * Adding this fixes the bug that stops the chat window from opening when an agent initialises a chat with a user
-         *
-         * Reasoning: when running open_chat(), wplc_is_chat_open is set to TRUE at the end of the function, and stops any future request to open_chat();
-         *
-         */
-        wplc_is_chat_open = false;
+        var wplc_force_must_min = Cookies.get('wplc_minimize');
+        if(wplc_force_must_min === 'yes'){ 
+            /* User has actively chosen to minimize the chat, leave it alone */
+        } else {
+            setTimeout(function(){
+                open_chat(0);
+            },1000);
+            /**
+             * Adding this fixes the bug that stops the chat window from opening when an agent initialises a chat with a user
+             *
+             * Reasoning: when running open_chat(), wplc_is_chat_open is set to TRUE at the end of the function, and stops any future request to open_chat();
+             *
+             */
+            wplc_is_chat_open = false;
+        }
     }
 
     jQuery.event.trigger({type: "wplc_animation_done"});

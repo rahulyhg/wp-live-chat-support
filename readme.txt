@@ -12,7 +12,7 @@ Fully functional Live Chat plugin. Chat with your visitors for free! No need for
 
 == Description ==
 
-The most cost effective Live Chat plugin. Chat with your visitors for free! WP Live Chat Support is perfect for small businesses. No third party connections required. There's no need to pay for live chat monthly subscriptions in order to better understand your visitors. This is a fully functional live chat plugin. Increase your conversion rates by communicating directly with your visitors when they're ready to do so using WP Live Chat Support.
+The most cost effective Live Chat plugin. Chat with your visitors for free! WP Live Chat Support is perfect for small businesses. There's no need to pay for live chat monthly subscriptions in order to better understand your visitors. This is a fully functional live chat plugin. Increase your conversion rates by communicating directly with your visitors when they're ready to do so using WP Live Chat Support.
 
 = Free Version Features =
 
@@ -34,10 +34,9 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 * Compatible with translation plugins
 * Google Analytics integration
 * Create a custom offline message form when you're not online
-* No advertising or links
 * Add surveys or polls to your chat box, before or after a chat session
 * Anonymity for your visitors
-* No "Powered by" links on the live chat window
+* GIF integration
 * No monthly live chat subscriptions needed
 * Allow the live chat box to automatically pop up
 * Limit the live chat box to only show to registered users
@@ -59,12 +58,14 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 
 * Unlimited live chat agents
 * Initiate live chats with online visitors
+* Agent to agent chats
+* See what your users are typing before they send their message
+* Track certain visitor events (scrolling, clicking, page views, etc.)
 * Quick Responses (insert a predefined response to your live chat box)
 * Data triggers (time trigger, scroll trigger, page trigger, on page leave trigger)
 * Reporting (chat stats, popular pages, ROI tracking and reporting, customer satisfaction ratings)
 * Customer satisfaction ratings for each chat session
 * ROI tracking
-* Encrypt your live chat conversations
 * Fully responsive admin chat dashboard
 * Compatible with all caching plugins (live chat window loaded via Ajax)
 * Desktop Notifications when receiving new live chats
@@ -207,6 +208,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 8.0.06 =
+It is highly recommended that you upgrade to WP Live Chat Support version 8.0.06 for security reasons.
+
 = 7.1.07 = 
 It is highly recommended that you upgrade to WP Live Chat Support version 7.1.07 for security reasons.
 
@@ -219,16 +223,25 @@ It is highly recommended that you upgrade to WP Live Chat Support version 7.1.04
 = 7.0.02 =
 We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
-= 6.2.04 =
-It is highly recommended that you upgrade to WP Live Chat Support version 6.0.04 for security reasons.
-
-= 6.2.02 =
-It is highly recommended that you upgrade to WP Live Chat Support version 6.0.02 for security reasons.
-
-= 4.4.1 =
-It is highly recommended that you upgrade to WP Live Chat Support version 4.4.0 for security reasons.
 
 == Changelog ==
+
+= 8.0.07 - 2018-03-23 - Low priority =
+* Fixed a "direct user to page" bug
+
+= 8.0.06 - 2018-03-23 - High priority =
+* XSS vulnerability fixes thanks to https://www.gubello.me/blog/
+* Fixed a chat width styling bug on the front end
+
+= 8.0.05 - 2018-03-09 - Medium priority =
+* Chat minimize is now respected
+* GIF integration support (Giphy, Tenor)
+* Fixed get correct rest api endpoint urls
+* Fixed chat box header not respecting Use WordPress name instead option
+* Fixes CSS issue in dashboard with the action column
+* Fixes chat history styling
+* Mac style fix (front end)
+* Email transcript integrated
 
 = 8.0.04 - 2018-02-12 - Low priority =
 * Allowed strings from the front end to be translated

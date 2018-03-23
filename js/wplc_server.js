@@ -1,6 +1,8 @@
 /*
  * Hanldes Message transportation within WPLC
 */
+var gifExtensionPattern = new RegExp(/\.(gif)\b/);
+
 var wplc_server_method = null;
 var wplc_supress_server_logs = true; //We are now surpressing server logs
 var wplc_node_socket = null; //Will not be set unless
@@ -419,7 +421,12 @@ function wplc_rest_api(type, wplc_send_data, wplc_send_timeout, next) {
 	//Send the data to the Async
 	if(typeof wplc_restapi_enabled !== "undefined" && parseInt(wplc_restapi_enabled) === 1 && typeof wplc_restapi_endpoint !== "undefined"){
 		//REST API is ready to rumble
-		wplc_send_url = wplc_restapi_endpoint + "/" + type;
+		
+		let anti_cache = Date.now();
+
+		wplc_send_url = wplc_restapi_endpoint + "/" + type + "?nocache="+anti_cache;
+
+
 
 		var prepared_data = wplc_send_data;
 
@@ -671,6 +678,35 @@ function wplc_get_chat_person_name_msg_field(name) {
 }
 
 /**
+ * Removes undesired strings from a message which contains a GIF URL and returns only the gif url
+ * @param {*} message_content 
+ */
+function getCleanedGif(message_content) {
+	if (typeof(message_content) !== "undefined") {
+		var msgParts = message_content.split(" ");
+	
+		if (typeof(msgParts) !== "undefined") {
+	
+			for (var i = 0; i < msgParts.length; i++) {
+				var msgPart = msgParts[i];
+	
+				if (typeof(msgPart) !== "undefined") {
+	
+					if (gifExtensionPattern.test(msgPart)) {
+						var cleanedGifUrl = msgPart.replace("href=", "");
+						cleanedGifUrl = cleanedGifUrl.replace(/\"/g, "");
+	
+						return cleanedGifUrl;
+					}
+				}
+			}
+		}
+	}
+	
+	return "";
+}
+
+/**
  * Pushes the message object to the chat box
  *
  * @param  {object} the_message The message object
@@ -867,9 +903,16 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 	                message_content = niftyFormatParser(message_content);
 	            } 
 
-				concatenated_message += "<span class='messageBody' data-message='" + original_message + "'>"+message_content+"</span>"+ message_edit_string;
-				
-				// Close the person name and message wrapper, if it was added
+				// If it is a GIF message
+ 				if (gifExtensionPattern.test(message_content)) {
+					cleanedGif = getCleanedGif(message_content);
+					concatenated_message += "<span class='messageBody' data-message='"+ cleanedGif +"'><img src='"+ cleanedGif + "' class='gif-img'/></span>"+ message_edit_string;
+				} else {
+					// If it is a regular message
+					concatenated_message += "<span class='messageBody' data-message='" + original_message + "'>"+message_content+"</span>"+ message_edit_string;
+				}
+
+				// Close the person name/message wrapper, if it was added
 				concatenated_message += "</div>";
 				
 				// Close the HTML of a message
