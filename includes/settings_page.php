@@ -77,7 +77,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
         if (isset($wplc_settings["wplc_settings_color3"])) { $wplc_settings_color3 = $wplc_settings["wplc_settings_color3"]; } else { $wplc_settings_color3 = "EEEEEE"; }
         if (isset($wplc_settings["wplc_settings_color4"])) { $wplc_settings_color4 = $wplc_settings["wplc_settings_color4"]; } else { $wplc_settings_color4 = "666666"; }
         if (isset($wplc_settings["wplc_environment"])) { $wplc_environment[intval($wplc_settings["wplc_environment"])] = "SELECTED"; }
-
+        
+        
         if(get_option("WPLC_HIDE_CHAT") == true) { $wplc_hide_chat = "checked"; } else { $wplc_hide_chat = ""; };
         
      ?>
@@ -223,6 +224,17 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <input type="checkbox" value="1" name="wplc_record_ip_address" <?php if(isset($wplc_settings['wplc_record_ip_address'])  && $wplc_settings['wplc_record_ip_address'] == 1 ) { echo "checked"; } ?> />                      
                   </td>
               </tr>
+
+              <?php if( isset( $wplc_settings['wplc_use_node_server'] ) && intval( $wplc_settings['wplc_use_node_server'] ) == 1 ){ ?>
+              <tr>
+                  <td width='300' valign='top'>
+                      <?php _e("Play a sound when there is a new visitor","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this to mute the sound that is played when a new visitor arrives", "wplivechat") ?>"></i>
+                  </td>
+                  <td valign='top'>
+                      <input type="checkbox" value="1" name="wplc_enable_visitor_sound" <?php if(isset($wplc_settings['wplc_enable_visitor_sound'])  && $wplc_settings['wplc_enable_visitor_sound'] == 1 ) { echo "checked"; } ?> />                      
+                  </td>
+              </tr>
+              <?php } ?>
               <tr>
                   <td width='300' valign='top'>
                       <?php _e("Play a sound when a new message is received","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this to mute the sound that is played when a new chat message is received", "wplivechat") ?>"></i>
@@ -231,6 +243,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <input type="checkbox" value="1" name="wplc_enable_msg_sound" <?php if(isset($wplc_settings['wplc_enable_msg_sound'])  && $wplc_settings['wplc_enable_msg_sound'] == 1 ) { echo "checked"; } ?> />                      
                   </td>
               </tr>
+              
               <tr>
                   <td width='300' valign='top'>
     			          <?php _e("Enable Font Awesome set","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Disable this if you have Font Awesome set included with your theme", "wplivechat") ?>"></i>
@@ -555,6 +568,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </tbody>
               </table>
           <?php } ?>
+
+          
 
           <?php do_action('wplc_hook_admin_settings_chat_box_settings_after'); ?>
 

@@ -304,3 +304,12 @@
 }
 .wplc_agent_container small {  word-wrap: break-word; display:block; height:50px; }
 .wplc_agent_container select { width: 120px; }
+
+.initiate_upsell {
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    width: 100%;
+    background-color: #fff;
+}

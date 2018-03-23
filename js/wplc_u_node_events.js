@@ -36,6 +36,7 @@ jQuery(document).ready(function() {
             jQuery("#wp-live-chat-header").addClass("active");
         } else if (nc_status === "active") {
             /* go straight into chat */
+            Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
             jQuery.event.trigger({type: "wplc_open_chat_2", wplc_online: wplc_online});
             
 
@@ -157,6 +158,10 @@ jQuery(document).ready(function() {
             wplc_push_message_to_chatbox(the_message,'u', function() {
                 wplc_scroll_to_bottom();    
             });
+
+            if (Cookies.get("wplc_minimize") === 'yes' && jQuery("#bleeper_bell").length > 0) {
+                jQuery("#bleeper_bell").show();
+            }
         }
     });
 
@@ -317,11 +322,11 @@ jQuery(document).ready(function() {
                         if(typeof e.ndata.pretty_name !== "undefined"){
                             var link_url = e.ndata.pretty_name + " - " + e.ndata.direction;
                             
-                            var notice = "<span>";
+                            var notice = "<span> ";
                             notice += (typeof e.ndata.agent_name !== "undefined" ? e.ndata.agent_name : "Agent") + " "; 
                             notice += (typeof bleeper_direct_to_page_localized_notice !== "undefined" ? bleeper_direct_to_page_localized_notice : "would like to direct you to the following page: ");
                             notice += link_url;
-                            notice += "</span>";
+                            notice += " </span>";
 
                             the_message = {};
                             the_message.msg = notice;

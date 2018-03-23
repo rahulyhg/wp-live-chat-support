@@ -980,15 +980,19 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
         $nice_time = date("d M Y H:i:s",$timestamp);
 
 
-
+        $agent_from = false;
 
         $image = "";
         if($result->originates == 1){
+
+            $agent_from = 'Agent';
 
         } else if ($result->originates == 2){
 
 
         } else if ($result->originates == 0 || $result->originates == 3) {
+
+            
 
             $system_notification = true;
             $cuid = get_current_user_id();
@@ -1031,11 +1035,40 @@ function wplc_return_chat_messages($cid, $transcript = false, $html = true, $wpl
                 $msg = stripslashes($msg);
             }
 
-            if ( isset( $result->afrom ) && intval( $result->afrom ) > 0 ) { $msg_array[$id]['afrom'] = intval( $result->afrom ); $other_data['aid'] = intval( $result->afrom ); }
+            if ( isset( $result->afrom ) && intval( $result->afrom ) > 0 ) { 
+                $msg_array[$id]['afrom'] = intval( $result->afrom ); $other_data['aid'] = intval( $result->afrom );
+                
+            }
             if ( isset( $result->ato ) && intval( $result->ato ) > 0 ) { $msg_array[$id]['ato'] = intval( $result->ato ); }
 
+
+            /* use the new  "other" array to get the AID and agent name */
+            if ( $result->originates == '1' && isset( $result->other ) ){
+                $other_data = maybe_unserialize( $result->other );
+                if ( isset( $other_data['aid'] ) ) {
+                    $user_info = get_userdata( intval( $other_data['aid'] ) );
+                    $agent_from = $user_info->display_name;
+                }
+
+            }
+
+            /* get the name of the USER if there is one */
+            if ( $result->originates == '2' && isset( $result->msgfrom ) ) {
+                $user_from = $result->msgfrom;
+            } else {
+                $user_from = 'User';
+            }
+        
+
             $msg_array[$id]['msg'] = $msg;
-            $msg_hist .= $msg;
+
+            if ($agent_from !== false) {
+                $msg_hist .= $agent_from . ": " . $msg . "<br />";
+            } else {
+                $msg_hist .= $user_from . ": " . $msg . "<br />";
+            }
+            
+
             $msg_array[$id]['originates'] = $result->originates;
             $msg_array[$id]['other'] = $other_data;
 

@@ -7,7 +7,7 @@ jQuery("document").ready(function() {
 		
 		sessionStorage.setItem(
 			"wplc-tabs-index",
-			$(event.target).tabs("option", "active")
+			jQuery(event.target).tabs("option", "active")
 		);
 	}
 	

@@ -73,3 +73,23 @@
 .wplc_bottom_chat_info_container h3{
     margin-top: 0 !important;
 }
+
+.wplc-user-message, .wplc-admin-message {
+    display: block;
+    max-width: 80%;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.wplc-user-message-avatar, .wplc-admin-message-avatar {
+    display:  inline-block;
+    border-radius: 20px;
+}
+
+.wplc-msg-content{
+    
+    display: inline-block;
+    padding-left:10px
+
+}
