@@ -745,6 +745,9 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 
 	        var message_edit_string = "";
 
+	        var audioPattern = new RegExp(/-blob.wav/);
+	        var isAudioPattern = false;
+
 	        if (parseInt(the_message.originates) === 1) {
 	        	//From Admin
 
@@ -758,6 +761,12 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 	            	message_aid = false;
 	            }
 	            message_class = "wplc-admin-message wplc-color-bg-4 wplc-color-2 wplc-color-border-4";
+
+	            // If it is audio message
+				isAudioPattern = audioPattern.test(the_message.msg);
+                if (isAudioPattern) {
+                    message_class += " wplc-user-message-audio";
+                }
 
 				if (aoru === 'u') {
 
@@ -820,6 +829,12 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 	        } else {
 	        	/* most likely from the user */
 	            message_class = "wplc-user-message wplc-color-bg-1 wplc-color-2 wplc-color-border-1";
+
+                isAudioPattern = audioPattern.test(the_message.msg);
+                if (isAudioPattern) {
+                    message_class += " wplc-user-message-audio";
+                }
+
 	            if (aoru === 'u') {
 	            	message_edit_string = "<span class='bleeper-edit-message' style='display:none;'>Edit</span>";
 
@@ -878,6 +893,9 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 			if (message_content !== ""){
 				 message_content = wplc_sanitize_attributes(message_content);
 				 
+				 // If it is audio message
+				 isAudioPattern = audioPattern.test(message_content);
+
 				 // Open the HTML of a message
 				 var concatenated_message = "<span class='" + message_class + "' mid='"+the_message.mid+"'>";
 
@@ -888,9 +906,15 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 					}
 					
 					// Add a wrapper for the person name and the message, this wrapper is necessary to implement the UI of the admin chat	
+                     if (isAudioPattern) {
+                         concatenated_message += "<div class='wplc-msg-content wplc-msg-content-audio' mid='" + the_message.mid + "'>";
+                     } else {
 					concatenated_message += "<div class='wplc-msg-content' mid='"+the_message.mid+"'>";
-					
-	                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") {
+                     }
+
+                     if (isAudioPattern) {
+                         concatenated_message += "<span class='wplc-msg-content-audio-icon'></span>";
+                     } else if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") {
 					  concatenated_message += message_from;
 	                }
 	            } else {
@@ -899,7 +923,9 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 				}
 
 				var original_message = message_content;
-				if (typeof niftyFormatParser !== "undefined"){
+                if (isAudioPattern) {
+                    message_content = "<a href='" + message_content + "' target='_blank'>" + wplc_visitor_voice.play_sound + "</a>";
+                } else if (typeof niftyFormatParser !== "undefined"){
 	                message_content = niftyFormatParser(message_content);
 	            } 
 
@@ -907,6 +933,9 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
  				if (gifExtensionPattern.test(message_content)) {
 					cleanedGif = getCleanedGif(message_content);
 					concatenated_message += "<span class='messageBody' data-message='"+ cleanedGif +"'><img src='"+ cleanedGif + "' class='gif-img'/></span>"+ message_edit_string;
+				} else if (isAudioPattern) {
+                    // If it is audio pattern
+                    concatenated_message += "<span class='messageBody'>"+message_content+"</span>";
 				} else {
 					// If it is a regular message
 					concatenated_message += "<span class='messageBody' data-message='" + original_message + "'>"+message_content+"</span>"+ message_edit_string;
