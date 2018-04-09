@@ -745,7 +745,7 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 
 	        var message_edit_string = "";
 
-	        var audioPattern = new RegExp(/-blob.wav/);
+	        var audioPattern = new RegExp(/blob.wav/);
 	        var isAudioPattern = false;
 
 	        if (parseInt(the_message.originates) === 1) {
