@@ -1126,7 +1126,7 @@ function wplc_push_js_to_front_basic() {
     global $wplc_is_mobile;
     global $wplc_version;
 
-	wp_register_script('wplc-user-jquery-cookie', plugins_url('/js/jquery-cookie.js', __FILE__), array('wplc-user-script'),false, false);
+	wp_register_script('wplc-user-jquery-cookie', plugins_url('/js/jquery-cookie.js', __FILE__), array('jquery'),false, false);
 	wp_enqueue_script('wplc-user-jquery-cookie');
 
     wp_enqueue_script('jquery');
