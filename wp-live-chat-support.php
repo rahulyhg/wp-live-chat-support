@@ -1125,6 +1125,10 @@ function wplc_load_user_js () {
 function wplc_push_js_to_front_basic() {
     global $wplc_is_mobile;
     global $wplc_version;
+
+	wp_register_script('wplc-user-jquery-cookie', plugins_url('/js/jquery-cookie.js', __FILE__), array('wplc-user-script'),false, false);
+	wp_enqueue_script('wplc-user-jquery-cookie');
+
     wp_enqueue_script('jquery');
 
     $wplc_settings = get_option("WPLC_SETTINGS");
@@ -1280,10 +1284,6 @@ function wplc_push_js_to_front_basic() {
         wp_register_script('wplc-theme-classic', plugins_url('/js/themes/classic.js', __FILE__),array('wplc-user-script'),$wplc_version);
         wp_enqueue_script('wplc-theme-classic');
     }
-
-
-    wp_register_script('wplc-user-jquery-cookie', plugins_url('/js/jquery-cookie.js', __FILE__), array('wplc-user-script'),false, false);
-    wp_enqueue_script('wplc-user-jquery-cookie');
 
     $ajax_url = admin_url('admin-ajax.php');
     $home_ajax_url = $ajax_url;
