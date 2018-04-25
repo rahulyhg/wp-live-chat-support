@@ -189,14 +189,15 @@ jQuery(document).ready(function() {
                 msg_id: e.msg_id,
                 wplc_extra_data:wplc_extra_data
         };
-        wplc_rest_api('send_message', data, 12000, null);
-        
-        
 
-        
-        jQuery("#wplc_chatmsg").val('');
-
-
+        if(typeof wplc_chat === "string" && wplc_chat.trim() !== ""){
+            /* 
+             * Will only send message if this is not empty string
+             * This will resolve some issues with rest storage
+            */
+            wplc_rest_api('send_message', data, 12000, null);
+            jQuery("#wplc_chatmsg").val('');
+        }
 
     });
 
