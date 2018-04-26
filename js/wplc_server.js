@@ -649,7 +649,7 @@ function wplc_add_date_and_time(the_message,originates) {
 						.replace( /h/g, time_hours_12 < 10 ? '0' + time_hours_12 : time_hours_12 )
 						.replace( /G/g, time_hours_24 )
 						.replace( /H/g, time_hours_24 < 10 ? '0' + time_hours_24 : time_hours_24 )
-						.replace( /i/g, time_minutes < 10 ? '0' + time_hours_24 : time_hours_24 )
+						.replace( /i/g, time_minutes < 10 ? '0' + time_minutes : time_minutes )
 						.replace( /a/g, time_am_pm.toLowerCase() )
 						.replace( /A/g, time_am_pm.toUpperCase() );
 

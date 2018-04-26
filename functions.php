@@ -719,6 +719,7 @@ function wplc_return_user_chat_messages($cid,$wplc_settings = false,$cdata = fal
 
         $timestamp = strtotime( $result->timestamp );
         $other_data['datetime'] = $timestamp;
+	    $other_data['datetimeUTC'] = strtotime( get_gmt_from_date( $result->timestamp ) );
 
         //
         if($result->originates == 1){
@@ -1234,6 +1235,7 @@ function wplc_return_admin_chat_messages($cid) {
 
             $timestamp = strtotime( $result->timestamp );
             $other_data['datetime'] = $timestamp;
+	        $other_data['datetimeUTC'] = strtotime( get_gmt_from_date( $result->timestamp ) );
 
             if (intval($result->originates) == 3) {
                 /*

@@ -13,6 +13,8 @@
 /**
  * 
  * 8.0.08
+ * 
+ * Fix for timestamp not displaying correctly
  * Fix for WP Rocket comaptibility
  * Fix for chat box not popping up for returning visitors that had previously minimized
  *
