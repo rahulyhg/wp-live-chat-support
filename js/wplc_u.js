@@ -56,7 +56,7 @@ var wplc_long_poll_delay = 1500;
 
 
 jQuery(document).ready(function() {
-    
+
     /* Gutenberg functions */
     jQuery('.wp-block-wp-live-chat-support-wplc-chat-box').on('click',function(){
         jQuery("#wplc_hovercard").fadeOut("fast");
@@ -64,7 +64,7 @@ jQuery(document).ready(function() {
         wplc_is_chat_open = true;
         jQuery.event.trigger({type: "wplc_open_chat"});
     });
-    
+
     wplc_map_node_variables();
 
     /* preload the images */
@@ -205,9 +205,9 @@ jQuery(document).ready(function() {
 
                     wplc_call_to_server_chat(data,true,false);
                 }
-                
+
                 if(wplc_cid !== null   && wplc_init_chat_box_check == true && wplc_init_chat_box !== false){
-                    
+
                     wplc_init_chat_box(wplc_cid,wplc_chat_status);
                 } else {
                     //Node and offline
@@ -537,7 +537,7 @@ function wplc_loop_response_handler(response, data){
                                 wplc_scroll_to_bottom();
                             });
 
-
+							wplc_new_message_sound = true;
                         }
                     }
                 }
@@ -811,11 +811,11 @@ function wplc_cbox_animation() {
             break;
     }
 
-    //jQuery("#wp-live-chat").css({ "display" : "block" }); 
+    //jQuery("#wp-live-chat").css({ "display" : "block" });
     if(jQuery("#wp-live-chat").attr('wplc-auto-pop-up') === "1"){
 
         var wplc_force_must_min = Cookies.get('wplc_minimize');
-        if(wplc_force_must_min === 'yes'){ 
+        if(wplc_force_must_min === 'yes'){
             /* User has actively chosen to minimize the chat, leave it alone */
         } else {
             setTimeout(function(){
@@ -890,26 +890,26 @@ function wplc_strip(str) {
 }
 
 (function($) {
-	
+
 	$(document).ready(function(event) {
-		
+
 		if(!window.wdtEmojiBundle)
 			return;
-		
+
 		$(document.body).on("click", function(event) {
-			
+
 			// If click event isn't on the emoji window, or the emoji open button, close the emoji window
 			if($(event.target).closest(".wdt-emoji-picker, .wdt-emoji-popup").length == 0 && !(
 				event.target.parentNode == null && $(event.target).hasClass("fa-smile-o")
 				))
 				wdtEmojiBundle.close();
-			
+
 		});
-		
+
 		// Close emoji window on scroll
 		$(window).scroll(function(event) {
 			wdtEmojiBundle.close();
 		});
 	});
-	
+
 })(jQuery);
