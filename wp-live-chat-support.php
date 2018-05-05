@@ -13,7 +13,7 @@
 /**
  *
  * 8.0.08
- * Add pagination to History and Missed Chats admin pages
+ * Add pagination to History, Missed Chats and Offline Messages admin pages
  * Fix for Disable Emojis setting not displaying when Pro is active
  * Fix for timestamp not displaying correctly
  * Fix for WP Rocket comaptibility
