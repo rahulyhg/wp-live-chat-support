@@ -4575,7 +4575,13 @@ function wplc_admin_display_offline_messages_new() {
             </thead>
             <tbody id=\"the-list\" class='list:wp_list_text_link'>";
 
-    $sql = "SELECT * FROM $wplc_tblname_offline_msgs ORDER BY `timestamp` DESC";
+	$pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
+	$limit = 20; // number of rows in page
+	$offset = ( $pagenum - 1 ) * $limit;
+	$total = $wpdb->get_var( "SELECT COUNT(`id`) FROM $wplc_tblname_offline_msgs" );
+	$num_of_pages = ceil( $total / $limit );
+
+    $sql = "SELECT * FROM $wplc_tblname_offline_msgs ORDER BY `timestamp` DESC LIMIT $limit OFFSET $offset";
 
     $results = $wpdb->get_results($sql);
 
@@ -4596,6 +4602,19 @@ function wplc_admin_display_offline_messages_new() {
     echo "
             </tbody>
         </table>";
+
+	$page_links = paginate_links( array(
+		'base' => add_query_arg( 'pagenum', '%#%' ),
+		'format' => '',
+		'prev_text' => __( '&laquo;', 'wplivechat' ),
+		'next_text' => __( '&raquo;', 'wplivechat' ),
+		'total' => $num_of_pages,
+		'current' => $pagenum
+	) );
+
+	if ( $page_links ) {
+		echo '<div class="tablenav"><div class="tablenav-pages" style="margin: 1em 0;float:none;text-align:center;">' . $page_links . '</div></div>';
+	}
 }
 
 /**
