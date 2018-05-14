@@ -511,7 +511,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   </td>
               </tr> 
 				<?php
-				if(defined('WPLC_LIVE_CHAT_SUPPORT_PRO_LOADED'))
+				if(defined('WPLC_PRO_PLUGIN'))
 				{
 					?>
 					<tr>

@@ -249,7 +249,7 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
     wplc_chat_status = Cookies.get('wplc_chat_status');
     
 
-    if (Cookies.get('wplc_minimize') === 'yes') { } else {
+    if (Cookies.get('wplc_minimize') === 'yes' && !jQuery("#wp-live-chat-header").hasClass("active")) { } else {
 
         jQuery("#wp-live-chat-1").hide();
         jQuery("#wp-live-chat-2-inner").hide();
