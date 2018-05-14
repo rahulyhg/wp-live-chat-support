@@ -11,8 +11,9 @@
  */
 
 /**
- *
- * 8.0.08
+ * 8.0.08 - High priority
+ * XSS vulnerability fixes thanks to Riccardo Ten cate
+ * Fixed REST Storage Issue
  * Add pagination to History, Missed Chats and Offline Messages admin pages
  * Fix for Disable Emojis setting not displaying when Pro is active
  * Fix for timestamp not displaying correctly
