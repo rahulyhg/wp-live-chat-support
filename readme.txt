@@ -1,4 +1,4 @@
-=== WP Live Chat Support ===
+﻿=== WP Live Chat Support ===
 Contributors: WP-LiveChat, NickDuncan, CodeCabin_, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
@@ -208,6 +208,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 8.0.08 =
+It is highly recommended that you upgrade to WP Live Chat Support version 8.0.08 for security reasons.
+
 = 8.0.06 =
 It is highly recommended that you upgrade to WP Live Chat Support version 8.0.06 for security reasons.
 
@@ -225,6 +228,15 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.08 - 2018-05-14 - High priority =
+* XSS vulnerability fixes thanks to Riccardo Ten cate
+* Fixed REST Storage Issue
+* Add pagination to History, Missed Chats and Offline Messages admin pages
+* Fix for Disable Emojis setting not displaying when Pro is active
+* Fix for timestamp not displaying correctly
+* Fix for WP Rocket comaptibility
+* Fix for chat box not popping up for returning visitors that had previously minimized
 
 = 8.0.07 - 2018-03-23 - Low priority =
 * Fixed a "direct user to page" bug

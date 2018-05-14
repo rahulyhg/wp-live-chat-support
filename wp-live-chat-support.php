@@ -11,8 +11,9 @@
  */
 
 /**
- *
- * 8.0.08
+ * 8.0.08 - High priority
+ * XSS vulnerability fixes thanks to Riccardo Ten cate
+ * Fixed REST Storage Issue
  * Add pagination to History, Missed Chats and Offline Messages admin pages
  * Fix for Disable Emojis setting not displaying when Pro is active
  * Fix for timestamp not displaying correctly
@@ -3477,7 +3478,7 @@ function wplc_draw_chat_area($cid, $chat_data = false) {
           $user_ip = "<a href='http://www.ip-adress.com/ip_tracer/" . $user_ip . "' title='".__('Whois for' ,'wplivechat')." ".$user_ip."' target='_BLANK'>".$user_ip."</a>";
       }
 
-	echo "<h2>$status " . __( 'Chat with', 'wplivechat' ) . " " . $result->name . "</h2>";
+	echo "<h2>$status " . __( 'Chat with', 'wplivechat' ) . " " . sanitize_text_field($result->name) . "</h2>";
 	if ( isset( $_GET['action'] ) && 'history' === $_GET['action'] ) {
 		echo "<span class='wplc-history__date'><strong>" . __( 'Starting Time:', 'wplivechat' ) . "</strong>" . date( 'Y-m-d H:i:s', current_time( strtotime( $result->timestamp ) ) ) . "</span>";
 		echo "<span class='wplc-history__date wplc-history__date-end'><strong>" . __( 'Ending Time:', 'wplivechat' ) . "</strong>" . date( 'Y-m-d H:i:s', current_time( strtotime( $result->last_active_timestamp ) ) ) . "</span>";
@@ -3516,8 +3517,8 @@ function wplc_draw_chat_area($cid, $chat_data = false) {
       echo "  <div style='float:left;'>";
 
       echo "      <div class='admin_visitor_info_box1'>";
-      echo "          <span class='admin_chat_name'>" . $result->name . "</span>";
-      echo "          <span class='admin_chat_email'>" . $result->email . "</span>";
+      echo "          <span class='admin_chat_name'>" . sanitize_text_field($result->name) . "</span>";
+      echo "          <span class='admin_chat_email'>" . sanitize_text_field($result->email) . "</span>";
       echo "      </div>";
       echo "  </div>";
 
@@ -3531,11 +3532,11 @@ function wplc_draw_chat_area($cid, $chat_data = false) {
       echo "      <strong>" . __("Advanced Info", "wplivechat") . "</strong>";
       echo "      <hr />";
       echo "      <span class='part1'>" . __("Browser:", "wplivechat") . "</span><span class='part2'> $browser <img src='" . $wplc_basic_plugin_url . "/images/$browser_image' alt='$browser' title='$browser' /><br />";
-      echo "      <span class='part1'>" . __("IP Address:", "wplivechat") . "</span><span class='part2'> ".$user_ip;
+      echo "      <span class='part1'>" . __("IP Address:", "wplivechat") . "</span><span class='part2'> ".sanitize_text_field($user_ip);
       echo "  </div>";
 	  echo "<hr />";
 
-      echo (apply_filters("wplc_filter_advanced_info","", $result->id, $result->name, $result));
+      echo (apply_filters("wplc_filter_advanced_info","", sanitize_text_field($result->id), sanitize_text_field($result->name), $result));
 
       echo "  <div id=\"wplc_sound_update\"></div>";
 
@@ -4459,8 +4460,8 @@ function wplc_hook_control_chat_history() {
 
             echo "<tr id=\"record_" . $tcid . "\" $trstyle>";
             echo "<td class='chat_id column-chat_d'>" . date("Y-m-d H:i:s", current_time( strtotime( $result->timestamp ) ) ) . "</td>";
-            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . $result->name . "</td>";
-            echo "<td class='chat_email column_chat_email' id='chat_email_" . $tcid . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
+            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . sanitize_text_field($result->name) . "</td>";
+            echo "<td class='chat_email column_chat_email' id='chat_email_" . $tcid . "'><a href='mailto:" . sanitize_text_field($result->email) . "' title='Email " . ".$result->email." . "'>" . sanitize_text_field ($result->email) . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $tcid . "'>" . esc_url($result->url) . "</td>";
             echo "<td class='chat_status column_chat_status' id='chat_status_" . $tcid . "'><strong>" . wplc_return_status($result->status) . "</strong></td>";
             echo "<td class='chat_action column-chat_action' id='chat_action_" . $tcid . "'>$actions</td>";
