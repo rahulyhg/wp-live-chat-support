@@ -199,6 +199,10 @@ jQuery(document).ready(function() {
             jQuery("#wplc_chatmsg").val('');
         }
 
+        
+
+        jQuery.event.trigger({type: "wplc_update_gdpr_last_chat_id"});
+
     });
 
 
@@ -262,6 +266,9 @@ jQuery(document).ready(function() {
             window.location = wplc_redirect_thank_you;
         }
 
+        if(jQuery('#wplc_gdpr_end_chat_notice_container').length > 0){
+            jQuery("#wplc_gdpr_end_chat_notice_container").fadeIn('fast');
+        }
     });
 
     /**
@@ -411,6 +418,39 @@ jQuery(document).ready(function() {
         });
     }
 
-   
+    
+    /** End Chat from User Side */
+    jQuery(document).on("wplc_end_chat_as_user", function(e){
+        if(typeof socket !== "undefined"){
+            socket.emit('end chat', {chatid:chatid,agent:false,agent_name:'User', visitor_socket: socket.id});
+        }
+
+        data = { 'agent_name' : 'User'};
+
+        jQuery.event.trigger({type: "bleeper_chat_ended_notification", ndata:data});
+        
+        jQuery('#bleeper_chat_ended').show();
+        jQuery('.bleeper_restart_chat').remove();
+        bleeper_end_chat_div_create();
+
+        if (typeof user_heartbeat !== "undefined"){
+            clearInterval(user_heartbeat);
+        }
+        
+        user_heartbeat = undefined;
+        
+        socket.disconnect({test:'test'});
+        
+        niftyUpdateStatusCookie('browsing');
+        // restart connection as a visitor
+        if (typeof io !== "undefined") {
+          socket = io.connect(NIFTY_SOCKET_URI, { query : query_string, transports: ['websocket'] } );
+          nifty_chat_delegates();
+        }
+
+        if(typeof Cookies !== "undefined"){
+          Cookies.remove("wplc_cid");
+        }
+    });
 });
 

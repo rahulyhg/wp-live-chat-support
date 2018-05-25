@@ -989,6 +989,15 @@ jQuery(function(){
 		});
 
 		jQuery("body").on("click", "#wplc_na_msg_btn", function() {
+			var wplc_is_gdpr_enabled = jQuery(this).attr('data-wplc-gdpr-enabled');
+			if(typeof wplc_is_gdpr_enabled !== "undefined" && (wplc_is_gdpr_enabled === 'true' )){
+			  var wplc_gdpr_opt_in_checked = jQuery("#wplc_chat_gdpr_opt_in").is(':checked');
+			  if(typeof wplc_gdpr_opt_in_checked === "undefined" || wplc_gdpr_opt_in_checked === false){
+			    /* GDPR requirements not met */
+			    return false;
+			  }
+			}
+			
             var wplc_name = jQuery("#wplc_name").val();
             var wplc_email = jQuery("#wplc_email").val();
             var wplc_msg = jQuery("#wplc_message").val();

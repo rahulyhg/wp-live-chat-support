@@ -8,8 +8,8 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
     $wplc_settings = get_option('WPLC_SETTINGS');
 
 
-
-    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+    /** DEPRECATED DUE TO GDPR */
+    /*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
 
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -26,7 +26,12 @@ function wplc_log_user_on_page($name,$email,$session, $is_mobile = false) {
             'ip' => "",
             'user_agent' => $_SERVER['HTTP_USER_AGENT']
         );
-    }
+    }*/
+
+    $user_data = array(
+        'ip' => "",
+        'user_agent' => $_SERVER['HTTP_USER_AGENT']
+    );
 
 
     /* user types
@@ -89,7 +94,8 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
     global $wplc_tblname_chats;
     $wplc_settings = get_option('WPLC_SETTINGS');
 
-    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+    /** DEPRECATED BY GDPR */
+    /*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
 
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -105,7 +111,12 @@ function wplc_update_user_on_page($cid, $status = 5,$session) {
             'ip' => "",
             'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
-    }
+    }*/
+
+    $user_data = array(
+        'ip' => "",
+        'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
+    );
 
 
 
@@ -1647,7 +1658,8 @@ function wplc_store_offline_message($name, $email, $message){
 
     $wplc_settings = get_option('WPLC_SETTINGS');
 
-    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+    /** DEPRECATED BY GDPR */
+    /**if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
@@ -1656,7 +1668,9 @@ function wplc_store_offline_message($name, $email, $message){
         $offline_ip_address = $ip_address;
     } else {
         $offline_ip_address = "";
-    }
+    }*/
+
+    $offline_ip_address = "";
 
 
     $ins_array = array(
@@ -1694,7 +1708,8 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
 
     $wplc_settings = get_option('WPLC_SETTINGS');
 
-    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+    /** DEPRECATED BY GDPR */
+    /*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
             $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
         } else {
@@ -1711,7 +1726,13 @@ function wplc_user_initiate_chat($name,$email,$cid = null,$session) {
             'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
         );
         $wplc_ce_ip = null;
-    }
+    }*/
+
+    $user_data = array(
+        'ip' => "",
+        'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
+    );
+    $wplc_ce_ip = null;
 
     if(function_exists('wplc_ce_activate')){
         /* Log the chat for statistical purposes as well */

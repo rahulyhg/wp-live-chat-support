@@ -265,6 +265,54 @@ jQuery(document).ready(function() {
         }
     });
 
+   jQuery("body").on("click", "#wplc_end_chat_button", function(e){
+        jQuery.event.trigger({type: "wplc_end_chat_as_user"});
+   });
+
+   jQuery("body").on("click", "#wplc_gdpr_download_data_button", function(e){
+        var wplc_init_nonce = jQuery(this).attr('data-wplc-init-nonce');
+        var wplc_gdpr_last_cid = jQuery(this).attr('data-wplc-last-cid');
+
+        if(typeof wplc_gdpr_last_cid !== 'undefined'){
+            var reference_href = window.location.href;
+            reference_href = reference_href.indexOf("?") !== -1 ? reference_href.substr(0, reference_href.indexOf("?")) : reference_href;
+            var download_url = reference_href + "?wplc_action=wplc_gdpr_download_chat_json&wplc_cid=" + wplc_gdpr_last_cid + "&wplc_init_nonce=" + wplc_init_nonce;
+            window.open(download_url);
+        }
+   });
+
+   jQuery("body").on("click", "#wplc_gdpr_remove_data_button", function(e){
+        var current_button = jQuery(this);
+
+        var wplc_rest_nonce = current_button.attr('data-wplc-rest-nonce');
+        var wplc_gdpr_rest_url = current_button.attr('data-wplc-rest-url');
+        var wplc_gdpr_last_cid = current_button.attr('data-wplc-last-cid');
+
+        current_button.text('Processing...');
+
+        if(typeof wplc_gdpr_last_cid !== 'undefined'){
+
+            jQuery.ajax({
+                url: wplc_gdpr_rest_url + "/delete_chat",
+                data: {
+                    wplc_cid: wplc_gdpr_last_cid,
+                    _wpnonce: wplc_rest_nonce
+                },
+                type:"POST",
+                complete: function() {
+                    current_button.text('Complete');
+                }   
+            });
+        }
+
+   });
+
+   jQuery(document).on("wplc_update_gdpr_last_chat_id", function(e) {
+        jQuery('#wplc_gdpr_remove_data_button,#wplc_gdpr_download_data_button').attr('data-wplc-last-cid', wplc_cid);
+   });
+
+   
+
     // Fix conflict with Responsive Lighbox plugin
     setTimeout(function () {
         if (jQuery('html').hasClass('nivo-lightbox-notouch') || jQuery('a[rel*="lightbox"]').length) {
