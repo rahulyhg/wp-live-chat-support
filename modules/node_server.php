@@ -661,6 +661,8 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 
         
         $wplc_server_location = get_option( "wplc_server_location" );
+        $wplc_server_location = apply_filters('wplc_node_server_default_selection_override', $wplc_server_location, $wplc_settings);
+        
         if( $wplc_server_location !== false && $wplc_server_location !== "" && $wplc_server_location !== "auto" ){
         	if ( $wplc_server_location === "us1") { $wplc_server_location = "0"; }
         	else if ( $wplc_server_location === "us2") { $wplc_server_location = "3"; }

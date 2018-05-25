@@ -161,6 +161,15 @@ jQuery(document).ready(function() {
        
 
         jQuery("body").on("click", "#wplc_start_chat_btn", function() {
+            var wplc_is_gdpr_enabled = jQuery(this).attr('data-wplc-gdpr-enabled');
+            if(typeof wplc_is_gdpr_enabled !== "undefined" && (wplc_is_gdpr_enabled === 'true' )){
+              var wplc_gdpr_opt_in_checked = jQuery("#wplc_chat_gdpr_opt_in").is(':checked');
+              if(typeof wplc_gdpr_opt_in_checked === "undefined" || wplc_gdpr_opt_in_checked === false){
+                /* GDPR requirements not met */
+                return false;
+              }
+            }
+            
             var wplc_name = jQuery("#wplc_name").val();
             var wplc_email = jQuery("#wplc_email").val(); 
             
@@ -369,6 +378,8 @@ jQuery(document).ready(function() {
                         //Complete
                     }
                 );
+
+                jQuery.event.trigger({type: "wplc_update_gdpr_last_chat_id"});
                 
                 if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
                     if (typeof ga !== "undefined") {
@@ -412,6 +423,15 @@ jQuery(document).ready(function() {
             if(typeof wplc_redirect_thank_you !== "undefined" && wplc_redirect_thank_you !== null && wplc_redirect_thank_you !== ""){
                 window.location = wplc_redirect_thank_you;
             }
+
+            if(jQuery('#wplc_gdpr_end_chat_notice_container').length > 0){
+                jQuery("#wplc_gdpr_end_chat_notice_container").fadeIn('fast');
+            }
+        });
+
+        /** End Chat from User Side */
+        jQuery(document).on("wplc_end_chat_as_user", function(e){
+            jQuery.event.trigger({type: "wplc_end_chat"});
         });
 
         function wplc_pre_open_check_status(status, callback) {

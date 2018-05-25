@@ -630,8 +630,9 @@ function wplc_api_call_start_chat( WP_REST_Request $request ){
 			    global $wplc_tblname_chats;
 
 			    $wplc_settings = get_option('WPLC_SETTINGS');
-			        
-			    if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
+			      
+			    /** DEPRECATED BY GDPR */  
+			    /*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1){
 			        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
 			            $ip_address = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
 			        } else {
@@ -648,7 +649,13 @@ function wplc_api_call_start_chat( WP_REST_Request $request ){
 			            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
 			        );
 			        $wplc_ce_ip = null;
-			    }
+			    }*/
+
+			    $user_data = array(
+		            'ip' => "",
+		            'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
+		        );
+		        $wplc_ce_ip = null;
 			    
 			    
 		

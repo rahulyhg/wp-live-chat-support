@@ -2,8 +2,8 @@
 /*
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
-  Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support. No third party connection required!
-  Version: 8.0.08
+  Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
+  Version: 8.0.09
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,11 @@
  */
 
 /**
+ * 8.0.09 - High priority
+ * Added GDPR Compliance
+ * Added GDPR Options
+ * Added GDPR Admin page
+ *
  * 8.0.08 - High priority
  * XSS vulnerability fixes thanks to Riccardo Ten cate
  * Fixed REST Storage Issue
@@ -624,7 +629,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.08";
+$wplc_version = "8.0.09";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -651,10 +656,10 @@ require_once (plugin_dir_path(__FILE__) . "modules/google_analytics.php");
 require_once (plugin_dir_path(__FILE__) . "modules/api/wplc-api.php");
 require_once (plugin_dir_path(__FILE__) . "modules/beta_features.php");
 require_once (plugin_dir_path(__FILE__) . "modules/node_server.php");
-require_once (plugin_dir_path(__FILE__) . "modules/module_subscribe.php");
 require_once (plugin_dir_path(__FILE__) . "modules/module_gif.php");
 require_once (plugin_dir_path(__FILE__) . "includes/update_control.class.php");
 require_once (plugin_dir_path(__FILE__) . "modules/webhooks_manager.php");
+require_once (plugin_dir_path(__FILE__) . "modules/privacy.php");
 
 // Gutenberg Blocks
 require_once (plugin_dir_path(__FILE__) . "includes/blocks/wplc-chat-box/index.php");
@@ -870,11 +875,12 @@ function wplc_version_control() {
             $wplc_settings['wplc_user_alternative_text'] = $wplc_alt_text;
         }
         if (!isset($wplc_settings['wplc_enabled_on_mobile'])) { $wplc_settings['wplc_enabled_on_mobile'] = "1"; }
-        if(!isset($wplc_settings['wplc_record_ip_address'])){ $wplc_settings['wplc_record_ip_address'] = "1"; }
+        if(!isset($wplc_settings['wplc_record_ip_address'])){ $wplc_settings['wplc_record_ip_address'] = "0"; }
         if(!isset($wplc_settings['wplc_enable_msg_sound'])){ $wplc_settings['wplc_enable_msg_sound'] = "1"; }
 	    if(!isset($wplc_settings['wplc_enable_font_awesome'])){ $wplc_settings['wplc_enable_font_awesome'] = "1"; }
 	    if(!isset($wplc_settings['wplc_using_localization_plugin'])){ $wplc_settings['wplc_using_localization_plugin'] = 0; }
 
+	    $wplc_settings = apply_filters('wplc_update_settings_between_versions_hook', $wplc_settings); //Added in 8.0.09
 
         update_option("WPLC_SETTINGS", $wplc_settings);
 
@@ -956,9 +962,6 @@ function wplc_action_callback() {
 }
 
 
-function wplc_feedback_page_include() {
-    include 'includes/feedback-page.php';
-}
 
 /**
  * Decide who gets to see the various main menus (left navigation)
@@ -1031,7 +1034,6 @@ function wplc_admin_menu() {
       do_action("wplc_hook_menu_mid",$cap);
 
 
-      add_submenu_page('wplivechat-menu', __('Feedback', 'wplivechat'), __('Feedback', 'wplivechat'), $cap[5], 'wplivechat-menu-feedback-page', 'wplc_feedback_page_include');
       add_submenu_page('wplivechat-menu', __('Support', 'wplivechat'), __('Support', 'wplivechat'), 'manage_options', 'wplivechat-menu-support-page', 'wplc_support_menu');
       add_submenu_page('wplivechat-menu', __('Extensions', 'wplivechat'), __('Extensions', 'wplivechat'), 'manage_options', 'wplivechat-menu-extensions-page', 'wplc_extensions_menu');
     }
@@ -1209,16 +1211,19 @@ function wplc_push_js_to_front_basic() {
 
  		wp_localize_script('wplc-server-script', 'bleeper_override_upload_url', rest_url( 'wp_live_chat_support/v1/remote_upload' ) );
 
- 		if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1) {
+ 		/** DEPRECATED BY GDPR */
+ 		/*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1) {
              $ip_address = false;
             if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') { $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR']; } else { $ip_address = $_SERVER['REMOTE_ADDR']; }
 
             if($ip_address !== false){
                 wp_localize_script('wplc-server-script', 'bleeper_user_ip_address', $ip_address);
             }
-        }
+        }*/
 
 		$wplc_server_location = get_option( "wplc_server_location" );
+		$wplc_server_location = apply_filters('wplc_node_server_default_selection_override', $wplc_server_location, $wplc_settings);
+
         if( $wplc_server_location !== false && $wplc_server_location !== "" && $wplc_server_location !== "auto" ){
         	if ( $wplc_server_location === "us1") { $wplc_server_location = "0"; }
         	else if ( $wplc_server_location === "us2") { $wplc_server_location = "3"; }
@@ -1939,7 +1944,8 @@ function wplc_filter_control_live_chat_box_html_start_chat_button($wplc_settings
     $wplc_sst_1 = __('Start chat', 'wplivechat');
     if (!isset($wplc_settings['wplc_pro_sst1']) || $wplc_settings['wplc_pro_sst1'] == "") { $wplc_settings['wplc_pro_sst1'] = $wplc_sst_1; }
     $text = ($wplc_using_locale ? $wplc_sst_1 : stripslashes($wplc_settings['wplc_pro_sst1']));
-  	return "<button id=\"wplc_start_chat_btn\" type=\"button\" class='wplc-color-bg-1 wplc-color-2'>$text</button>";
+    $custom_attr = apply_filters('wplc_start_button_custom_attributes_filter', "", $wplc_settings);
+  	return "<button id=\"wplc_start_chat_btn\" type=\"button\" class='wplc-color-bg-1 wplc-color-2' $custom_attr>$text</button>";
 }
 
 
@@ -2029,7 +2035,8 @@ if (isset($wplc_settings['wplc_theme'])) { $wplc_theme = $wplc_settings['wplc_th
         $wplc_settings_font = "#FFFFFF";
     }
   }
-  $ret_msg = "<input id=\"wplc_na_msg_btn\" type=\"button\" value=\"".stripslashes($wplc_settings['wplc_pro_offline_btn_send'])."\" style=\"background: ".$wplc_settings_fill." !important; background-color: ".$wplc_settings_fill." !important; color: ".$wplc_settings_font." !important;\"/>";
+  $custom_attr = apply_filters('wplc_offline_message_button_custom_attributes_filter', "", $wplc_settings);
+  $ret_msg = "<input id=\"wplc_na_msg_btn\" type=\"button\" value=\"".stripslashes($wplc_settings['wplc_pro_offline_btn_send'])."\" style=\"background: ".$wplc_settings_fill." !important; background-color: ".$wplc_settings_fill." !important; color: ".$wplc_settings_font." !important;\" $custom_attr/>";
   return $ret_msg;
 }
 
@@ -2102,7 +2109,10 @@ function wplc_filter_control_live_chat_box_html_2nd_layer($wplc_settings,$logged
           $ip_address = $_SERVER['REMOTE_ADDR'];
       }
 
-      if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1) { $offline_ip_address = $ip_address; } else { $offline_ip_address = ""; }
+      /** DEPRECATED BY GDPR */
+      /*if(isset($wplc_settings['wplc_record_ip_address']) && $wplc_settings['wplc_record_ip_address'] == 1) { $offline_ip_address = $ip_address; } else { $offline_ip_address = ""; }*/
+
+      $offline_ip_address = "";
 
       $ret_msg .= "<input type=\"hidden\" name=\"wplc_ip_address\" id=\"wplc_ip_address\" value=\"".$offline_ip_address."\" />";
       $ret_msg .= "<input type=\"hidden\" name=\"wplc_domain_offline\" id=\"wplc_domain_offline\" value=\"".site_url()."\" />";
@@ -2258,6 +2268,9 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
   if (isset($wplc_settings['wplc_newtheme']) && $wplc_settings['wplc_newtheme'] == 'theme-1') {
   	$ret_msg .= apply_filters("wplc_filter_typing_control_div","");
   }
+
+  $ret_msg .= apply_filters("wplc_filter_inner_live_chat_box_4th_layer","", $wplc_settings);
+
   $ret_msg .= "<div id=\"wplc_sound_update\" style=\"height:0; width:0; display:none; border:0;\"></div>";
 
   $ret_msg .= apply_filters("wplc_filter_live_chat_box_above_main_div","",$wplc_settings, $cid);
@@ -3840,7 +3853,7 @@ function wplc_activate() {
             "wplc_user_default_visitor_name" => $wplc_default_visitor_name,
             "wplc_enabled_on_mobile" => '1',
             "wplc_display_name" => '1',
-            "wplc_record_ip_address" => '1',
+            "wplc_record_ip_address" => '0',
             "wplc_pro_chat_email_address" => $wplc_admin_email,
             "wplc_pro_fst1" => __("Questions?", "wplivechat"),
             "wplc_pro_fst2" => __("Chat with us", "wplivechat"),
@@ -4494,6 +4507,7 @@ function wplc_admin_history_layout() {
     wplc_stats("history");
     echo"<div class=\"wrap wplc_wrap\"><div id=\"icon-edit\" class=\"icon32 icon32-posts-post\"><br></div><h2>" . __("WP Live Chat History", "wplivechat") . "</h2>";
 
+    do_action("wplc_before_history_table_hook");
 
     if(function_exists("wplc_ce_activate")){
         wplc_ce_admin_display_history();
@@ -4740,7 +4754,10 @@ function wplc_head_basic() {
 
 		$wplc_data['wplc_disable_emojis'] = !empty($_POST['wplc_disable_emojis']);
 
-        if(isset($_POST['wplc_record_ip_address'])){ $wplc_data['wplc_record_ip_address'] = esc_attr($_POST['wplc_record_ip_address']); } else { $wplc_data['wplc_record_ip_address'] = "0"; }
+		/** DEPRECATED BY GDPR */
+        /*if(isset($_POST['wplc_record_ip_address'])){ $wplc_data['wplc_record_ip_address'] = esc_attr($_POST['wplc_record_ip_address']); } else { $wplc_data['wplc_record_ip_address'] = "0"; }*/
+
+        $wplc_data['wplc_record_ip_address'] = "0";
 
         if(isset($_POST['wplc_enable_msg_sound'])){ $wplc_data['wplc_enable_msg_sound'] = esc_attr($_POST['wplc_enable_msg_sound']); } else { $wplc_data['wplc_enable_msg_sound'] = "0"; }
 
@@ -4871,29 +4888,6 @@ function wplc_head_basic() {
     }
     if( isset( $_GET['override'] ) && $_GET['override'] == '1' ){
     	update_option( "WPLC_V8_FIRST_TIME", false);
-    }
-    if (isset($_POST['wplc_nl_send_feedback'])) {
-        if (wp_mail("nick@wp-livechat.com", "Plugin feedback", "Name: " . $_POST['wplc_nl_feedback_name'] . "\n\r" . "Email: " . $_POST['wplc_nl_feedback_email'] . "\n\r" . "Website: " . $_POST['wplc_nl_feedback_website'] . "\n\r" . "Feedback:" . $_POST['wplc_nl_feedback_feedback'])) {
-            echo "<div id=\"message\" class=\"updated\"><p>" . __("Thank you for your feedback. We will be in touch soon", "wplc") . "</p></div>";
-        } else {
-
-            if (function_exists('curl_version')) {
-                $request_url = "http://www.wp-livechat.com/apif/rec_feedback.php";
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $request_url);
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
-                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_HOST']);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $output = curl_exec($ch);
-                curl_close($ch);
-                echo "<div id=\"message\" class=\"updated\"><p>" . __("Thank you for your feedback. We will be in touch soon", "wplc") . "</p></div>";
-            } else {
-                echo "<div id=\"message\" class=\"error\">";
-                echo "<p>" . __("There was a problem sending your feedback. Please log your feedback on ", "wplc") . "<a href='https://wp-livechat.com//support/' target='_BLANK'>https://wp-livechat.com//support/</a></p>";
-                echo "</div>";
-            }
-        }
     }
 }
 
@@ -6555,20 +6549,6 @@ function wplc_browser_notifications_admin_warning() {
         }
     }
 }
-
-require_once(plugin_dir_path(__FILE__) . 'lib/codecabin/plugin-deactivation-survey/deactivate-feedback-form.php');
-
-function wplc_register_plugin_for_deactivation_feedback_form($plugins) {
-	global $wplc_version;
-	$plugins[] = (object)array(
-		'slug'		=> 'wp-live-chat-support',
-		'version'	=> $wplc_version
-	);
-
-	return $plugins;
-}
-
-add_filter('codecabin_deactivate_feedback_form_plugins', 'wplc_register_plugin_for_deactivation_feedback_form');
 
 if ( function_exists( 'wplc_et_first_run_check' ) ) {
 	add_action( 'admin_notices', 'wplc_transcript_admin_notice' );
