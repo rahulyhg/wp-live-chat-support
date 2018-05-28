@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.09
+  Version: 8.0.11
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,12 @@
  */
 
 /**
+ * 8.0.11 - High priority
+ * Fixed a bug that caused a fatal error on PHP 5.3 and below
+ *
+ * 8.0.10 - Medium priority
+ * Resyncs files for GDPR modules to load correctly
+ *
  * 8.0.09 - High priority
  * Added GDPR Compliance
  * Added GDPR Options
@@ -629,7 +635,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.09";
+$wplc_version = "8.0.11";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );

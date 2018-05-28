@@ -208,6 +208,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 8.0.11 =
+It is highly recommended that you upgrade to WP Live Chat Support version 8.0.11 if using PHP 5.3 or below.
+
 = 8.0.09 =
 It is highly recommended that you upgrade to WP Live Chat Support version 8.0.09 for GDPR compliance.
 
@@ -231,6 +234,12 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.11 - 2018-05-28 - High priority =
+* Fixed a bug that caused a fatal error on PHP 5.3 and below
+
+= 8.0.10 - 2018-05-25 - Medium priority =
+* Resyncs files for GDPR modules to load correctly
 
 = 8.0.09 - 2018-05-25 - High priority =
 * Added GDPR Compliance
