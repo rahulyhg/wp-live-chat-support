@@ -23,18 +23,18 @@ add_action("wplc_hook_privacy_options_content", "wplc_gdpr_settings_content", 10
  * Adds the GDPR sepcific settings to the Privacy tab
 */
 function wplc_gdpr_settings_content($wplc_settings = false){
-	if($wplc_settings === false){ $wplc_settings = get_option("WPLC_SETTINGS"); }
+  if($wplc_settings === false){ $wplc_settings = get_option("WPLC_SETTINGS"); }
 
-	?>
-	<table class="wp-list-table wplc_list_table widefat fixed striped pages">
+  ?>
+  <table class="wp-list-table wplc_list_table widefat fixed striped pages">
        <tbody>
          <tr>
            <td width="250" valign="top">
              <label for="wplc_gdpr_enabled"><?php _e("Enbled GDPR Compliance", "wplivechat"); ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Disabling will disable all GDPR related options, this is not advised.', 'wplivechat'); ?>"></i></label>
            </td>
            <td> 
-           	<input type="checkbox" name="wplc_gdpr_enabled" value="1" <?php echo(isset($wplc_settings['wplc_gdpr_enabled']) && $wplc_settings['wplc_gdpr_enabled'] == '1' ? 'checked' : ''); ?> > 
-           	<a href="https://www.eugdpr.org/" target="_blank"><?php _e("Importance of GDPR Compliance", "wplivechat"); ?></a>
+            <input type="checkbox" name="wplc_gdpr_enabled" value="1" <?php echo(isset($wplc_settings['wplc_gdpr_enabled']) && $wplc_settings['wplc_gdpr_enabled'] == '1' ? 'checked' : ''); ?> > 
+            <a href="https://www.eugdpr.org/" target="_blank"><?php _e("Importance of GDPR Compliance", "wplivechat"); ?></a>
            </td>
          </tr>
 
@@ -43,7 +43,7 @@ function wplc_gdpr_settings_content($wplc_settings = false){
              <label for="wplc_gdpr_notice_company"><?php _e("Company Name", "wplivechat"); ?></label>
            </td>
            <td> 
-           	<input type="text" name="wplc_gdpr_notice_company" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_company']) ? $wplc_settings['wplc_gdpr_notice_company'] : get_bloginfo('name')); ?>" > 
+            <input type="text" name="wplc_gdpr_notice_company" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_company']) ? $wplc_settings['wplc_gdpr_notice_company'] : get_bloginfo('name')); ?>" > 
            </td>
          </tr>
 
@@ -52,7 +52,7 @@ function wplc_gdpr_settings_content($wplc_settings = false){
              <label for="wplc_gdpr_notice_retention_purpose"><?php _e("Retention Purpose", "wplivechat"); ?></label>
            </td>
            <td> 
-           	<input type="text" name="wplc_gdpr_notice_retention_purpose" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_retention_purpose']) ? $wplc_settings['wplc_gdpr_notice_retention_purpose'] : __('Chat/Support', 'wplivechat')); ?>" > 
+            <input type="text" name="wplc_gdpr_notice_retention_purpose" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_retention_purpose']) ? $wplc_settings['wplc_gdpr_notice_retention_purpose'] : __('Chat/Support', 'wplivechat')); ?>" > 
            </td>
          </tr>
 
@@ -61,7 +61,7 @@ function wplc_gdpr_settings_content($wplc_settings = false){
              <label for="wplc_gdpr_notice_retention_period"><?php _e("Retention Period", "wplivechat"); ?></label>
            </td>
            <td> 
-           	<input type="number" name="wplc_gdpr_notice_retention_period" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_retention_period']) ? intval($wplc_settings['wplc_gdpr_notice_retention_period']) < 1 ? 1 : intval($wplc_settings['wplc_gdpr_notice_retention_period']) : 30); ?>" > <?php _e('days', 'wplivechat'); ?> 
+            <input type="number" name="wplc_gdpr_notice_retention_period" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_retention_period']) ? intval($wplc_settings['wplc_gdpr_notice_retention_period']) < 1 ? 1 : intval($wplc_settings['wplc_gdpr_notice_retention_period']) : 30); ?>" > <?php _e('days', 'wplivechat'); ?> 
            </td>
          </tr>
 
@@ -81,26 +81,26 @@ function wplc_gdpr_settings_content($wplc_settings = false){
          </tr>
 
          <tr>
-         	<td width="250" valign="top">
+          <td width="250" valign="top">
              <label><?php _e("GDPR Notice", "wplivechat"); ?> 
-             	<i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Users will be asked to accept the notice shown here, in the form of a check box.', 'wplivechat'); ?>"></i>
+              <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e('Users will be asked to accept the notice shown here, in the form of a check box.', 'wplivechat'); ?>"></i>
              </label>
-           	</td>
-           	<td>
-           		<span>
-           			<?php
-           				echo wplc_gdpr_generate_retention_agreement_notice($wplc_settings);     
+            </td>
+            <td>
+              <span>
+                <?php
+                  echo wplc_gdpr_generate_retention_agreement_notice($wplc_settings);     
                   echo "<br><br>"; 
-                  echo apply_filters('wplc_gdpr_create_opt_in_checkbox_filter', "");     				
-           			?>
-           		</span>
-           	</td>
+                  echo apply_filters('wplc_gdpr_create_opt_in_checkbox_filter', "");            
+                ?>
+              </span>
+            </td>
          </tr> 
 
         
         </tbody>
     </table>
-	<?php
+  <?php
 }
 
 add_filter("wplc_settings_save_filter_hook", "wplc_gdpr_settings_save_hooked", 10, 1);
@@ -131,10 +131,10 @@ add_action("wplc_hook_menu", "wplc_gdpr_add_menu");
  * Adds a menu specifically dedicated to GDPR
 */
 function wplc_gdpr_add_menu(){
-	$wplc_settings = get_option("WPLC_SETTINGS");
+  $wplc_settings = get_option("WPLC_SETTINGS");
 
-	if(isset($wplc_settings['wplc_gdpr_enabled']) && $wplc_settings['wplc_gdpr_enabled'] == '1'){
-    	add_submenu_page('wplivechat-menu', __('GDPR', 'wplivechat'), __('GDPR', 'wplivechat'), 'manage_options', 'wplivechat-menu-gdpr-page', 'wplc_gdpr_page_layout');
+  if(isset($wplc_settings['wplc_gdpr_enabled']) && $wplc_settings['wplc_gdpr_enabled'] == '1'){
+      add_submenu_page('wplivechat-menu', __('GDPR', 'wplivechat'), __('GDPR', 'wplivechat'), 'manage_options', 'wplivechat-menu-gdpr-page', 'wplc_gdpr_page_layout');
     }
 }
 
@@ -142,8 +142,8 @@ function wplc_gdpr_add_menu(){
  * Handles the layout for the GDPR page
 */
 function wplc_gdpr_page_layout(){
-	?>
- 	<h2><?php _e('WP Live Chat Support - GDPR', 'wplivechat'); ?></h2>
+  ?>
+  <h2><?php _e('WP Live Chat Support - GDPR', 'wplivechat'); ?></h2>
 
   <small><em><?php _e("Search is performed on chat sessions, messages, and offline messages. Data will also be deleted automatically per your retention policy.", "wplivechat"); ?></em></small>
   <?php do_action('wplc_gdpr_page_before_table_hook'); ?>
@@ -185,15 +185,15 @@ function wplc_gdpr_page_layout(){
               /**Setup Defaults*/
               $cid_identidier = 'id';
               $action_action_filter = 'chat_session';
-              $show_fields = ['name', 'email'];
+              $show_fields = array('name', 'email');
               switch ($original_heading) {
                 case 'chat_messages':
                   $cid_identidier = 'chat_sess_id';
-                  $show_fields = ['msg'];
+                  $show_fields = array('msg');
                   break;
                 case 'offline_messages':
                   $action_action_filter = 'offline_message';
-                  $show_fields = ['name', 'email', 'message'];
+                  $show_fields = array('name', 'email', 'message');
                   break;
               }
 
@@ -237,7 +237,7 @@ function wplc_gdpr_page_layout(){
 
   <?php do_action('wplc_gdpr_page_after_table_hook'); ?>
 
-	<?php
+  <?php
 }
 
 add_action('admin_init', 'wplc_gdpr_admin_init', 1);
@@ -337,7 +337,7 @@ function wplc_gdpr_return_chat_session_search_results($term){
   $results_message = $wpdb->get_results("SELECT * FROM $wplc_tblname_msgs WHERE `msg` LIKE '%$term%'", ARRAY_A);
   $results_offline = $wpdb->get_results("SELECT * FROM $wplc_tblname_offline_msgs WHERE `name` LIKE '%$term%' OR `email` LIKE '%$term%' OR `message` LIKE '%$term%'", ARRAY_A);
 
-  $formatted_messages = [];
+  $formatted_messages = array();
   foreach ($results_message as $key => $value) {
     $cid = isset($value['chat_sess_id']) ? $value['chat_sess_id'] : false;
     if($cid !== false){
@@ -352,11 +352,11 @@ function wplc_gdpr_return_chat_session_search_results($term){
     }
   }
 
-  $return_results = [
+  $return_results = array(
     'chat_sessions' => $results_chats,
     'chat_messages' => $formatted_messages,
     'offline_messages' => $results_offline
-  ];
+  );
 
   return $return_results;
 
@@ -366,9 +366,9 @@ function wplc_gdpr_return_chat_session_search_results($term){
  * Generates a localized retention notice message
 */
 function wplc_gdpr_generate_retention_agreement_notice($wplc_settings = false){
-	if($wplc_settings === false){ $wplc_settings = get_option("WPLC_SETTINGS"); }
+  if($wplc_settings === false){ $wplc_settings = get_option("WPLC_SETTINGS"); }
 
-	$localized_notice = __("I agree for my personal data to be processed and for the use of cookies in order to engage in a chat processed by %%COMPANY%%, for the purpose of %%PURPOSE%%, for the time of %%PERIOD%% day(s) as per the GDPR.", "wplivechat");
+  $localized_notice = __("I agree for my personal data to be processed and for the use of cookies in order to engage in a chat processed by %%COMPANY%%, for the purpose of %%PURPOSE%%, for the time of %%PERIOD%% day(s) as per the GDPR.", "wplivechat");
     $company_replacement = isset($wplc_settings['wplc_gdpr_notice_company']) ? $wplc_settings['wplc_gdpr_notice_company'] : get_bloginfo('name');
     $purpose_replacement = isset($wplc_settings['wplc_gdpr_notice_retention_purpose']) ? $wplc_settings['wplc_gdpr_notice_retention_purpose'] : __('Chat/Support', 'wplivechat');
     $period_replacement = isset($wplc_settings['wplc_gdpr_notice_retention_period']) ? intval($wplc_settings['wplc_gdpr_notice_retention_period']) : 30;
