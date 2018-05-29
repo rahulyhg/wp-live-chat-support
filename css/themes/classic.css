@@ -445,6 +445,7 @@ span.wplc_system_notification {
 
 #wp-live-chat-2-inner #wplc_start_chat_btn {
     width:100%;
+    border:none;
 }
 
 #wplc_social_holder {
@@ -879,6 +880,7 @@ label[for=wplc_chat_gdpr_opt_in] {
     color: #333 !important;
     line-height: 12px;
     box-shadow: 0 0 15px 0 rgba(86, 86, 86, 0.11);
+    border: none;
 }
 
 .wplc_in_chat_notice {
@@ -907,6 +909,7 @@ label[for=wplc_chat_gdpr_opt_in] {
     display:  inline-block;
     font-weight: 100;
     margin-bottom: 5px;
+    border: none;
 }
 
 .wplc_in_chat_notice_content button:hover {

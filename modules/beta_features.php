@@ -158,7 +158,7 @@ function wplc_beta_settings_save_hooked($wplc_data){
   return $wplc_data;
 }
 
-add_filter("wplc_filter_inner_live_chat_box_4th_layer", "wplc_add_end_chat_button_to_chat_box");
+add_filter("wplc_filter_inner_live_chat_box_4th_layer", "wplc_add_end_chat_button_to_chat_box", 10, 2);
 /**
  * Adds an end chat button to the front end of the site
 */
