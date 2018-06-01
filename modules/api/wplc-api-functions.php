@@ -695,8 +695,8 @@ function wplc_api_call_start_chat( WP_REST_Request $request ){
 		        $cid = $wpdb->insert_id;
 
 		        /* Nick: moved from top of function to bottom of function to try speed up the process of accepting the chart - version 7 */
-		        if (function_exists("wplc_list_chats_pro")) { /* check if functions-pro is around */
-		            wplc_pro_notify_via_email();
+		        if (function_exists("wplc_pro_notify_via_email")) { /* check if pro is around */
+		            wplc_pro_notify_via_email( $request );
 		        }
 
 		        do_action("wplc_start_chat_hook_after_data_insert", $cid, 2, $request['wplc_name']);
