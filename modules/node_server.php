@@ -382,7 +382,7 @@ add_action('admin_enqueue_scripts', 'wplc_enqueue_dashboard_popup_scripts');
 function wplc_enqueue_dashboard_popup_scripts() {
 	global $wplc_version;
 	wp_enqueue_script('jquery-ui-draggable');
-	wp_enqueue_script('wplc-admin-popup', plugin_url('../js/wplc_admin_popup.js', __FILE__ ), array(), $wplc_version);
+	wp_enqueue_script('wplc-admin-popup', plugins_url('../js/wplc_admin_popup.js', __FILE__ ), array(), $wplc_version);
 	
 	wp_button_pointers_load_scripts('toplevel_page_wplivechat-menu');
 }
