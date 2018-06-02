@@ -12,6 +12,8 @@
 
 /**
  * 8.0.13
+ * Fix user triggers not setting chat bubble active.
+ * Mootools compatibility.
  * Fix new chat request email notifications (available in Pro only).
  * 
  * 8.0.12 - 2018-05-29 - High priority
