@@ -233,9 +233,11 @@ jQuery(document).ready(function() {
         if (typeof wplc_preload_images !== "undefined" && typeof wplc_preload_images === "object" ) {
             var wplc_i = 0;
             for (var key in wplc_preload_images) {
-                images[wplc_i] = new Image();
-                images[wplc_i].src = wplc_preload_images[key];
-                wplc_i++;
+                if (wplc_preload_images.hasOwnProperty(key)) {
+                    images[wplc_i] = new Image();
+                    images[wplc_i].src = wplc_preload_images[key];
+                    wplc_i++;
+                }
             }
         }
     }
