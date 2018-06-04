@@ -12,6 +12,8 @@
 
 /**
  * 8.0.13
+ * Fix chat delay not working for first visit and offline.
+ * Optimize images.
  * Mootools compatibility.
  * Fix new chat request email notifications (available in Pro only).
  * 
