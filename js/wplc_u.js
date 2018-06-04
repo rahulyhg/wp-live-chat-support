@@ -213,7 +213,11 @@ jQuery(document).ready(function() {
                     //Node and offline
                     if(typeof wplc_use_node_server !== "undefined" && (wplc_use_node_server === "true" || wplc_use_node_server  === true)){
 
-                        wplc_cbox_animation();
+						if(wplc_check_hide_cookie != "yes"){
+							wplc_dc = setTimeout(function (){
+								wplc_cbox_animation();
+							}, parseInt(window.wplc_delay));
+						}
                     }
                 }
 
