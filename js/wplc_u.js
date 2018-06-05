@@ -213,7 +213,11 @@ jQuery(document).ready(function() {
                     //Node and offline
                     if(typeof wplc_use_node_server !== "undefined" && (wplc_use_node_server === "true" || wplc_use_node_server  === true)){
 
-                        wplc_cbox_animation();
+						if(wplc_check_hide_cookie != "yes"){
+							wplc_dc = setTimeout(function (){
+								wplc_cbox_animation();
+							}, parseInt(window.wplc_delay));
+						}
                     }
                 }
 
@@ -233,9 +237,11 @@ jQuery(document).ready(function() {
         if (typeof wplc_preload_images !== "undefined" && typeof wplc_preload_images === "object" ) {
             var wplc_i = 0;
             for (var key in wplc_preload_images) {
-                images[wplc_i] = new Image();
-                images[wplc_i].src = wplc_preload_images[key];
-                wplc_i++;
+                if (wplc_preload_images.hasOwnProperty(key)) {
+                    images[wplc_i] = new Image();
+                    images[wplc_i].src = wplc_preload_images[key];
+                    wplc_i++;
+                }
             }
         }
     }
