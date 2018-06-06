@@ -238,6 +238,12 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 == Changelog ==
 
+= 8.0.13 - 2018-06-06 - Medium priority =
+* Fix chat delay not working for first visit and offline
+* Optimize images
+* Mootools compatibility
+* Fix new chat request email notifications when Pro is active
+
 = 8.0.12 - 2018-05-29 - High priority =
 * Fixed a bug which caused the chat box not to display on some sites
 * Fixed minor styling issues
