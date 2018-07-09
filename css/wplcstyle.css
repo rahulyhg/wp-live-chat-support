@@ -228,3 +228,9 @@
 
 
 
+#wp-live-chat-inner .wpcf_wrapper { 
+    position: inherit; 
+    padding: 25px;
+    max-height: 400px;
+    margin-bottom:20px;
+}
