@@ -15,6 +15,8 @@
  * 8.0.14 - 2018-06-10 - Low priority
  * Removed reference to NimbleSquirrel being free
  * Fixed erroneous display of set_time_limit and safe_mode warnings
+ * Fixed a big that lead to the deletion of sessions and not messages when a chat was marked for deletion
+ * Improved security in the chat history code
  * 
  * 8.0.13 - 2018-06-06 - Medium priority
  * Fix chat delay not working for first visit and offline
@@ -4406,115 +4408,127 @@ add_action("wplc_hook_chat_history","wplc_hook_control_chat_history");
  */
 function wplc_hook_control_chat_history() {
 
+	if (is_admin()) {
 
-    global $wpdb;
-    global $wplc_tblname_chats;
+	    global $wpdb;
+	    global $wplc_tblname_chats;
+	    global $wplc_tblname_msgs;
 
-    if(isset($_GET['wplc_action']) && $_GET['wplc_action'] == 'remove_cid'){
-        if(isset($_GET['cid'])){
-            if(isset($_GET['wplc_confirm'])){
-                //Confirmed - delete
-                $delete_sql = "
-                    DELETE FROM $wplc_tblname_chats
-                    WHERE `id` = '".intval($_GET['cid'])."'                  
-                    ";
+	    if(isset($_GET['wplc_action']) && $_GET['wplc_action'] == 'remove_cid'){
+	        if(isset($_GET['cid'])){
+	            if(isset($_GET['wplc_confirm'])){
+	                //Confirmed - delete
+	                $delete_sql = "
+	                    DELETE FROM $wplc_tblname_chats
+	                    WHERE `id` = '".intval($_GET['cid'])."'                  
+	                    ";
+					$delete_messages = "
+	                    DELETE FROM $wplc_tblname_msgs
+	                    WHERE `chat_sess_id` = '".intval($_GET['cid'])."'                  
+	                    ";
+
+	                $wplc_was_error = false;
+
+	                $wpdb->query($delete_sql);
+	                if ($wpdb->last_error) { $wplc_was_error = true; }
+	                $wpdb->query($delete_messages);
+	                if ($wpdb->last_error) { $wplc_was_error = true; }
+
+	                if ($wplc_was_error) {
+	                    echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+	                        ".__("Error: Could not delete chat", "wplivechat")."<br>
+	                      </div>";
+	                } else {
+	                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
+	                        ".__("Chat Deleted", "wplivechat")."<br>
+	                      </div>";
+	                }
+
+	            } else {
+	                //Prompt
+	                echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
+	                        ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
+	                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".sanitize_text_field( $_GET['cid'] )."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-history'>".__("No", "wplivechat")."</a>
+	                      </div>";
+	            }
+	        }
+	    }
+
+		$pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
+		$limit = 20; // number of rows in page
+		$offset = ( $pagenum - 1 ) * $limit;
+		$total = $wpdb->get_var( "SELECT COUNT(`id`) FROM $wplc_tblname_chats" );
+		$num_of_pages = ceil( $total / $limit );
+
+		$results = $wpdb->get_results(
+	            "
+	        SELECT *
+	        FROM $wplc_tblname_chats
+	        WHERE `name` NOT LIKE 'agent-to-agent chat'
+	        ORDER BY `timestamp` DESC
+	        LIMIT $limit OFFSET $offset
+	      "
+	    );
+	    echo "
+	       <form method=\"post\" >
+	        <input type=\"submit\" value=\"".__('Delete History', 'wplivechat')."\" class='button' name=\"wplc-delete-chat-history\" /><br /><br />
+	       </form>
+
+	      <table class=\"wp-list-table wplc_list_table widefat fixed \" cellspacing=\"0\">
+	  <thead>
+	  <tr>
+	    <th scope='col' id='wplc_id_colum' class='manage-column column-id sortable desc'  style=''><span>" . __("Date", "wplivechat") . "</span></th>
+	                <th scope='col' id='wplc_name_colum' class='manage-column column-name_title sortable desc'  style=''><span>" . __("Name", "wplivechat") . "</span></th>
+	                <th scope='col' id='wplc_email_colum' class='manage-column column-email' style=\"\">" . __("Email", "wplivechat") . "</th>
+	                <th scope='col' id='wplc_url_colum' class='manage-column column-url' style=\"\">" . __("URL", "wplivechat") . "</th>
+	                <th scope='col' id='wplc_status_colum' class='manage-column column-status'  style=\"\">" . __("Status", "wplivechat") . "</th>
+	                <th scope='col' id='wplc_action_colum' class='manage-column column-action sortable desc'  style=\"\"><span>" . __("Action", "wplivechat") . "</span></th>
+	        </tr>
+	  </thead>
+	        <tbody id=\"the-list\" class='list:wp_list_text_link'>
+	        ";
+	    if (!$results) {
+	        echo "<tr><td></td><td>" . __("No chats available at the moment", "wplivechat") . "</td></tr>";
+	    } else {
+	        foreach ($results as $result) {
+	            unset($trstyle);
+	            unset($actions);
+
+	            $tcid = sanitize_text_field( $result->id );
 
 
-                $wpdb->query($delete_sql);
-                if ($wpdb->last_error) {
-                    echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Error: Could not delete chat", "wplivechat")."<br>
-                      </div>";
-                } else {
-                     echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;border-color:#67d552;'>
-                        ".__("Chat Deleted", "wplivechat")."<br>
-                      </div>";
-                }
+	            $url = admin_url('admin.php?page=wplivechat-menu&action=history&cid=' . $tcid);
+	            $url2 = admin_url('admin.php?page=wplivechat-menu&action=download_history&type=csv&cid=' . $tcid);
+	            $url3 = "?page=wplivechat-menu-history&wplc_action=remove_cid&cid=" . $tcid;
+	            $actions = "
+	                <a href='$url' class='button' title='".__('View Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-eye'></i></a> <a href='$url2' class='button' title='".__('Download Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-download'></i></a> <a href='$url3' class='button'><i class='fa fa-trash-o'></i></a>      
+	                ";
+	            $trstyle = "style='height:30px;'";
 
-            } else {
-                //Prompt
-                echo "<div class='update-nag' style='margin-top: 0px;margin-bottom: 5px;'>
-                        ".__("Are you sure you would like to delete this chat?", "wplivechat")."<br>
-                        <a class='button' href='?page=wplivechat-menu-history&wplc_action=remove_cid&cid=".sanitize_text_field( $_GET['cid'] )."&wplc_confirm=1''>".__("Yes", "wplivechat")."</a> <a class='button' href='?page=wplivechat-menu-history'>".__("No", "wplivechat")."</a>
-                      </div>";
-            }
-        }
-    }
+	            echo "<tr id=\"record_" . $tcid . "\" $trstyle>";
+	            echo "<td class='chat_id column-chat_d'>" . date("Y-m-d H:i:s", current_time( strtotime( $result->timestamp ) ) ) . "</td>";
+	            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . sanitize_text_field($result->name) . "</td>";
+	            echo "<td class='chat_email column_chat_email' id='chat_email_" . $tcid . "'><a href='mailto:" . sanitize_text_field($result->email) . "' title='Email " . ".$result->email." . "'>" . sanitize_text_field ($result->email) . "</a></td>";
+	            echo "<td class='chat_name column_chat_url' id='chat_url_" . $tcid . "'>" . esc_url($result->url) . "</td>";
+	            echo "<td class='chat_status column_chat_status' id='chat_status_" . $tcid . "'><strong>" . wplc_return_status($result->status) . "</strong></td>";
+	            echo "<td class='chat_action column-chat_action' id='chat_action_" . $tcid . "'>$actions</td>";
+	            echo "</tr>";
+	        }
+	    }
+	    echo "</table>";
 
-	$pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
-	$limit = 20; // number of rows in page
-	$offset = ( $pagenum - 1 ) * $limit;
-	$total = $wpdb->get_var( "SELECT COUNT(`id`) FROM $wplc_tblname_chats" );
-	$num_of_pages = ceil( $total / $limit );
+		$page_links = paginate_links( array(
+			'base' => add_query_arg( 'pagenum', '%#%' ),
+			'format' => '',
+			'prev_text' => __( '&laquo;', 'wplivechat' ),
+			'next_text' => __( '&raquo;', 'wplivechat' ),
+			'total' => $num_of_pages,
+			'current' => $pagenum
+		) );
 
-	$results = $wpdb->get_results(
-            "
-        SELECT *
-        FROM $wplc_tblname_chats
-        WHERE `name` NOT LIKE 'agent-to-agent chat'
-        ORDER BY `timestamp` DESC
-        LIMIT $limit OFFSET $offset
-      "
-    );
-    echo "
-       <form method=\"post\" >
-        <input type=\"submit\" value=\"".__('Delete History', 'wplivechat')."\" class='button' name=\"wplc-delete-chat-history\" /><br /><br />
-       </form>
-
-      <table class=\"wp-list-table wplc_list_table widefat fixed \" cellspacing=\"0\">
-  <thead>
-  <tr>
-    <th scope='col' id='wplc_id_colum' class='manage-column column-id sortable desc'  style=''><span>" . __("Date", "wplivechat") . "</span></th>
-                <th scope='col' id='wplc_name_colum' class='manage-column column-name_title sortable desc'  style=''><span>" . __("Name", "wplivechat") . "</span></th>
-                <th scope='col' id='wplc_email_colum' class='manage-column column-email' style=\"\">" . __("Email", "wplivechat") . "</th>
-                <th scope='col' id='wplc_url_colum' class='manage-column column-url' style=\"\">" . __("URL", "wplivechat") . "</th>
-                <th scope='col' id='wplc_status_colum' class='manage-column column-status'  style=\"\">" . __("Status", "wplivechat") . "</th>
-                <th scope='col' id='wplc_action_colum' class='manage-column column-action sortable desc'  style=\"\"><span>" . __("Action", "wplivechat") . "</span></th>
-        </tr>
-  </thead>
-        <tbody id=\"the-list\" class='list:wp_list_text_link'>
-        ";
-    if (!$results) {
-        echo "<tr><td></td><td>" . __("No chats available at the moment", "wplivechat") . "</td></tr>";
-    } else {
-        foreach ($results as $result) {
-            unset($trstyle);
-            unset($actions);
-
-            $tcid = sanitize_text_field( $result->id );
-
-
-            $url = admin_url('admin.php?page=wplivechat-menu&action=history&cid=' . $tcid);
-            $url2 = admin_url('admin.php?page=wplivechat-menu&action=download_history&type=csv&cid=' . $tcid);
-            $url3 = "?page=wplivechat-menu-history&wplc_action=remove_cid&cid=" . $tcid;
-            $actions = "
-                <a href='$url' class='button' title='".__('View Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-eye'></i></a> <a href='$url2' class='button' title='".__('Download Chat History', 'wplivechat')."' target='_BLANK' id=''><i class='fa fa-download'></i></a> <a href='$url3' class='button'><i class='fa fa-trash-o'></i></a>      
-                ";
-            $trstyle = "style='height:30px;'";
-
-            echo "<tr id=\"record_" . $tcid . "\" $trstyle>";
-            echo "<td class='chat_id column-chat_d'>" . date("Y-m-d H:i:s", current_time( strtotime( $result->timestamp ) ) ) . "</td>";
-            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . sanitize_text_field($result->name) . "</td>";
-            echo "<td class='chat_email column_chat_email' id='chat_email_" . $tcid . "'><a href='mailto:" . sanitize_text_field($result->email) . "' title='Email " . ".$result->email." . "'>" . sanitize_text_field ($result->email) . "</a></td>";
-            echo "<td class='chat_name column_chat_url' id='chat_url_" . $tcid . "'>" . esc_url($result->url) . "</td>";
-            echo "<td class='chat_status column_chat_status' id='chat_status_" . $tcid . "'><strong>" . wplc_return_status($result->status) . "</strong></td>";
-            echo "<td class='chat_action column-chat_action' id='chat_action_" . $tcid . "'>$actions</td>";
-            echo "</tr>";
-        }
-    }
-    echo "</table>";
-
-	$page_links = paginate_links( array(
-		'base' => add_query_arg( 'pagenum', '%#%' ),
-		'format' => '',
-		'prev_text' => __( '&laquo;', 'wplivechat' ),
-		'next_text' => __( '&raquo;', 'wplivechat' ),
-		'total' => $num_of_pages,
-		'current' => $pagenum
-	) );
-
-	if ( $page_links ) {
-		echo '<div class="tablenav"><div class="tablenav-pages" style="margin: 1em 0;float:none;text-align:center;">' . $page_links . '</div></div>';
+		if ( $page_links ) {
+			echo '<div class="tablenav"><div class="tablenav-pages" style="margin: 1em 0;float:none;text-align:center;">' . $page_links . '</div></div>';
+		}
 	}
 
 
