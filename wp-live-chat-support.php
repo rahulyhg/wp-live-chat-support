@@ -14,6 +14,7 @@
  * 
  * 8.0.14 - 2018-06-10 - Low priority
  * Removed reference to NimbleSquirrel being free
+ * Fixed erroneous display of set_time_limit and safe_mode warnings
  * 
  * 8.0.13 - 2018-06-06 - Medium priority
  * Fix chat delay not working for first visit and offline
@@ -4949,24 +4950,30 @@ function wplc_get_home_path() {
  */
 if(isset($_GET['page']) && $_GET['page'] == 'wplivechat-menu-settings'){
     if(is_admin()){
-        $wplc_error_count = 0;
-        $wplc_admin_warnings = "<div class='error'>";
-        if(!function_exists('set_time_limit')){
-            $wplc_admin_warnings .= "
-                <p>".__("WPLC: set_time_limit() is not enabled on this server. You may experience issues while using WP Live Chat Support as a result of this. Please get in contact your host to get this function enabled.", "wplivechat")."</p>
-            ";
-            $wplc_error_count++;
-        }
-        if(ini_get('safe_mode')){
-            $wplc_admin_warnings .= "
-                <p>".__("WPLC: Safe mode is enabled on this server. You may experience issues while using WP Live Chat Support as a result of this. Please contact your host to get safe mode disabled.", "wplivechat")."</p>
-            ";
-            $wplc_error_count++;
-        }
-        $wplc_admin_warnings .= "</div>";
-        if($wplc_error_count > 0){
-            echo $wplc_admin_warnings;
-        }
+    	
+    	// Only show these warning messages to Legacy users as they will be affected, not Node users.
+    	$wplc_settings = get_option("WPLC_SETTINGS");
+    	if (isset( $wplc_settings['wplc_use_node_server'] ) && intval( $wplc_settings['wplc_use_node_server'] ) == 1 ) { } else {
+
+	        $wplc_error_count = 0;
+	        $wplc_admin_warnings = "<div class='error'>";
+	        if(!function_exists('set_time_limit')){
+	            $wplc_admin_warnings .= "
+	                <p>".__("WPLC: set_time_limit() is not enabled on this server. You may experience issues while using WP Live Chat Support as a result of this. Please get in contact your host to get this function enabled.", "wplivechat")."</p>
+	            ";
+	            $wplc_error_count++;
+	        }
+	        if(ini_get('safe_mode')){
+	            $wplc_admin_warnings .= "
+	                <p>".__("WPLC: Safe mode is enabled on this server. You may experience issues while using WP Live Chat Support as a result of this. Please contact your host to get safe mode disabled.", "wplivechat")."</p>
+	            ";
+	            $wplc_error_count++;
+	        }
+	        $wplc_admin_warnings .= "</div>";
+	        if($wplc_error_count > 0){
+	            echo $wplc_admin_warnings;
+	        }
+	    }
     }
 }
 
