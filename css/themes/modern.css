@@ -1009,7 +1009,7 @@ button.wplc_retry_chat {
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 510px) {
 
     #wplc_chatmsg {
         font-size:16px !important;

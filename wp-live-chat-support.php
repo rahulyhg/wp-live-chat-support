@@ -17,6 +17,7 @@
  * Fixed erroneous display of set_time_limit and safe_mode warnings
  * Fixed a big that lead to the deletion of sessions and not messages when a chat was marked for deletion
  * Improved security in the chat history code
+ * Added better styling support for smaller width devices (<500px)
  * 
  * 8.0.13 - 2018-06-06 - Medium priority
  * Fix chat delay not working for first visit and offline
