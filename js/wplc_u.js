@@ -57,6 +57,8 @@ var wplc_long_poll_delay = 1500;
 
 jQuery(document).ready(function() {
 
+
+
     /* Gutenberg functions */
     jQuery('.wp-block-wp-live-chat-support-wplc-chat-box').on('click',function(){
         jQuery("#wplc_hovercard").fadeOut("fast");
@@ -966,4 +968,9 @@ function wplc_strip(str) {
 		});
 	});
 
+
+
 })(jQuery);
+
+
+
