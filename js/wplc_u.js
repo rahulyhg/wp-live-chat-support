@@ -53,11 +53,8 @@ var wplc_cid = null;
 var initial_data = {};
 var wplc_fist_run = true;
 var wplc_long_poll_delay = 1500;
-
-
+ 
 jQuery(document).ready(function() {
-
-
 
     /* Gutenberg functions */
     jQuery('.wp-block-wp-live-chat-support-wplc-chat-box').on('click',function(){
@@ -274,6 +271,14 @@ jQuery(document).ready(function() {
     });
 
    jQuery("body").on("click", "#wplc_end_chat_button", function(e){
+        var data = {
+            security: wplc_nonce,
+            chat_id: wplc_cid,
+            agent_id: 0
+        };
+
+        wplc_rest_api('end_chat', data, 12000, null);
+
         jQuery.event.trigger({type: "wplc_end_chat_as_user"});
    });
 
@@ -968,9 +973,4 @@ function wplc_strip(str) {
 		});
 	});
 
-
-
 })(jQuery);
-
-
-

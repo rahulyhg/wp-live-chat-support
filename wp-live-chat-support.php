@@ -12,14 +12,30 @@
 
 /**
  * 
- * 8.0.14 - 2018-06-10 - Low priority
- * Removed reference to NimbleSquirrel being free
+ * 8.0.14 - 2018-07-19 - Low priority
+ * Removed 'let' from wplc_server.js file (Adds Safari compatibility)
+ * Fixed issues with Google Analytics integration when using our servers
+ * Fixed issues with chat box styling with classic theme and GDPR module enabled
+ * Fixed issues with Contact From Ready integration styling with modern theme
+ * Fixed issues with Slack integration extension
+ * Bulgarian Translation Added (Thank you Emil Genchev!)
  * Fixed erroneous display of set_time_limit and safe_mode warnings
  * Fixed a big that lead to the deletion of sessions and not messages when a chat was marked for deletion
  * Improved security in the chat history code
  * Added better styling support for smaller width devices (<500px)
  * Updated Swedish translation files
  * Added Arabic translation files
+ * Fixed the duplicate message history loading in the history area
+ * Fixed core framework issues with Voice Note system
+ * Fixed an issue where invalid query selectors would break the 'Open chat via' functionality
+ * Fixed an issue with username encoding
+ * Fixed issue with surveys showing after chat end
+ * Fixed an issue with classic theme display when anchored to left/right positions
+ * Added auto transcript mailing to frontend end chat button, and REST API
+ * Added an 'incomplete' class when GDPR checkbox is not ticket, to draw attention to this input field
+ * Tested Multi-Site compatibility
+ * Updated all PO/MO files with updated sources
+ * Added default GDPR translations for DE, FR, ES, and IT languages (Using Google Translate)
  * 
  * 8.0.13 - 2018-06-06 - Medium priority
  * Fix chat delay not working for first visit and offline
@@ -2869,7 +2885,7 @@ function wplc_superadmin_javascript() {
 	        	/** set the global chat data here so we dont need to keep getting it from the DB or Cloud server */
 	        	global $admin_chat_data;
 	        	$admin_chat_data = wplc_get_chat_data($_GET['cid'], __LINE__);
-
+	        	
 	            wplc_return_admin_chat_javascript(sanitize_text_field($_GET['cid']));
 
 
@@ -3768,8 +3784,8 @@ function wplc_return_admin_chat_javascript($cid) {
 		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', $wplc_agent_data->display_name );
         wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', md5( $wplc_agent_data->user_email ) );
 	} else {
-		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', '' );
-		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', '' );
+		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_name', ' ' );
+		wp_localize_script( 'wplc-admin-chat-js', 'wplc_agent_email', ' ' );
 	}
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_chat_name', $cdata->name);
@@ -3789,10 +3805,10 @@ function wplc_return_admin_chat_javascript($cid) {
       if ($src) {
           $image = "<img src=" . $src . " width='20px' id='wp-live-chat-2-img'/>";
       } else {
-        $image = "";
+        $image = " ";
       }
     } else {
-      $image = "";
+      $image = " ";
     }
     $admin_pic = $image;
     wp_localize_script('wplc-admin-chat-js', 'wplc_localized_string_is_typing', __("is typing...","wplivechat"));
@@ -3820,7 +3836,7 @@ function wplc_return_admin_chat_javascript($cid) {
     if (isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != "") {
         $wplc_user_email_address = sanitize_text_field($_COOKIE['wplc_email']);
     } else {
-        $wplc_user_email_address = "";
+        $wplc_user_email_address = " ";
     }
 
     wp_localize_script('wplc-admin-chat-js', 'wplc_name', $display_name);
@@ -6680,38 +6696,49 @@ function wplc_send_transcript( $cid ) {
 	if ( ! $cid ) {
 		return array( "error" => "no CID", "cid" => $cid );
 	}
+	
+	if( ! filter_var($cid, FILTER_VALIDATE_INT) ) {
+        /*  We need to identify if this CID is a node CID, and if so, return the WP CID */
+        $cid = wplc_return_chat_id_by_rel($cid);
+    }
 
 	$email = false;
 	$wplc_et_settings = get_option( "WPLC_ET_SETTINGS" );
 
-	if ( function_exists( "wplc_get_chat_data" ) ) {
-		$cdata = wplc_get_chat_data( $cid );
-		if ( $cdata ) {
-			if ( $wplc_et_settings['wplc_send_transcripts_to'] === 'admin' ) {
-			    $user = wp_get_current_user();
-				$email = $user->user_email;
-		    } else {
-				$email = $cdata->email;
-			}
-			if ( ! $email ) {
-				return array( "error" => "no email" );
+	$wplc_enable_transcripts = $wplc_et_settings['wplc_enable_transcripts'];
+	if ( isset( $wplc_enable_transcripts ) && $wplc_enable_transcripts == 1 ) {
+
+		if ( function_exists( "wplc_get_chat_data" ) ) {
+			$cdata = wplc_get_chat_data( $cid );
+			if ( $cdata ) {
+				if ( $wplc_et_settings['wplc_send_transcripts_to'] === 'admin' ) {
+				    $user = wp_get_current_user();
+					$email = $user->user_email;
+			    } else {
+					$email = $cdata->email;
+				}
+				if ( ! $email ) {
+					return array( "error" => "no email" );
+				}
+			} else {
+				return array( "error" => "no chat data" );
 			}
 		} else {
-			return array( "error" => "no chat data" );
+			return array( "error" => "basic funtion missing" );
 		}
-	} else {
-		return array( "error" => "basic funtion missing" );
-	}
 
-	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
-	$subject = sprintf( __( 'Your chat transcript from %1$s', 'wplivechat' ),
-		get_bloginfo( 'url' )
-	);
-	wp_mail( $email, $subject, wplc_transcript_return_chat_messages( $cid ), $headers );
+		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+		$subject = sprintf( __( 'Your chat transcript from %1$s', 'wplivechat' ),
+			get_bloginfo( 'url' )
+		);
+		wp_mail( $email, $subject, wplc_transcript_return_chat_messages( $cid ), $headers );
+
+	}
 
 	return array( "success" => 1 );
 
 }
+add_action('wplc_send_transcript_hook', 'wplc_send_transcript', 10, 1);
 
 function wplc_transcript_return_chat_messages( $cid ) {
 	global $current_chat_id;

@@ -102,10 +102,15 @@ function wplc_call_to_server_admin_chat(data) {
             }
         },
         function (response) {
-            if (wplc_run) {
-                setTimeout(function () {
-                    wplc_call_to_server_admin_chat(data);
-                }, wplc_poll_delay);
+            var wplc_page_action = wplc_findGetParameter('action');
+            if((wplc_page_action !== undefined && wplc_page_action !== false) && wplc_page_action === 'history'){
+                //We will no longer allow long polling on history screen
+            } else {
+                if (wplc_run) {
+                    setTimeout(function () {
+                        wplc_call_to_server_admin_chat(data);
+                    }, wplc_poll_delay);
+                }
             }
         }
     );

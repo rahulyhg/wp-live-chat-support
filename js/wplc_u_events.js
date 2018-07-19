@@ -166,10 +166,12 @@ jQuery(document).ready(function() {
               var wplc_gdpr_opt_in_checked = jQuery("#wplc_chat_gdpr_opt_in").is(':checked');
               if(typeof wplc_gdpr_opt_in_checked === "undefined" || wplc_gdpr_opt_in_checked === false){
                 /* GDPR requirements not met */
+                jQuery("#wplc_chat_gdpr_opt_in").addClass('incomplete');
                 return false;
               }
+              jQuery("#wplc_chat_gdpr_opt_in").removeClass('incomplete');
             }
-            
+
             var wplc_name = jQuery("#wplc_name").val();
             var wplc_email = jQuery("#wplc_email").val(); 
             
@@ -462,9 +464,13 @@ jQuery(document).ready(function() {
             if(typeof wplc_elem_trigger_action !== "undefined" && wplc_elem_trigger_action !== ""){ wplc_click_or_hover = parseInt(wplc_elem_trigger_action); }
             if(typeof wplc_elem_trigger_type !== "undefined" && wplc_elem_trigger_type !== ""){ wplc_class_or_id = parseInt(wplc_elem_trigger_type); }
             
-            jQuery( (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id).on( (wplc_click_or_hover === 1 ? "mouseenter" : "click"), function(){
-                open_chat(0);
-            });
+            try{
+                jQuery( (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id).on( (wplc_click_or_hover === 1 ? "mouseenter" : "click"), function(){
+                    open_chat(0);
+                });
+            } catch (e){
+                console.log("WPLC Error: \"" + (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id + "\" is not a valid selector");
+            }
         }
 
 });
