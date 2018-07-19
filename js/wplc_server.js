@@ -422,7 +422,7 @@ function wplc_rest_api(type, wplc_send_data, wplc_send_timeout, next) {
 	if(typeof wplc_restapi_enabled !== "undefined" && parseInt(wplc_restapi_enabled) === 1 && typeof wplc_restapi_endpoint !== "undefined"){
 		//REST API is ready to rumble
 		
-		let anti_cache = Date.now();
+		var anti_cache = Date.now();
 
 		wplc_send_url = wplc_restapi_endpoint + "/" + type + "?nocache="+anti_cache;
 
@@ -745,7 +745,7 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 
 	        var message_edit_string = "";
 
-	        var audioPattern = new RegExp(/-blob.wav/);
+	        var audioPattern = new RegExp(/blob.wav/);
 	        var isAudioPattern = false;
 
 	        if (parseInt(the_message.originates) === 1) {
@@ -924,7 +924,7 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 
 				var original_message = message_content;
                 if (isAudioPattern) {
-                    message_content = "<a href='" + message_content + "' target='_blank'>" + wplc_visitor_voice.play_sound + "</a>";
+                    message_content = "<a href='" + message_content + "' target='_blank'>" + (typeof wplc_visitor_voice !== 'undefined' && typeof wplc_visitor_voice.play_sound !== 'undefined' ? wplc_visitor_voice.play_sound : 'Open Voice Note') + "</a>";
                 } else if (typeof niftyFormatParser !== "undefined"){
 	                message_content = niftyFormatParser(message_content);
 	            } 
@@ -994,8 +994,10 @@ jQuery(function(){
 			  var wplc_gdpr_opt_in_checked = jQuery("#wplc_chat_gdpr_opt_in").is(':checked');
 			  if(typeof wplc_gdpr_opt_in_checked === "undefined" || wplc_gdpr_opt_in_checked === false){
 			    /* GDPR requirements not met */
+                jQuery("#wplc_chat_gdpr_opt_in").addClass('incomplete');
 			    return false;
 			  }
+              jQuery("#wplc_chat_gdpr_opt_in").removeClass('incomplete');
 			}
 			
             var wplc_name = jQuery("#wplc_name").val();

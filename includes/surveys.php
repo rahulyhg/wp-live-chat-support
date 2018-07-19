@@ -362,7 +362,7 @@ function wplc_admin_survey_layout() {
     } 
     else {
 
-    $link1 = sprintf( __( 'Register on <a href="%s" target="_BLANK" title="NimbleSquirrel">NimbleSquirrel</a>', 'wplivechat' ),
+    $link1 = sprintf( __( 'Register on <a href="%s" target="_BLANK" title="NimbleSquirrel">NimbleSquirrel</a> (It\'s free)', 'wplivechat' ),
         'http://app.nimblesquirrel.com/join.php?email='.get_option("admin_email")."&site=".site_url().'&utm_source=wplc&utm_medium=click&utm_campaign=plugin_register'
     );
     $link2 = sprintf( __( '<a href="%s" target="_BLANK" title="Create a survey">Create a survey</a>.', 'wplivechat' ),

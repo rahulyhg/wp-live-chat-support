@@ -1308,3 +1308,9 @@ label[for=wplc_chat_gdpr_opt_in] {
 .wplc_in_chat_notice_content {
     padding-top: 15px;
 }
+
+.wp-live-chat-wraper .wpcf_wrapper {
+    position: relative !important;
+    padding: 20px;
+}
+

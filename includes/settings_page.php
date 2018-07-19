@@ -259,7 +259,8 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                   <td valign='top'>
                       <input type="checkbox" value="1" name="wplc_enable_all_admin_pages" <?php if(isset($wplc_settings['wplc_enable_all_admin_pages']) && $wplc_settings['wplc_enable_all_admin_pages'] == 1 ) { echo "checked"; } ?> />
                   </td>
-              </tr>              
+              </tr>    
+          
               <?php if (!function_exists("wplc_pro_activate")) { ?>
 
               <tr>

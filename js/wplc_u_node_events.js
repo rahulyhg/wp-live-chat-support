@@ -197,6 +197,17 @@ jQuery(document).ready(function() {
             */
             wplc_rest_api('send_message', data, 12000, null);
             jQuery("#wplc_chatmsg").val('');
+
+            if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+                if (typeof ga !== "undefined") {
+                    ga('send', {
+                      hitType: 'event',
+                      eventCategory: 'WP_Live_Chat_Support',
+                      eventAction: 'Event',
+                      eventLabel: 'User Send Message'
+                    });
+                }
+            }
         }
 
         
@@ -250,6 +261,17 @@ jQuery(document).ready(function() {
                 });
             }
 
+            if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+                if (typeof ga !== "undefined") {
+                    ga('send', {
+                      hitType: 'event',
+                      eventCategory: 'WP_Live_Chat_Support',
+                      eventAction: 'Event',
+                      eventLabel: 'Agent left the chat'
+                    });
+                }
+            }
+
         }
     });
 
@@ -268,6 +290,17 @@ jQuery(document).ready(function() {
 
         if(jQuery('#wplc_gdpr_end_chat_notice_container').length > 0){
             jQuery("#wplc_gdpr_end_chat_notice_container").fadeIn('fast');
+        }
+
+        if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+            if (typeof ga !== "undefined") {
+                ga('send', {
+                  hitType: 'event',
+                  eventCategory: 'WP_Live_Chat_Support',
+                  eventAction: 'Event',
+                  eventLabel: 'Chat Ended By Agent'
+                });
+            }
         }
     });
 
@@ -325,6 +358,17 @@ jQuery(document).ready(function() {
                     
 
                     jQuery.event.trigger({type: "wplc_agent_joined", ndata:{other:data}}); 
+
+                    if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+                        if (typeof ga !== "undefined") {
+                            ga('send', {
+                              hitType: 'event',
+                              eventCategory: 'WP_Live_Chat_Support',
+                              eventAction: 'Event',
+                              eventLabel: 'Agent joined chat'
+                            });
+                        }
+                    }
                 } else if(e.ndata.action === "send_user_direct_to_page"){
                     if(typeof e.ndata.direction !== "undefined"){
                         if(typeof e.ndata.pretty_name !== "undefined"){
@@ -402,8 +446,18 @@ jQuery(document).ready(function() {
         }
 
         jQuery.event.trigger({type: "wplc_open_chat_2", wplc_online: wplc_online});
-        
-        
+
+        if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+            if (typeof ga !== "undefined") {
+                ga('send', {
+                  hitType: 'event',
+                  eventCategory: 'WP_Live_Chat_Support',
+                  eventAction: 'Event',
+                  eventLabel: 'Start Chat'
+                });
+            }
+        }
+         
     });
 
     if(typeof wplc_elem_trigger_id !== "undefined" && wplc_elem_trigger_id !== ""){
@@ -413,9 +467,13 @@ jQuery(document).ready(function() {
         if(typeof wplc_elem_trigger_action !== "undefined" && wplc_elem_trigger_action !== ""){ wplc_click_or_hover = parseInt(wplc_elem_trigger_action); }
         if(typeof wplc_elem_trigger_type !== "undefined" && wplc_elem_trigger_type !== ""){ wplc_class_or_id = parseInt(wplc_elem_trigger_type); }
         
-        jQuery( (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id).on( (wplc_click_or_hover === 1 ? "mouseenter" : "click"), function(){
-            open_chat(0);
-        });
+        try{
+            jQuery( (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id).on( (wplc_click_or_hover === 1 ? "mouseenter" : "click"), function(){
+                open_chat(0);
+            });
+        } catch (e){
+            console.log("WPLC Error: \"" + (wplc_class_or_id === 1 ? "#" : ".") + wplc_elem_trigger_id + "\" is not a valid selector");
+        }
     }
 
     
@@ -450,6 +508,17 @@ jQuery(document).ready(function() {
 
         if(typeof Cookies !== "undefined"){
           Cookies.remove("wplc_cid");
+        }
+
+        if (typeof wplc_enable_ga !== "undefined" && wplc_enable_ga === '1') {
+            if (typeof ga !== "undefined") {
+                ga('send', {
+                  hitType: 'event',
+                  eventCategory: 'WP_Live_Chat_Support',
+                  eventAction: 'Event',
+                  eventLabel: 'User End Chat'
+                });
+            }
         }
     });
 });

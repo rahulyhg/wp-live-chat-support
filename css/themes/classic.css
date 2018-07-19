@@ -101,7 +101,7 @@
     border-radius: 5px 5px 0 0 ;
     color:#999;
     max-width: 280px;  
-    max-height: 400px;
+   /* max-height: 400px;*/
     z-index: 9999;
 }
 
@@ -270,7 +270,7 @@
 }
 .wplc_close.wplc_left{
     padding-right: 45px;
-    height: 220px;
+   min-height: 220px; 
 }
 /*
 .wplc_left #wplc_chatbox, .wplc_right #wplc_chatbox{
@@ -317,7 +317,7 @@ span.wplc_system_notification {
 
 .wplc_close.wplc_right{
     padding-left: 45px;
-    height: 220px;
+    min-height: 220px;
     border-radius: 5px 0px 0px 5px !important;
 }
 .wplc_open.wplc_right #wp-live-chat-header{

@@ -238,6 +238,31 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 == Changelog ==
 
+= 8.0.14 - 2018-07-19 - Medium priority =
+* Removed 'let' from wplc_server.js file (Adds Safari compatibility)
+* Fixed issues with Google Analytics integration when using our servers
+* Fixed issues with chat box styling with classic theme and GDPR module enabled
+* Fixed issues with Contact From Ready integration styling with modern theme
+* Fixed issues with Slack integration extension
+* Bulgarian Translation Added (Thank you Emil Genchev!)
+* Fixed erroneous display of set_time_limit and safe_mode warnings
+* Fixed a big that lead to the deletion of sessions and not messages when a chat was marked for deletion
+* Improved security in the chat history code
+* Added better styling support for smaller width devices (<500px)
+* Updated Swedish translation files
+* Added Arabic translation files
+* Fixed the duplicate message history loading in the history area
+* Fixed core framework issues with Voice Note system
+* Fixed an issue where invalid query selectors would break the 'Open chat via' functionality
+* Fixed an issue with username encoding
+* Fixed issue with surveys showing after chat end
+* Fixed an issue with classic theme display when anchored to left/right positions
+* Added auto transcript mailing to frontend end chat button, and REST API
+* Added an 'incomplete' class when GDPR checkbox is not ticket, to draw attention to this input field
+* Tested Multi-Site compatibility
+* Updated all PO/MO files with updated sources
+* Added default GDPR translations for DE, FR, ES, and IT languages (Using Google Translate)
+
 = 8.0.13 - 2018-06-06 - Medium priority =
 * Fix chat delay not working for first visit and offline
 * Optimize images
