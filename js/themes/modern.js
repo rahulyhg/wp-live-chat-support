@@ -104,7 +104,7 @@ jQuery(document).on("wplc_agent_joined", function(e) {
         wplc_node_pair_name = tname;
         wplc_agent_name = tname;
 
-        var timageurl = 'https://www.gravatar.com/avatar/'+temail;
+        var timageurl = wplc_user_avatars[taid];
 
         if(jQuery(".wplc_agent_info").html().trim() === "" || typeof jQuery(".wplc_agent_info").attr("aid") === "undefined"){
             //No Agents have joined yet

@@ -2413,3 +2413,31 @@ function wplc_return_message_count_by_cid($cid) {
 
     return $message_count;
 }
+
+function wplc_all_avatars() {
+    $users = get_users(array(
+        'meta_key' => 'wplc_ma_agent',
+    ));
+    $avatars = array();
+    foreach ($users as $user) {
+        $avatars[$user->data->ID] = wplc_get_avatar($user->data->ID);
+    }
+    return $avatars;
+}
+
+function wplc_get_avatar($id) {
+    $wplc_settings = get_option("WPLC_SETTINGS");
+    $user = get_user_by( 'id', $id );
+    
+    if (isset($wplc_settings['wplc_avatar_source']) && $wplc_settings['wplc_avatar_source'] == 'gravatar') {
+        return '//www.gravatar.com/avatar/' . md5( strtolower( trim( $user->data->user_email ) ) );
+    } elseif (isset($wplc_settings['wplc_avatar_source']) && $wplc_settings['wplc_avatar_source'] == 'wp_avatar') {
+        if (function_exists('get_wp_user_avatar')) {
+            return get_wp_user_avatar_src($id);
+        } else {
+            return '//www.gravatar.com/avatar/' . md5( strtolower( trim( $user->data->user_email ) ) );
+        }
+    } else {
+        return '//www.gravatar.com/avatar/' . md5( strtolower( trim( $user->data->user_email ) ) );
+    }
+}

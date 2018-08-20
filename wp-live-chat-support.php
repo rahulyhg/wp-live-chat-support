@@ -11,7 +11,9 @@
 */
 
 /**
- * 
+ * 8.0.15 - 2018-08-20 - Low priority
+ * Added WP User Avatar integration
+ *
  * 8.0.14 - 2018-07-19 - Low priority
  * Removed 'let' from wplc_server.js file (Adds Safari compatibility)
  * Fixed issues with Google Analytics integration when using our servers
@@ -1333,7 +1335,8 @@ function wplc_push_js_to_front_basic() {
       else if($wplc_newtheme == 'theme-2') {
         wp_register_script('wplc-theme-modern', plugins_url('/js/themes/modern.js', __FILE__),array('wplc-user-script'),$wplc_version);
         wp_enqueue_script('wplc-theme-modern');
-
+        $avatars = wplc_all_avatars();
+        wp_localize_script('wplc-theme-modern', 'wplc_user_avatars', $avatars);
       }
     } else {
         wp_register_script('wplc-theme-classic', plugins_url('/js/themes/classic.js', __FILE__),array('wplc-user-script'),$wplc_version);
