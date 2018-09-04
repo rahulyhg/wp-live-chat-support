@@ -66,7 +66,7 @@ final class wplc_update_control {
             return $checked_data;
 
         if ( empty( $checked_data->checked[$this->wplc_api_slug . '/' . $this->wplc_api_slug . '.php'] ) ) {
-        	$plugin_data = get_plugin_data( trailingslashit( dirname( __FILE__, 3 ) ) . $this->wplc_api_slug . '/' . $this->wplc_api_slug . '.php' );
+        	$plugin_data = get_plugin_data( trailingslashit( dirname( dirname( dirname( __FILE__ ) ) ) ) . $this->wplc_api_slug . '/' . $this->wplc_api_slug . '.php' );
         	if ( ! empty( $plugin_data['Version'] ) ) {
         	    $version = $plugin_data['Version'];
 	        } else {
