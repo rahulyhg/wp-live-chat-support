@@ -969,7 +969,7 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 }
 
 jQuery(function(){
-	jQuery(document).ready(function(){
+	jQuery(function(){
 		var wplc_node_searchTimeout;
 
 		jQuery("body").on("keydown","#wplc_chatmsg, #wplc_admin_chatmsg", function(e) {

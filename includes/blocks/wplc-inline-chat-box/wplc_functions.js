@@ -1,4 +1,4 @@
-jQuery(document).ready( function($){
+jQuery(function($){
 
 	var chat_box_button = '<div class="wplc_gutenberg_button active" style="background-color: #' + wplc_styles.color_1 + '; background-image: url(' + wplc_images.close_icon + ');"></div>';
 	var chatbox_preview_img = '<img class="wplc_gutenberg_avatar_img" style="max-width:inherit;" id="agent_grav_' + wplc_agent_info.id + '" title="' + wplc_agent_info.name + '" src="https://www.gravatar.com/avatar/' + wplc_agent_info.email + '?s=60" />';

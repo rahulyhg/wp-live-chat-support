@@ -1,5 +1,5 @@
 // Gutenberg functions
-jQuery(document).ready(function($){
+jQuery(function($){
 
 	var sizes = ['sm','md','lg'];
 

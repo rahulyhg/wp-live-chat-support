@@ -54,7 +54,7 @@ var initial_data = {};
 var wplc_fist_run = true;
 var wplc_long_poll_delay = 1500;
  
-jQuery(document).ready(function() {
+jQuery(function() {
 
     /* Gutenberg functions */
     jQuery('.wp-block-wp-live-chat-support-wplc-chat-box').on('click',function(){
@@ -397,7 +397,7 @@ function wplc_send_welcome_message() {
 
 }
 
-jQuery(document).ready(function(){
+jQuery(function(){
     if (wplc_online) {
         jQuery(document).on('click', '#wp-live-chat-header', function() {
             jQuery('#speeching_button').html(wplc_pro_sst1);
@@ -952,7 +952,7 @@ function wplc_strip(str) {
 
 (function($) {
 
-	$(document).ready(function(event) {
+	$(function(event) {
 
 		if(!window.wdtEmojiBundle)
 			return;

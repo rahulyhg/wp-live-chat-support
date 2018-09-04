@@ -36,7 +36,7 @@ wp_button_pointer_array[5] = {
 }; 
 
 
-jQuery(document).ready( function($) {
+jQuery(function($) {
 
     jQuery('body').on("click", ".wplc_initiate_chat", function (e) {
         e.preventDefault(); 

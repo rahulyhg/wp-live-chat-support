@@ -209,7 +209,7 @@ function wplc_api_test_component(){
 	?>
 		<script>
 			jQuery(function(){
-				jQuery(document).ready(function(){
+				jQuery(function(){
 					jQuery(".rest_test_button").click(function (){
 						var route = jQuery(this).attr('wplcRest');
 						var terms = jQuery(this).attr('wplcTerms').split(",");

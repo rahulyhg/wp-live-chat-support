@@ -17,7 +17,7 @@ var wplc_node_socket_connected = false;
 jQuery("#toolbar-item-open-bleeper").hide();
 
 
-jQuery(document).ready(function(){
+jQuery(function(){
   
   if ( typeof bleeper_in_dashboard !== "undefined" && bleeper_in_dashboard === "0") {
 
@@ -143,7 +143,7 @@ jQuery(document).on("bleeper_user_chat_notification", function(e){
   }
 }); 
 
-//jQuery(document).ready(function(){
+//jQuery(function(){
 jQuery(document).on("bleeper_dom_ready", function(e) {
 
 

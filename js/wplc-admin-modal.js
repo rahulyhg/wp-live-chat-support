@@ -5,7 +5,7 @@ var wplc_modal_cancel_callback = null;
 var wplc_modal_confirm_closes_modal = true;
 
 jQuery(function(){
-	jQuery(document).ready(function(){
+	jQuery(function(){
 		jQuery("body").on("click", ".wplc_modal_trigger_open", function(){
 			var current_modal_id = jQuery(this).attr("modal_id");
 			jQuery("#wplc_modal_" + current_modal_id).fadeIn();
@@ -61,7 +61,7 @@ function wplc_modal_remove_callback(){
 
 (function($) {
 	
-	$(document).ready(function(event) {
+	$(function(event) {
 		if(!window.wdtEmojiBundle)
 			return;
 
