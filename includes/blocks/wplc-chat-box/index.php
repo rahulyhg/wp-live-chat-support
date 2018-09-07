@@ -204,6 +204,7 @@ function wplc_chat_box_block_editor_assets() {
 
 	$gutenberg_settings = get_option( 'wplc_gutenberg_settings' );
 	$gutenberg_logo = $gutenberg_settings['wplc_gutenberg_logo'];
+	$settings['wplc_typing'] = __("Type here","wplivechat");
 	$settings['wplc_enabled'] = $gutenberg_settings['wplc_gutenberg_enable'];
 	$settings['wplc_size'] = ( $gutenberg_settings['wplc_gutenberg_size'] ? esc_attr( $gutenberg_settings['wplc_gutenberg_size'] ) : 2 );
 	$settings['wplc_logo'] = $gutenberg_logo;
