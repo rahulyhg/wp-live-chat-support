@@ -774,14 +774,14 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 	            	if (message_aid !== false && typeof wplc_agent_data !== "undefined" && typeof wplc_agent_data[message_aid] !== "undefined") {
 	            		/* we know who the agent was that sent this message (v7.1.00+) */
 	            		if (typeof wplc_show_chat_detail !== "undefined") {
-			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_agent_data[message_aid].md5 !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_agent_data[message_aid].md5+"?s=80' class='wplc-admin-message-avatar' />" : "");  }
+			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_agent_data[message_aid].md5 !== "undefined" ? "<img src='"+wplc_user_avatars[message_aid]+"?s=80' class='wplc-admin-message-avatar' />" : "");  }
 			                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_agent_data[message_aid].name !== "undefined" ? wplc_get_chat_person_name_msg_field(wplc_agent_data[message_aid].name) : "");  }
 			            }
 
 	            	} else {
 	            		/* we do'nt know which agent sent this message, so lets set it as the current user instead (backwards compat) */
 			            if (typeof wplc_show_chat_detail !== "undefined") {
-			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_current_agent.email !== "undefined" ? "<img src='//www.gravatar.com/avatar/"+wplc_current_agent.email+"?s=80'  class='wplc-admin-message-avatar' />" : "");  }
+			                if (typeof wplc_show_chat_detail.avatar !== "undefined" && wplc_show_chat_detail.avatar === "1") { message_grav = (typeof wplc_current_agent.email !== "undefined" ? "<img src='"+wplc_user_avatars[message_aid]+"?s=80' class='wplc-admin-message-avatar' />" : "");  }
 			                if (typeof wplc_show_chat_detail.name !== "undefined" && wplc_show_chat_detail.name === "1") { message_from = (typeof wplc_current_agent.name !== "undefined" ? wplc_get_chat_person_name_msg_field(wplc_current_agent.name) : "");  }
 			            }
 			        }
