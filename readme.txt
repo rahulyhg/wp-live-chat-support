@@ -2,7 +2,7 @@
 Contributors: WP-LiveChat, NickDuncan, CodeCabin_, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
-Requires at least: 3.8
+Requires at least: 4.4
 Tested up to: 4.9
 Requires PHP: 5.3
 Stable tag: trunk

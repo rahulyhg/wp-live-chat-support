@@ -57,7 +57,7 @@ var wplc_display_name = wplc_name;
 var wplc_enable_ding = wplc_enable_ding;
 var wplc_first_run = true;
 
-jQuery(document).ready(function(){
+jQuery(function(){
     //Parse existing data
     if(typeof niftyFormatParser !== "undefined"){
         var htmlToParse = jQuery(".admin_chat_box_inner").html();
@@ -282,7 +282,7 @@ function wplc_display_chat_status_update(new_chat_status, cid) {
     }
 }
 
-jQuery(document).ready(function () {
+jQuery(function () {
 
     var wplc_image = admin_pic;
 

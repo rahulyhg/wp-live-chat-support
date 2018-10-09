@@ -1,6 +1,6 @@
 (function($) {
 	
-	$(document).ready(function(event) {
+	$(function(event) {
 		var container = "#wpbody";
 
 		if($("#editor.gutenberg__editor").length)

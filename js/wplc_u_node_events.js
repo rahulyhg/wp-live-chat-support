@@ -12,7 +12,7 @@ var agent_joined = {};
  */
 var bleeper_disable_mongo = true;
 
-jQuery(document).ready(function() {        
+jQuery(function() {        
     bleeper_disable_mongo = true;
 
     /**

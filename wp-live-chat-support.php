@@ -2828,7 +2828,7 @@ function wplc_hook_control_superadmin_head() {
     $ajax_nonce = wp_create_nonce("wplc");
     ?>
       <script type="text/javascript">
-          jQuery(document).ready(function () {
+          jQuery(function () {
 
 
               var wplc_set_transient = null;
@@ -6132,7 +6132,7 @@ function wplc_basic_triggers_page(){
     $content .= "<script>
     				var isOn = true;
     				jQuery(function(){
-    					jQuery(document).ready(function(){
+    					jQuery(function(){
     						setInterval(function(){
     							if(isOn){
     								jQuery('.trigger_img_main').fadeOut('fast', function(){

@@ -413,7 +413,7 @@ if (update === false) {
 
 
 
-jQuery(document).ready(function () {
+jQuery(function () {
     jQuery('body').on("click", "a", function (event) {
         if (jQuery(this).hasClass('wplc_open_chat')) {
             if (event.preventDefault) {
@@ -532,7 +532,7 @@ jQuery("body").on("change","#wplc_field_type", function() {
 
 });
 
-jQuery(window).ready(function(){
+jQuery(function(){
 
     if( typeof ace !== 'undefined' ){
 

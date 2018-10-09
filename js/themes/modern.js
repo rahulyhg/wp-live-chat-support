@@ -292,7 +292,7 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
 var wplc_leave_window_alone = false;
 var wplc_currently_animating_agent_header = false;
 
-jQuery(document).ready(function() { 
+jQuery(function() { 
 
     
     jQuery("body").on("mousewheel", "#wplc_chatbox", function(turn, delta){

@@ -110,7 +110,7 @@ jQuery(document).on( "wplc_open_chat_2", function( e ) {
     Cookies.set('wplc_minimize', "", { expires: 1, path: '/' });
 });
 
-jQuery(document).ready(function() { 
+jQuery(function() { 
     //opens chat when clicked on top bar
     jQuery("body").on("click", "#wp-live-chat-1", function() {
         //jQuery.event.trigger({type: "wplc_open_chat"});

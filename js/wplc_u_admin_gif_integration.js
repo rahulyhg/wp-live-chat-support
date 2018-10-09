@@ -444,7 +444,7 @@ WPLC_U_Admin_GIF_Integration.prototype = {
 		try {
             var ctx = this;
 
-            jQuery(document).ready(function() {
+            jQuery(function() {
 
                 if (typeof(wplc_gif_integration_details) !== "undefined") {
                     ctx._initialized = true;

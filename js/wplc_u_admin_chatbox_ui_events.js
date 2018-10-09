@@ -182,7 +182,7 @@ WPLC_U_Admin_Chatbox_UI_Events.prototype = {
 		try {
 			var ctx = this;
 
-            jQuery(document).ready(function() {
+            jQuery(function() {
                 ctx.initEvents();
                 ctx.initVars();
 			});
