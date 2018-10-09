@@ -26,7 +26,7 @@ function wplc_filter_control_chat_notification_user_loaded($type,$cid,$data) {
             global $wplc_tblname_msgs;
 
 
-            $msg = sprintf(__("User is browsing <small><a href='%s' target='_BLANK'>%s</a></small>","wplivechat"),$data['uri'],wplc_shortenurl($data['uri']));
+            $msg = sprintf(__("User is browsing <small><a href='%s' target='_BLANK'>%s</a></small>","wplivechat"),strip_tags($data['uri']),strip_tags(wplc_shortenurl($data['uri'])));
 
             $wpdb->insert( 
                 $wplc_tblname_msgs, 
