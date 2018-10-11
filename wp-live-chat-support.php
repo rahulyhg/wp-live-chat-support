@@ -11,7 +11,7 @@
 */
 
 /**
- * 8.0.15 - 2018-08-20 - Low priority
+ * 8.0.15 - 2018-08-20 - High priority
  * Added WP User Avatar integration
  * Added jQuery 3 compatibility as per WordPress.org guidelines
  * Added auto hide of chat ended prompt on close or restart

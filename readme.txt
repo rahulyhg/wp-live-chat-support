@@ -208,6 +208,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 8.0.15 =
+It is highly recommended that you upgrade to WP Live Chat Support version 8.0.15 for security reasons.
+
 = 8.0.12 =
 It is highly recommended that you upgrade to WP Live Chat Support version 8.0.12 for stability reasons.
 
@@ -237,6 +240,24 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.15 - 2018-10-11 - High priority =
+* Added WP User Avatar integration
+* Added jQuery 3 compatibility as per WordPress.org guidelines
+* Added auto hide of chat ended prompt on close or restart
+* Fixed a possible injection issue within the notification control
+* Fixed Gutenberg and Yoast compatibility issue
+* Fixed minor issue with rest storage module
+* Fixed minor styling issue with popup dashbaord
+* Fixed some core issues which influenced custom fields (Pro)
+* Fixed issue with Android Browser image missing in dashboard
+* Fixed delete chat history not deleting messages
+* Fixed nonce checking for non-logged in users failing on cached pages for AJAX and WP API
+* Updated NL translation with GDPR strings (Google Translate)
+* Updated EL translation files. Thanks to Ioannis Barkouzos
+* Updated FR translation files. Thanks to Freitas Junior
+* Updated IT translation files. Thanks to Carlo Piazzano
+* Updated AR translation files. 
 
 = 8.0.14 - 2018-07-19 - Medium priority =
 * Removed 'let' from wplc_server.js file (Adds Safari compatibility)
