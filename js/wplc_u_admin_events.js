@@ -442,10 +442,12 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
                 }
 
                 bleeper_sort_and_send_messages(wplc_cid);
-                jQuery.event.trigger({type: "bleeper_messages_added", ndata:{cid:wplc_cid}});
+                
 
                 
             }
+
+            jQuery.event.trigger({type: "bleeper_messages_added", ndata:{cid:wplc_cid}});
         });
     });
 

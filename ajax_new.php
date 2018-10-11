@@ -25,7 +25,7 @@ function wplc_init_ajax_callback() {
     @ob_start();
 
     $wplc_session_id = rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9);
-    $check = check_ajax_referer( 'wplc', 'security' );
+    $check = is_user_logged_in() ? check_ajax_referer( 'wplc', 'security' ) : 1;
 
     if ($check == 1) {
 

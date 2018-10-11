@@ -370,6 +370,8 @@ jQuery(function() {
 
             }
 
+            jQuery('#wplc_gdpr_end_chat_notice_container').hide();
+
 
             
         //}
