@@ -491,6 +491,7 @@ jQuery(function() {
         jQuery('.bleeper_restart_chat').remove();
         bleeper_end_chat_div_create();
 
+
         if (typeof user_heartbeat !== "undefined"){
             clearInterval(user_heartbeat);
         }

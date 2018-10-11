@@ -240,3 +240,11 @@ input#wplc_chat_gdpr_opt_in.incomplete + label {
     background: none !important;
     padding: 4px;
 }
+
+
+@media screen and (max-width:510px){
+    #wp-live-chat.modern #wp-live-chat-2,
+    #wp-live-chat.modern #wp-live-chat-4 {
+    bottom:100px;
+    }
+}

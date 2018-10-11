@@ -139,6 +139,7 @@ jQuery(function() {
         jQuery("#wplc_hovercard").hide();
         jQuery("#wp-live-chat").css("height","");
         jQuery("#wplc-chat-alert").removeClass('is-active');
+        jQuery('#wplc_gdpr_end_chat_notice_container').hide();
     });
 
     jQuery("body").on("click", "#wp-live-chat-header", function(){

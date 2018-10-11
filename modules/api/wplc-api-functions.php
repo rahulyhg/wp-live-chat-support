@@ -286,6 +286,8 @@ function wplc_api_send_message(WP_REST_Request $request){
 									$return_array['data'] = array("chat_id" => intval($request['chat_id']),
 																  "agent_id" => intval($request['agent_id']));
 
+									do_action("wplc_new_user_message_after_record_hook", $chat_id, $message);
+
 
 								} else if ($action == "wplc_admin_send_msg"){
 									$message = sanitize_text_field($message);
@@ -1061,7 +1063,7 @@ function wplc_api_remote_upload(WP_REST_Request $request){
  * Rest Permission check for restricted end points
 */
 function wplc_api_permission_check(){
-    $wplc_rest_access_allowed = check_ajax_referer( 'wp_rest', '_wpnonce', false );
+    $wplc_rest_access_allowed = is_user_logged_in() ? check_ajax_referer( 'wp_rest', '_wpnonce', false ) : true;
     if($wplc_rest_access_allowed === false){
         //Check if the special access token is here
         if(isset($_REQUEST['auth_forced']) && $_REQUEST['auth_forced'] === "90e1da97979422f558a517c1668fde93"){

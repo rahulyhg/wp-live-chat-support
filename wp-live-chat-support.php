@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.14
+  Version: 8.0.15
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -13,6 +13,21 @@
 /**
  * 8.0.15 - 2018-08-20 - Low priority
  * Added WP User Avatar integration
+ * Added jQuery 3 compatibility as per WordPress.org guidelines
+ * Added auto hide of chat ended prompt on close or restart
+ * Fixed a possible injection issue within the notification control
+ * Fixed Gutenberg and Yoast compatibility issue
+ * Fixed minor issue with rest storage module
+ * Fixed minor styling issue with popup dashbaord
+ * Fixed some core issues which influenced custom fields (Pro)
+ * Fixed issue with Android Browser image missing in dashboard
+ * Fixed delete chat history not deleting messages
+ * Fixed nonce checking for non-logged in users failing on cached pages for AJAX and WP API
+ * Updated NL translation with GDPR strings (Google Translate)
+ * Updated EL translation files. Thanks to Ioannis Barkouzos
+ * Updated FR translation files. Thanks to Freitas Junior
+ * Updated IT translation files. Thanks to Carlo Piazzano
+ * Updated AR translation files. 
  *
  * 8.0.14 - 2018-07-19 - Low priority
  * Removed 'let' from wplc_server.js file (Adds Safari compatibility)
@@ -673,7 +688,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.14";
+$wplc_version = "8.0.15";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -4750,7 +4765,9 @@ function wplc_hook_control_head() {
 function wplc_del_history(){
     global $wpdb;
     global $wplc_tblname_chats;
+    global $wplc_tblname_msgs;
     $wpdb->query("TRUNCATE TABLE $wplc_tblname_chats");
+    $wpdb->query("TRUNCATE TABLE $wplc_tblname_msgs");
 }
 
 add_filter("wplc_filter_chat_header_extra_attr","wplc_filter_control_chat_header_extra_attr",10,1);

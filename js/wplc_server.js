@@ -926,8 +926,17 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
                 if (isAudioPattern) {
                     message_content = "<a href='" + message_content + "' target='_blank'>" + (typeof wplc_visitor_voice !== 'undefined' && typeof wplc_visitor_voice.play_sound !== 'undefined' ? wplc_visitor_voice.play_sound : 'Open Voice Note') + "</a>";
                 } else if (typeof niftyFormatParser !== "undefined"){
-	                message_content = niftyFormatParser(message_content);
+                	if(typeof the_message.other !== 'undefined' && typeof the_message.other.ignore_style_tags !== 'undefined' && the_message.other.ignore_style_tags === true){
+                		//Don't nifty parse this	
+                	} else {
+	                	message_content = niftyFormatParser(message_content);
+	                }
 	            } 
+
+	            //Cleanup the original message
+	             var original_message_stripper = document.createElement("DIV");
+   				original_message_stripper.innerHTML = original_message;
+   				original_message = original_message_stripper.textContent || original_message_stripper.innerText || "";
 
 				// If it is a GIF message
  				if (gifExtensionPattern.test(message_content)) {

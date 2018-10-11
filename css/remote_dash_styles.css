@@ -357,6 +357,10 @@ span.bleeper-edit-message {
     width:60% !important;
 }
 
+.nifty_top_wrapper.bleeper-out-dash .wrap {
+    z-index: 9999 !important;
+}
+
 .admin_visitor_advanced_info {
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -1251,4 +1255,10 @@ span.wplc_system_notification {
 #nifty_wrapper .messages .messageBody a{
     color: #fff !important;
     text-decoration: underline !important;
+}
+
+#nifty_wrapper .messages .wplc_system_notification .admin_visitor_advanced_info {
+    background: none !important;
+    border:none !important;
+    padding: 0 !important;
 }
