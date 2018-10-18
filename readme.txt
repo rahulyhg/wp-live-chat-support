@@ -241,6 +241,9 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 == Changelog ==
 
+= 8.0.16 - 2018-10-18 - Low priority =
+* Fixed undefined 'wplc_user_avatars' not defined error on frontend
+
 = 8.0.15 - 2018-10-11 - High priority =
 * Added WP User Avatar integration
 * Added jQuery 3 compatibility as per WordPress.org guidelines
