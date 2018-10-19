@@ -21,7 +21,7 @@
  * Added WP User Avatar integration
  * Added jQuery 3 compatibility as per WordPress.org guidelines
  * Added auto hide of chat ended prompt on close or restart
- * Fixed a possible injection issue within the notification control
+ * Fixed a possible injection issue within the notification control (Thanks to Nico from https://serhack.me)
  * Fixed Gutenberg and Yoast compatibility issue
  * Fixed minor issue with rest storage module
  * Fixed minor styling issue with popup dashbaord
