@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.16
+  Version: 8.0.17
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,9 @@
 */
 
 /**
+ * 8.0.17 - 2018-10-19 - Low priority
+ * Removes WP User Avatar option from settings page. This was incorrectly included in the last release.
+ *
  * 8.0.16 - 2018-10-18 - Low priority
  * Fixed undefined 'wplc_user_avatars' not defined error on frontend
  * 
@@ -691,7 +694,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.16";
+$wplc_version = "8.0.17";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );

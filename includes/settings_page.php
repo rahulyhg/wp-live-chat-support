@@ -375,7 +375,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                     </small>
                 </td>
             </tr>
-            <tr>
+            <!--<tr>
                 <td width='300'>
                     <?php _e("Avatar","wplivechat") ?> <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Choose which picture to use as your avatar.","wplivechat") ?>"></i>
                 </td>
@@ -385,7 +385,7 @@ if (get_option("WPLC_HIDE_CHAT") == true) {
                       <option value="wp_avatar" <?php echo (isset($wplc_settings['wplc_avatar_source']) && $wplc_settings['wplc_avatar_source'] == 'wp_avatar') ? 'selected' : ''; ?>>WP User Avatar</option>
                     </select>
                 </td>
-            </tr>
+            </tr>-->
               <!-- Chat Icon-->
               <tr>
                   <td width='300' valign='top'>

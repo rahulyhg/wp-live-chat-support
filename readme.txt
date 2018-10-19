@@ -241,6 +241,9 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 == Changelog ==
 
+= 8.0.17 - 2018-10-19 - Low priority =
+* Removes WP User Avatar option from settings page. This was incorrectly included in the last release
+
 = 8.0.16 - 2018-10-18 - Low priority =
 * Fixed undefined 'wplc_user_avatars' not defined error on frontend
 
