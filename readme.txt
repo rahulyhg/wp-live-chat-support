@@ -208,6 +208,9 @@ If the live chat box still does not appear on your website, please go through th
 
 == Upgrade Notice ==
 
+= 8.0.18 =
+It is highly recommended that you upgrade to WP Live Chat Support version 8.0.18 for security reasons.
+
 = 8.0.15 =
 It is highly recommended that you upgrade to WP Live Chat Support version 8.0.15 for security reasons.
 
@@ -240,6 +243,10 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.18 - 2018-10-31 - High Priority =
+* Fixed XSS vulnerability within the GDPR search system (Thanks to Tim Coen)
+* Fixed Self-XSS vulnerability within the message input field on both dashboard and chat box (Thanks to Tim Coen)
 
 = 8.0.17 - 2018-10-19 - Low priority =
 * Removes WP User Avatar option from settings page. This was incorrectly included in the last release

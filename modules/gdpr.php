@@ -156,7 +156,7 @@ function wplc_gdpr_page_layout(){
           <th>
             <form method="GET" action="">
               <input type="hidden" name="page" value='wplivechat-menu-gdpr-page'>
-              <input name='term' type="text" value='<?php echo(isset($_GET['term']) ? $_GET['term'] : ''); ?>' placeholder="<?php _e('Name, Email, Message', 'wplivechat'); ?>" style='height:30px; width: 70%'>
+              <input name='term' type="text" value='<?php echo(isset($_GET['term']) ? htmlspecialchars($_GET['term']) : ''); ?>' placeholder="<?php _e('Name, Email, Message', 'wplivechat'); ?>" style='height:30px; width: 70%'>
               
               <?php do_action('wplc_gdpr_page_search_form_before_submit_hook'); ?>
 
@@ -168,7 +168,7 @@ function wplc_gdpr_page_layout(){
    <tbody>
       <?php
         if(isset($_GET['term'])){
-          $results = wplc_gdpr_return_chat_session_search_results($_GET['term']);
+          $results = wplc_gdpr_return_chat_session_search_results(htmlspecialchars($_GET['term']));
 
           foreach ($results as $heading => $sub_results) {
               $original_heading = $heading;
@@ -197,6 +197,8 @@ function wplc_gdpr_page_layout(){
                   break;
               }
 
+              $action_action_filter = htmlspecialchars($action_action_filter);
+
               foreach ($sub_results as $key => $value) {
                   $cid = isset($value[$cid_identidier]) ? $value[$cid_identidier] : 'false';
                   $delete_button_text = str_replace("%%CID%%", $cid, __("Delete Chat (%%CID%%)", "wplivechat"));
@@ -215,8 +217,8 @@ function wplc_gdpr_page_layout(){
                       ?>
                     </td>
                     <td>
-                      <a class='button' href='?page=wplivechat-menu-gdpr-page&term=<?php echo($_GET["term"]); ?>&action=delete&filter=<?php echo $action_action_filter; ?>&id=<?php echo $cid; ?>'><?php echo $delete_button_text; ?></a>
-                      <a class='button button-primary' href='?page=wplivechat-menu-gdpr-page&term=<?php echo($_GET["term"]); ?>&action=download&filter=<?php echo $action_action_filter; ?>&id=<?php echo $cid; ?>'><?php echo $download_button_text; ?></a>
+                      <a class='button' href='?page=wplivechat-menu-gdpr-page&term=<?php echo(htmlspecialchars($_GET["term"])); ?>&action=delete&filter=<?php echo $action_action_filter; ?>&id=<?php echo htmlspecialchars($cid); ?>'><?php echo $delete_button_text; ?></a>
+                      <a class='button button-primary' href='?page=wplivechat-menu-gdpr-page&term=<?php echo(htmlspecialchars($_GET["term"])); ?>&action=download&filter=<?php echo $action_action_filter; ?>&id=<?php echo htmlspecialchars($cid); ?>'><?php echo $download_button_text; ?></a>
                     </td>
                   </tr>
                  <?php
@@ -574,7 +576,7 @@ add_action('init', 'wplc_gdpr_front_end_download_chat');
 function wplc_gdpr_front_end_download_chat(){
   if(isset($_GET['wplc_action']) && isset($_GET['wplc_init_nonce']) && isset($_GET['wplc_cid'])){
     if($_GET['wplc_action'] === 'wplc_gdpr_download_chat_json'){
-      if(wp_verify_nonce( $_GET['wplc_init_nonce'], 'wplc-init-nonce-' . date('Y-m-d'))){
+      if(wp_verify_nonce( htmlspecialchars($_GET['wplc_init_nonce']), 'wplc-init-nonce-' . date('Y-m-d'))){
         $chat_id = sanitize_text_field($_GET['wplc_cid']);
         if( ! filter_var($chat_id, FILTER_VALIDATE_INT) ) {
           /*  We need to identify if this CID is a node CID, and if so, return the WP CID */
@@ -672,7 +674,7 @@ function wplc_gdpr_disabled_warning(){
           $output .=     "<p>" . $privacy_warning . " <a href='https://wp-livechat.com/privacy-policy/' target='_blank'>" . __('Privacy Policy', 'wplivechat') . "</a></p>";
           $output .=     "<p>" . $final_warning . "</p>";
           $output .=     "<a class='button' href='?page=wplivechat-menu-settings#tabs-privacy' >" . __("Privacy Settings", "wplivechat") . "</a> ";
-          $output .=     "<a class='button' href='?page=" . $_GET['page'] ."&wplc_gdpr_dismiss_notice=true' style='color: #fff;background-color: #bb0000;border-color: #c70000;'>" . __("Dismiss & Accept Responsibility", "wplivechat") . "</a>";
+          $output .=     "<a class='button' href='?page=" . htmlspecialchars($_GET['page']) ."&wplc_gdpr_dismiss_notice=true' style='color: #fff;background-color: #bb0000;border-color: #c70000;'>" . __("Dismiss & Accept Responsibility", "wplivechat") . "</a>";
           $output .= "</div>";
           echo $output;
         }
