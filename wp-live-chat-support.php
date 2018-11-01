@@ -11,7 +11,7 @@
 */
 
 /**
- * 8.0.18 - 2018-10-31 - High Priority
+ * 8.0.18 - 2018-11-01 - High Priority
  * Fixed XSS vulnerability within the GDPR search system (Thanks to Tim Coen)
  * Fixed Self-XSS vulnerability within the message input field on both dashboard and chat box (Thanks to Tim Coen)
  *
