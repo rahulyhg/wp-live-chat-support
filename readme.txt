@@ -3,7 +3,7 @@ Contributors: WP-LiveChat, NickDuncan, CodeCabin_, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 4.4
-Tested up to: 4.9
+Tested up to: 5.0
 Requires PHP: 5.3
 Stable tag: trunk
 License: GPLv2
@@ -243,6 +243,10 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.19 - 2018-11-19 - Medium priority =
+* Tested on WordPress 5 Beta
+* Tested Basic Gutenberg Block Support
 
 = 8.0.18 - 2018-11-01 - High Priority =
 * Fixed XSS vulnerability within the GDPR search system (Thanks to Tim Coen)
