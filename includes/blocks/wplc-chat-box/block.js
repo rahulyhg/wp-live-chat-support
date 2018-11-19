@@ -4,7 +4,7 @@
 
 	var __ = wp.i18n.__;
 	var el = wp.element.createElement;
-	var children = wp.blocks.source.children;
+	var children = wp.blocks.children;
 	var registerBlockType = wp.blocks.registerBlockType;
 
 	String.prototype.stripSlashes = function(){
@@ -41,7 +41,7 @@
 	}
 
 	registerBlockType( 'wp-live-chat-support/wplc-chat-box', {
-		title: __( 'WP Live Chat Trigger (WP Live Chat Support)', 'WPLC' ),
+		title: __( 'WP Live Chat Trigger', 'WPLC' ),
 		icon: 'format-chat',
 		category: 'common',
 
@@ -76,6 +76,7 @@
 				output_wplc_block_text,
 				output_wplc_block_icon
 			);
+			
 
 			return el(
 				'div',
