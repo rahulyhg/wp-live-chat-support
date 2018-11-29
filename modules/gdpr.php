@@ -9,12 +9,13 @@ add_filter("wplc_activate_default_settings_array", "wplc_gdpr_set_default_settin
  * Sets the default GDPR options
 */
 function wplc_gdpr_set_default_settings($wplc_default_settings_array){
-    if(is_array($wplc_default_settings_array)){
+    //Disabled by default on new installations
+    /*if(is_array($wplc_default_settings_array)){
         if(!isset($wplc_default_settings_array['wplc_gdpr_enabled'])){
             //Is not set already
-            $wplc_default_settings_array['wplc_gdpr_enabled'] = 1;
+            //$wplc_default_settings_array['wplc_gdpr_enabled'] = 0;
         }
-    }
+    }*/
     return $wplc_default_settings_array;
 }
 
@@ -756,7 +757,7 @@ function wplc_gdpr_update_settings_between_versions($wplc_settings){
     if($gdpr_enabled_atleast_once_before === false){
       //Only fire if this user has never had GDPR enabled before
       update_option('WPLC_GDPR_ENABLED_AT_LEAST_ONCE', 'true');
-      $wplc_settings['wplc_gdpr_enabled'] = '1';
+      $wplc_settings['wplc_gdpr_enabled'] = '0';
     }
   }
 
