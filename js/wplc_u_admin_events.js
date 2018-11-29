@@ -101,7 +101,7 @@ jQuery(document).on("bleeper_connect", function(e) {
       jQuery(".nifty_bg_holder").css('left','25%');  
 
     } else {
-      socket = io.connect(node_uri, { secure:true, query : e.ndata.query_string } );
+      socket = io.connect(node_uri, { secure:true, query : e.ndata.query_string, transports: ['websocket'] } );
       wplc_node_socket_connected = true;
       bleeper_delegates();
       bleeper_update_agent_unread();
@@ -682,7 +682,7 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
             }
         } else if (e.ndata.action === "wplc_choose_accepting") {
             if (typeof socket === "undefined" || socket.connected === false) {
-                socket = io.connect(node_uri, { secure:true, query : query_string } );
+                socket = io.connect(node_uri, { secure:true, query : query_string, transports: ['websocket'] } );
                 bleeper_delegates();
                 jQuery(".nifty_bg_holder").fadeOut();  
                 
