@@ -83,10 +83,22 @@ The most cost effective Live Chat plugin. Chat with your visitors for free! WP L
 
 Get the [WP Live Chat Support Pro Add-on](http://wp-livechat.com/purchase-pro/?utm_source=readme&utm_medium=wordpress&utm_campaign=buy) for a once off payment!
 
+= Extend the functionality of WP Live Chat Support with the WP Live Chat Support Mobile/Desktop App Extension =
+
+* Accept chats from anywhere with our Android and iOS apps
+* Push notifications for new chats and messages
+* Manage devices directly from within the WordPress admin area
+* Effortless installation by simply scanning a QR code with your mobile device
+* Windows app also included
+* Mac app coming soon!
+* World-class support
+
+Get the [WP Live Chat Support Mobile/Desktop App Extension](https://wp-livechat.com/extensions/mobile-desktop-app-extension/?utm_source=readme&utm_medium=wordpress&utm_campaign=buy_app) now!
+
 = Coming soon =
-* Mobile and desktop App - we are currently in beta stage with our mobile and desktop live chat app. If you would like to help test, please get in touch.
-* Improvements - Better link and image handling within the live chat text area
-* New feature - Triggers - Build custom live chat triggers. For example, if a user has been idle for more than 2 minutes, initiate a live chat and send a response.
+* Front end performance improvements
+* Message read receipts
+* Customer Insights
 
 = 30 second live chat installation =
 
@@ -246,6 +258,12 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+
+= 8.0.21 - 2018-12-18 - Low priority =
+* Readme Update: Coming soon features
+* Readme Update: Features list
+* Tested on WordPress 5.0.1
+* Updated ZH_CN translation files. Thanks to Air
 
 = 8.0.20 - 2018-11-29 - Medium priority =
 * Fixed issue where relay server requests were made via a shortpoll. (Performance Update)
