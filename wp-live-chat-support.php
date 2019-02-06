@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.22
+  Version: 8.0.23
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,10 @@
 */
 
 /**
+ * 8.0.23 - 2019-02-05 - Low priority
+ * Fixed access to new dashboard for non admin agents
+ * Fixed documentation suggestions not working (Pro)
+ *
  * 8.0.22 - 2019-02-04 - Low priority
  * Introduced a new dashboard that showcases latest blog posts, the latest podcast episode and the system status
  * Moved GDPR warnings for first time users to the settings page only
@@ -118,7 +122,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.22";
+$wplc_version = "8.0.23";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -472,16 +476,26 @@ function wplc_filter_control_menu_control() {
     return $array;
 }
 
-if (isset($_GET['page'])) {
-    if ($_GET['page'] === 'wplivechat-menu') {
-        // check if we are overriding this redirect because the user pressed the "Chat now" button in the dashboard
-        if (isset($_GET['subaction']) && $_GET['subaction'] == 'override') { } else {
-            if(!isset($_COOKIE['wplcfirstsession'])) {
-                @setcookie("wplcfirstsession", true, time() + (60 * 10)); // 60 seconds ( 1 minute) * 20 = 20 minutes
-                @Header("Location: ./admin.php?page=wplivechat-menu-dashboard");
-                exit();
+add_action('admin_init', 'wplc_metric_dashboard_redirect');
+function wplc_metric_dashboard_redirect(){
+    try{
+        $cap = apply_filters("wplc_ma_filter_menu_control",array());
+        if(current_user_can($cap[1])){
+            if (isset($_GET['page'])) {
+                if ($_GET['page'] === 'wplivechat-menu') {
+                    // check if we are overriding this redirect because the user pressed the "Chat now" button in the dashboard
+                    if (isset($_GET['subaction']) && $_GET['subaction'] == 'override') { } else {
+                        if(!isset($_COOKIE['wplcfirstsession'])) {
+                            @setcookie("wplcfirstsession", true, time() + (60 * 10)); // 60 seconds ( 1 minute) * 20 = 20 minutes
+                            @Header("Location: ./admin.php?page=wplivechat-menu-dashboard");
+                            exit();
+                        }
+                    }
+
+                }
             }
         }
+    } catch (Exception $ex){
 
     }
 }
