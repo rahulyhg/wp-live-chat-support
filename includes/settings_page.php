@@ -1003,7 +1003,7 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                     -->
                         
                     <tr>
-                        <th><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></th>
+                        <td><label for=""><?php _e('Choose an animation', 'wplivechat'); ?></label></td>
 
                         <td>    
                             <div class='wplc_animation_block'>
@@ -1046,6 +1046,8 @@ if (isset($wplc_settings['wplc_hide_when_offline']) && $wplc_settings['wplc_hide
                 } ?>/>
                         </td>
                     </tr>
+
+                    <?php do_action('wplc_hook_styling_setting_bottom'); ?>
           </table>
       </div>
         <div id="tabs-5">

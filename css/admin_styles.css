@@ -447,3 +447,11 @@ margin-top: 10px !important;
   padding: 15px;
   padding-bottom: 0;
 }
+
+#wplc_settings input[type=button]:not(.button),
+#wplc_settings button:not(.button) {
+    background: #e6e6e6;
+    border: none; 
+    border-radius: 5px;
+    padding: 7px 7px
+}

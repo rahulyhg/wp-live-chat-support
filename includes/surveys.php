@@ -222,9 +222,9 @@ function wplc_nimble_load_scripts() {
 
 
 
-        if( isset( $settings['survey_user'] ) ){ $ns_id = $settings['survey_user']; } else { $ns_id = ''; }
-        if( isset( $settings['survey'] ) ){ $ns_sid = $settings['survey']; } else { $ns_sid = ''; }
-        if( isset( $settings['lead_form'] ) ){ $ns_lfid = $settings['lead_form']; } else { $ns_lfid = ''; }
+        if( isset( $settings['survey_user'] ) ){ $ns_id = $settings['survey_user']; } else { $ns_id = 'false'; }
+        if( isset( $settings['survey'] ) ){ $ns_sid = $settings['survey']; } else { $ns_sid = 'false'; }
+        if( isset( $settings['lead_form'] ) ){ $ns_lfid = $settings['lead_form']; } else { $ns_lfid = 'false'; }
 
         //wp_enqueue_script( 'nimble-squirrel-user-script', '//nimblesquirrel.com/api/nimblesquirrel.js', array(), '1.0.0', true );
         

@@ -3,7 +3,7 @@ Contributors: WP-LiveChat, NickDuncan, CodeCabin_, dylanauty
 Donate link: http://www.wp-livechat.com
 Tags: live chat, live support, chat plugin, live help, wordpress live chat, chat, live chat plugin, live support plugin, live chat support plugin, chat plugin, support plugin, live help
 Requires at least: 4.4
-Tested up to: 5.0
+Tested up to: 5.1
 Requires PHP: 5.3
 Stable tag: trunk
 License: GPLv2
@@ -258,6 +258,19 @@ We have patched the PHPMailer vulnerability. Please update to version 7.0.02.
 
 
 == Changelog ==
+= 8.0.24 - 2019-03-04 - Medium priority =
+* Added styling settings hook.
+* Added Slovenian translation files. Thanks to Zarko Germek
+* Fixed bug where transcript message would be empty if settings were cleared (defaults)
+* Fixed bug where slashes were repeatedly added to GDPR company name
+* Fixed issues with history styling when using our servers
+* Fixed a bug where wp_localize_script would localize an empty value, causing WP Core errors appearing on the frontent (Survey Module)
+* Modified cookie lifespan for dashboard redirect
+* Modified remote dashboard URL to load directly from API
+* Modified all Gravatar links to default to Mystery Man
+* Improved styling in settings area
+* Tested on WordPress 5.1.0
+
 = 8.0.23 - 2019-02-05 - Low priority =
 
 * Fixed access to new dashboard for non admin agents
