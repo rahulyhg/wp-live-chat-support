@@ -3,9 +3,9 @@ jQuery(document).on("wplc_minimize_chat", function( e ) {
     if(jQuery("#wp-live-chat").attr("original_pos") === "bottom_right"){
         jQuery("#wp-live-chat").css("left", "");
         jQuery("#wp-live-chat").css("bottom", "0");
-        jQuery("#wp-live-chat").css("right", "100px");
+        jQuery("#wp-live-chat").css("right", "20px");
     } else if(jQuery("#wp-live-chat").attr("original_pos") === "bottom_left"){
-        jQuery("#wp-live-chat").css("left", "100px");
+        jQuery("#wp-live-chat").css("left", "20px");
         jQuery("#wp-live-chat").css("bottom", "0");
         jQuery("#wp-live-chat").css("right", "");
     } else if(jQuery("#wp-live-chat").attr("original_pos") === "left"){

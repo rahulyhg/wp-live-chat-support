@@ -18,10 +18,12 @@
  * Fixed bug where slashes were repeatedly added to GDPR company name
  * Fixed issues with history styling when using our servers
  * Fixed a bug where wp_localize_script would localize an empty value, causing WP Core errors appearing on the frontent (Survey Module)
+ * Fixed placement issue when using classic theme
  * Modified cookie lifespan for dashboard redirect
  * Modified remote dashboard URL to load directly from API
  * Modified all Gravatar links to default to Mystery Man
  * Improved styling in settings area
+ * Updated Bulgarian translation file. Thanks to Pavel Valkov.
  * Tested on WordPress 5.1.0
  *
  * 8.0.23 - 2019-02-05 - Low priority
