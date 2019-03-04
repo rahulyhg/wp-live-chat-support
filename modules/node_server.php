@@ -3,7 +3,7 @@
  * Node Code -> Insert pun here
 */
 
-define("BLEEPER_API_URL", "https://bleeper.io/app/api/v1/");
+define("BLEEPER_API_URL", "https://api.bleeper.io/app/api/v1.2/");
 define("BLEEPER_REMOTE_DASH_ROUTE", "remote_dashboard.php");
 
 define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");

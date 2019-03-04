@@ -597,7 +597,7 @@ function wplc_api_return_sessions() {
                $session_array[$result->id]['type'] = __("Returning","wplivechat");
            }
            
-           $session_array[$result->id]['image'] = "//www.gravatar.com/avatar/".md5($result->email)."?s=30";
+           $session_array[$result->id]['image'] = "//www.gravatar.com/avatar/".md5($result->email)."?s=30&d=mm";
            $session_array[$result->id]['data']['browsing'] = $result->url;
            $path = parse_url($result->url, PHP_URL_PATH);
            

@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.23
+  Version: 8.0.24
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,19 @@
 */
 
 /**
+ * 8.0.24 - 2019-03-04 - Medium priority
+ * Added styling settings hook.
+ * Added Slovenian translation files. Thanks to Zarko Germek
+ * Fixed bug where transcript message would be empty if settings were cleared (defaults)
+ * Fixed bug where slashes were repeatedly added to GDPR company name
+ * Fixed issues with history styling when using our servers
+ * Fixed a bug where wp_localize_script would localize an empty value, causing WP Core errors appearing on the frontent (Survey Module)
+ * Modified cookie lifespan for dashboard redirect
+ * Modified remote dashboard URL to load directly from API
+ * Modified all Gravatar links to default to Mystery Man
+ * Improved styling in settings area
+ * Tested on WordPress 5.1.0
+ *
  * 8.0.23 - 2019-02-05 - Low priority
  * Fixed access to new dashboard for non admin agents
  * Fixed documentation suggestions not working (Pro)
@@ -122,7 +135,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.23";
+$wplc_version = "8.0.24";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -486,7 +499,7 @@ function wplc_metric_dashboard_redirect(){
                     // check if we are overriding this redirect because the user pressed the "Chat now" button in the dashboard
                     if (isset($_GET['subaction']) && $_GET['subaction'] == 'override') { } else {
                         if(!isset($_COOKIE['wplcfirstsession'])) {
-                            @setcookie("wplcfirstsession", true, time() + (60 * 10)); // 60 seconds ( 1 minute) * 20 = 20 minutes
+                            @setcookie("wplcfirstsession", true, time() + (60 * 60 * 24)); // 60s * 60m * 24h (Life span of cookie)
                             @Header("Location: ./admin.php?page=wplivechat-menu-dashboard");
                             exit();
                         }
@@ -986,7 +999,7 @@ function wplc_push_js_to_front_basic() {
 
     if (isset($_COOKIE['wplc_email']) && $_COOKIE['wplc_email'] != "") { $wplc_user_gravatar = sanitize_text_field(md5(strtolower(trim($_COOKIE['wplc_email'])))); } else {$wplc_user_gravatar = ""; }
 
-    if ($wplc_user_gravatar != "") { $wplc_grav_image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30' class='wplc-user-message-avatar' />";} else { $wplc_grav_image = "";}
+    if ($wplc_user_gravatar != "") { $wplc_grav_image = "<img src='//www.gravatar.com/avatar/$wplc_user_gravatar?s=30&d=mm' class='wplc-user-message-avatar' />";} else { $wplc_grav_image = "";}
 
 	if ( ! empty( $wplc_grav_image ) ) {
 		wp_localize_script('wplc-user-script', 'wplc_gravatar_image', $wplc_grav_image);
@@ -1743,13 +1756,13 @@ function wplc_filter_control_live_chat_box_above_main_div( $msg, $wplc_settings,
 		                $agent = 'Admin';
 		            }
 		        }
-		        $cbox_header_bg = "style='background-image:url(https://www.gravatar.com/avatar/".md5($user_info->user_email)."?s=380); no-repeat; cover;'";
+		        $cbox_header_bg = "style='background-image:url(https://www.gravatar.com/avatar/".md5($user_info->user_email)."?s=380&d=mm); no-repeat; cover;'";
 
 				$extra = apply_filters( "wplc_filter_further_live_chat_box_above_main_div", '', $wplc_settings, $cid, $chat_data, $agent );
 
 				$agent_string = '
 				<p style="text-align:center;">
-					<img class="img-thumbnail img-circle wplc_thumb32 wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'.$agent_id.'" title="'.$agent.'" src="https://www.gravatar.com/avatar/'.md5($user_info->user_email).'?s=60" /><br />
+					<img class="img-thumbnail img-circle wplc_thumb32 wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'.$agent_id.'" title="'.$agent.'" src="https://www.gravatar.com/avatar/'.md5($user_info->user_email).'?s=60&d=mm" /><br />
 					<span class="wplc_agent_name wplc-color-2">'.$agent.'</span>
 					'.$extra.'
 					<span class="bleeper_pullup down"><i class="fa fa-angle-up"></i></span>
@@ -1817,7 +1830,7 @@ function wplc_filter_control_live_chat_box_html_4th_layer($wplc_settings,$wplc_u
 
   $ret_msg .= "<p>";
   $placeholder = __('Type here','wplivechat');
-  $ret_msg .= "<textarea type=\"text\" name=\"wplc_chatmsg\" id=\"wplc_chatmsg\" placeholder=\"".$placeholder."\" onclick=\"jQuery(this).select();\" class='wdt-emoji-bundle-enabled'></textarea>";
+  $ret_msg .= "<textarea type=\"text\" name=\"wplc_chatmsg\" id=\"wplc_chatmsg\" placeholder=\"".$placeholder."\" class='wdt-emoji-bundle-enabled'></textarea>";
   if(!isset($wplc_settings['wplc_newtheme'])){ $wplc_settings['wplc_newtheme'] = "theme-2"; }
   if (isset($wplc_settings['wplc_newtheme']) && $wplc_settings['wplc_newtheme'] == 'theme-2') {
   	$ret_msg .= apply_filters("wplc_filter_typing_control_div_theme_2","");
@@ -3052,7 +3065,7 @@ function wplc_draw_chat_area($cid, $chat_data = false) {
       do_action("wplc_hook_admin_visitor_info_display_before",$cid);
 
 
-      echo "  <div style='float:left; width:100px;'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "\" class=\"admin_chat_img\" /></div>";
+      echo "  <div style='float:left; width:100px;'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?d=mm\" class=\"admin_chat_img\" /></div>";
       echo "  <div style='float:left;'>";
 
       echo "      <div class='admin_visitor_info_box1'>";
@@ -4018,7 +4031,7 @@ function wplc_hook_control_chat_history() {
 
 	            echo "<tr id=\"record_" . $tcid . "\" $trstyle>";
 	            echo "<td class='chat_id column-chat_d'>" . date("Y-m-d H:i:s", current_time( strtotime( $result->timestamp ) ) ) . "</td>";
-	            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40\" /> " . sanitize_text_field($result->name) . "</td>";
+	            echo "<td class='chat_name column_chat_name' id='chat_name_" . $tcid . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=40&d=mm\" /> " . sanitize_text_field($result->name) . "</td>";
 	            echo "<td class='chat_email column_chat_email' id='chat_email_" . $tcid . "'><a href='mailto:" . sanitize_text_field($result->email) . "' title='Email " . ".$result->email." . "'>" . sanitize_text_field ($result->email) . "</a></td>";
 	            echo "<td class='chat_name column_chat_url' id='chat_url_" . $tcid . "'>" . esc_url($result->url) . "</td>";
 	            echo "<td class='chat_status column_chat_status' id='chat_status_" . $tcid . "'><strong>" . wplc_return_status($result->status) . "</strong></td>";
@@ -4152,7 +4165,7 @@ function wplc_admin_display_offline_messages_new() {
         foreach ($results as $result) {
             echo "<tr id=\"record_" . $result->id . "\">";
             echo "<td class='chat_id column-chat_d'>" . $result->timestamp . "</td>";
-            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\" /> " . $result->name . "</td>";
+            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30&d=mm\" /> " . $result->name . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . $result->email . "' title='Email " . ".$result->email." . "'>" . $result->email . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . nl2br($result->message) . "</td>";
             echo "<td class='chat_name column_chat_delete'><button class='button wplc_delete_message' title='".__('Delete Message', 'wplivechat')."' class='wplc_delete_message' mid='".$result->id."'><i class='fa fa-times'></i></button></td>";
@@ -6243,7 +6256,7 @@ function wplc_transcript_return_chat_messages( $cid ) {
 	$wplc_et_settings = get_option( "WPLC_ET_SETTINGS" );
 	$body             = html_entity_decode( stripslashes( $wplc_et_settings['wplc_et_email_body'] ) );
 
-	if ( ! $body ) {
+	if (!$body || empty($body)) {
 		$body = do_shortcode( wplc_transcript_return_default_email_body() );
 	} else {
 		$body = do_shortcode( $body );

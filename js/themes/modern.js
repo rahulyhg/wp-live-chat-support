@@ -115,7 +115,7 @@ jQuery(document).on("wplc_agent_joined", function(e) {
                 jQuery('<p/>', {
                     'class': '',
                     'style': 'text-align:center;',
-                    html: '<img class="img-thumbnail img-circle wplc_thumb32 wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'+taid+'" title="'+tname+'" src="'+timageurl+'?s=60" /><br /><span class="wplc_agent_name wplc-color-2">'+tname+'</span>'+ta_tagline+ta_bio+ta_social_links
+                    html: '<img class="img-thumbnail img-circle wplc_thumb32 wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'+taid+'" title="'+tname+'" src="'+timageurl+'?s=60&d=mm" /><br /><span class="wplc_agent_name wplc-color-2">'+tname+'</span>'+ta_tagline+ta_bio+ta_social_links
                 }).appendTo('.wplc_agent_info');
                 
                 jQuery('<span/>', {
@@ -125,9 +125,9 @@ jQuery(document).on("wplc_agent_joined", function(e) {
                 }).appendTo('.wplc_agent_info');
             }
 
-            var csst = "url(https://www.gravatar.com/avatar/20a6e5c8b75ce87f4896f46ed6f49832?s=60);";
+            var csst = "url(https://www.gravatar.com/avatar/20a6e5c8b75ce87f4896f46ed6f49832?s=60&d=mm);";
 
-            jQuery("#wplc_chatbox_header_bg").css('background-image', 'url('+timageurl+'?s=380)');
+            jQuery("#wplc_chatbox_header_bg").css('background-image', 'url('+timageurl+'?s=380&d=mm)');
             jQuery("#wplc_chatbox").css("top",
                jQuery("#wplc_chatbox_header").height()+18+"px"
             );
@@ -166,7 +166,7 @@ jQuery(document).on("wplc_agent_joined", function(e) {
                 jQuery("img.wplc_agent_involved").removeClass("wplc_thumb32").addClass("wplc_thumb16_stacked");
 
                 //Add the new agents image as well
-                var wplc_new_agent_grav = '<img class="img-thumbnail img-circle wplc_thumb16_stacked wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'+taid+'" title="'+tname+'" src="'+timageurl+'?s=60" />';
+                var wplc_new_agent_grav = '<img class="img-thumbnail img-circle wplc_thumb16_stacked wplc_agent_involved" style="max-width:inherit;" id="agent_grav_'+taid+'" title="'+tname+'" src="'+timageurl+'?s=60&d=mm" />';
                 jQuery(wplc_new_agent_grav).insertAfter("img.wplc_agent_involved:last");
 
                 //Update the height of the header

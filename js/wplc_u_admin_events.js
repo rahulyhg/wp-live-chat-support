@@ -603,7 +603,7 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
                       'id' : 'agent_grav_'+e.chatid+'_'+e.agentid,
                       'title' : agent_involved_name,
                       'alt' : agent_involved_name,
-                      'src' : 'https://www.gravatar.com/avatar/'+agent_involved_email+'?s=32&d=identicon',
+                      'src' : 'https://www.gravatar.com/avatar/'+agent_involved_email+'?s=32&d=mm',
                       'class' : "img-thumbnail img-circle thumb16 agent_involved agent_involved_"+e.chatid
                     }).appendTo('#'+e.chatid+ " .agents_involved");
                 }
@@ -642,7 +642,7 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
                       'id' : 'agent_grav_visitor_'+e.chatid+'_'+e.agentid,
                       'title' : agent_involved_name,
                       'alt' : agent_involved_name,
-                      'src' : 'https://www.gravatar.com/avatar/'+agent_involved_email+'?s=32&d=identicon',
+                      'src' : 'https://www.gravatar.com/avatar/'+agent_involved_email+'?s=32&d=mm',
                       'class' : "img-thumbnail img-circle thumb16 agent_involved agent_involved_"+e.chatid
                     }).appendTo('#vis'+e.chatid+ " .agents_involved_visitor");
                 }

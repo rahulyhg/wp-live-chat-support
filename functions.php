@@ -2155,7 +2155,7 @@ function wplc_admin_display_missed_chats() {
 
             echo "<tr id=\"record_" . $result->id . "\">";
             echo "<td class='chat_id column-chat_d'>" . sanitize_text_field($result->timestamp) . "</td>";
-            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30\"  class='wplc-user-message-avatar' /> " . sanitize_text_field($result->name) . "</td>";
+            echo "<td class='chat_name column_chat_name' id='chat_name_" . $result->id . "'><img src=\"//www.gravatar.com/avatar/" . md5($result->email) . "?s=30&d=mm\"  class='wplc-user-message-avatar' /> " . sanitize_text_field($result->name) . "</td>";
             echo "<td class='chat_email column_chat_email' id='chat_email_" . $result->id . "'><a href='mailto:" . sanitize_text_field($result->email) . "' title='Email " . ".$result->email." . "'>" . sanitize_text_field($result->email) . "</a></td>";
             echo "<td class='chat_name column_chat_url' id='chat_url_" . $result->id . "'>" . esc_url($result->url) . "</td>";
             echo "<td class='chat_name column_chat_url'>".$actions."</td>";

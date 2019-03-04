@@ -44,7 +44,7 @@ function wplc_gdpr_settings_content($wplc_settings = false){
              <label for="wplc_gdpr_notice_company"><?php _e("Company Name", "wplivechat"); ?></label>
            </td>
            <td> 
-            <input type="text" name="wplc_gdpr_notice_company" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_company']) ? $wplc_settings['wplc_gdpr_notice_company'] : get_bloginfo('name')); ?>" > 
+            <input type="text" name="wplc_gdpr_notice_company" value="<?php echo(isset($wplc_settings['wplc_gdpr_notice_company']) ? stripslashes($wplc_settings['wplc_gdpr_notice_company']) : get_bloginfo('name')); ?>" > 
            </td>
          </tr>
 
@@ -372,7 +372,7 @@ function wplc_gdpr_generate_retention_agreement_notice($wplc_settings = false){
   if($wplc_settings === false){ $wplc_settings = get_option("WPLC_SETTINGS"); }
 
   $localized_notice = __("I agree for my personal data to be processed and for the use of cookies in order to engage in a chat processed by %%COMPANY%%, for the purpose of %%PURPOSE%%, for the time of %%PERIOD%% day(s) as per the GDPR.", "wplivechat");
-    $company_replacement = isset($wplc_settings['wplc_gdpr_notice_company']) ? $wplc_settings['wplc_gdpr_notice_company'] : get_bloginfo('name');
+    $company_replacement = isset($wplc_settings['wplc_gdpr_notice_company']) ? stripslashes($wplc_settings['wplc_gdpr_notice_company']) : get_bloginfo('name');
     $purpose_replacement = isset($wplc_settings['wplc_gdpr_notice_retention_purpose']) ? $wplc_settings['wplc_gdpr_notice_retention_purpose'] : __('Chat/Support', 'wplivechat');
     $period_replacement = isset($wplc_settings['wplc_gdpr_notice_retention_period']) ? intval($wplc_settings['wplc_gdpr_notice_retention_period']) : 30;
 
