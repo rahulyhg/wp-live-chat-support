@@ -48,7 +48,7 @@ final class wplc_update_control {
 
     public function activate() {
         $this->wplc_extension_string = $this->wplc_title;
-        $this->wplc_api_url = 'https://ccplugins.co/api-control/';
+        $this->wplc_api_url = 'https://update.wp-livechat.com/auth_api/api-control/';
  
 
         add_filter('pre_set_site_transient_update_plugins', array( $this, 'wplc_check_for_plugin_update' ));
@@ -94,7 +94,6 @@ final class wplc_update_control {
         // Start checking for an update
         $raw_response = wp_remote_post($this->wplc_api_url, $request_string);
 
-        
         if (!is_wp_error($raw_response) && ($raw_response['response']['code'] == 200))
             $response = unserialize($raw_response['body']);
 
@@ -158,10 +157,6 @@ final class wplc_update_control {
             ));
             $response = wp_remote_post($this->wplc_api_url, $data_array);
 
-
-
-
-			
             if (is_array($response)) {
                 if ( $response['response']['code'] == "200" ) {
                     $data = $response['body'];

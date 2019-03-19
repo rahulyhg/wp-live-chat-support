@@ -11,7 +11,7 @@
 	    return this.replace(/\\(.)/mg, "$1");
 	}
 
-	var wplc_logo = ( wplc_settings.wplc_logo ) ? wplc_settings.wplc_logo : 'https://bleeper.io/app/assets/images/wplc_loading.png';
+	var wplc_logo = ( wplc_settings.wplc_logo ) ? wplc_settings.wplc_logo : 'https://update.wp-livechat.com/remote_files/assets/images/wplc_loading.png';
 	var wplc_text = ( wplc_settings.wplc_text ) ? wplc_settings.wplc_text : 'Live Chat';
 	var wplc_icon = ( wplc_settings.wplc_icon ) ? wplc_settings.wplc_icon : 'fa-commenting-o';
 	var classes = ( wplc_settings.wplc_enabled == 0 ) ? ' disabled' : '';

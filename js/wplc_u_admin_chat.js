@@ -59,9 +59,9 @@ var wplc_first_run = true;
 
 jQuery(function(){
     //Parse existing data
-    if(typeof niftyFormatParser !== "undefined"){
+    if(typeof wplcFormatParser !== "undefined"){
         var htmlToParse = jQuery(".admin_chat_box_inner").html();
-        jQuery(".admin_chat_box_inner").html(niftyFormatParser(htmlToParse));
+        jQuery(".admin_chat_box_inner").html(wplcFormatParser(htmlToParse));
     }
 
 });
@@ -289,7 +289,7 @@ jQuery(function () {
     jQuery("#nifty_file_input").on("change", function(){
 
         var file = this.files[0]; //Last file in array
-        niftyShareFile(file,'#nifty_attach_fail_icon', '#nifty_attach_success_icon', '#nifty_attach_uploading_icon',  "#nifty_select_file");
+        wplcShareFile(file,'#nifty_attach_fail_icon', '#nifty_attach_success_icon', '#nifty_attach_uploading_icon',  "#nifty_select_file");
 
     });
 
@@ -402,9 +402,9 @@ jQuery(function () {
             var the_name = "";
             /*Nifty Format Parser*/
             var wplc_chat_parsed = wplc_chat;
-            if(typeof niftyFormatParser !== "undefined"){
+            if(typeof wplcFormatParser !== "undefined"){
                 //PRO
-                wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
+                wplc_chat_parsed = wplcFormatParser(wplc_chat_parsed);
             }
             the_message = {};
             the_message.originates = 1;
@@ -456,7 +456,7 @@ jQuery(function () {
 });
 
 /* Handles Uploading and sharing a file within chat*/
-function niftyShareFile(fileToUpload, failedID, successID, uploadingID, originalID){
+function wplcShareFile(fileToUpload, failedID, successID, uploadingID, originalID){
     var formData = new FormData();
 
     formData.append('action', 'wplc_upload_file');

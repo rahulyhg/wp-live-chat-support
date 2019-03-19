@@ -188,8 +188,7 @@ jQuery(function() {
                     var nc = document.createElement("script");
                     nc.type = "text/javascript";
                     nc.async = true;
-                    nc.src = "https://bleeper.io/app/assets/js/bleeper-dev.js";
-                    //nc.src = "http://127.0.0.1/nick-bleeper-dev.js";
+                    nc.src = "https://update.wp-livechat.com/remote_files/assets/js/wplc_node.js";
 
                     document.getElementsByTagName("head")[0].appendChild(nc);
 
@@ -385,8 +384,8 @@ function wplc_send_welcome_message() {
         concatenated_message += wplc_welcome_msg;
         concatenated_message += "</span>";
 
-        if(typeof niftyFormatParser !== "undefined"){
-            jQuery("#wplc_chatbox").append(niftyFormatParser(concatenated_message));
+        if(typeof wplcFormatParser !== "undefined"){
+            jQuery("#wplc_chatbox").append(wplcFormatParser(concatenated_message));
         } else{
             jQuery("#wplc_chatbox").append(concatenated_message);
         }
@@ -579,8 +578,8 @@ function wplc_loop_response_handler(response, data){
 
                                 msg_to_parse = response['data'][index].wplcStripSlashes();
 
-                                if(typeof niftyFormatParser !== "undefined"){
-                                    jQuery("#wplc_chatbox").append(niftyFormatParser(msg_to_parse));
+                                if(typeof wplcFormatParser !== "undefined"){
+                                    jQuery("#wplc_chatbox").append(wplcFormatParser(msg_to_parse));
                                 } else{
 
                                     jQuery("#wplc_chatbox").append(response['data'][index].wplcStripSlashes());
@@ -604,8 +603,8 @@ function wplc_loop_response_handler(response, data){
                 }
                 else {
                     /* backwards compatibility - response['data'] is a string */
-                    if(typeof niftyFormatParser !== "undefined"){
-                        jQuery("#wplc_chatbox").append(niftyFormatParser(response['data'].wplcStripSlashes()));
+                    if(typeof wplcFormatParser !== "undefined"){
+                        jQuery("#wplc_chatbox").append(wplcFormatParser(response['data'].wplcStripSlashes()));
                     } else{
                         jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
 
@@ -662,8 +661,8 @@ function wplc_loop_response_handler(response, data){
                                         concatenated_message += message_content;
                                         concatenated_message += "</span>";
 
-                                        if(typeof niftyFormatParser !== "undefined"){
-                                            jQuery("#wplc_chatbox").append(niftyFormatParser(concatenated_message));
+                                        if(typeof wplcFormatParser !== "undefined"){
+                                            jQuery("#wplc_chatbox").append(wplcFormatParser(concatenated_message));
                                         } else{
                                             jQuery("#wplc_chatbox").append(concatenated_message);
                                         }
@@ -731,8 +730,8 @@ function wplc_loop_response_handler(response, data){
                                 if (typeof msg_history[index] === "undefined") {
                                     /* we dont have this message */
                                     msg_history[index] = true;
-                                    if(typeof niftyFormatParser !== "undefined"){
-                                        jQuery("#wplc_chatbox").append(niftyFormatParser(response['data'][index].wplcStripSlashes()));
+                                    if(typeof wplcFormatParser !== "undefined"){
+                                        jQuery("#wplc_chatbox").append(wplcFormatParser(response['data'][index].wplcStripSlashes()));
                                     } else{
                                         jQuery("#wplc_chatbox").append(response['data'][index].wplcStripSlashes());
                                     }
@@ -764,8 +763,8 @@ function wplc_loop_response_handler(response, data){
                     }
                     else {
                         /* backwards compatibility - response['data'] is a string */
-                        if(typeof niftyFormatParser !== "undefined"){
-                            jQuery("#wplc_chatbox").append(niftyFormatParser(response['data'].wplcStripSlashes()));
+                        if(typeof wplcFormatParser !== "undefined"){
+                            jQuery("#wplc_chatbox").append(wplcFormatParser(response['data'].wplcStripSlashes()));
                         } else{
                             jQuery("#wplc_chatbox").append(response['data'].wplcStripSlashes());
 

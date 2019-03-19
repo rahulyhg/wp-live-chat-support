@@ -1,5 +1,5 @@
 var wplcApiUrls = {
-	blogFeedUrl: 'https://bleeper.io/blog/wp-json/wp/v2/posts',
+	blogFeedUrl: 'https://wp-livechat.com/wp-json/wp/v2/posts',
 	statusPageComponentsURL: 'https://bleeper.statuspage.io/api/v2/components.json',
 	statusPageIncidentsURL: 'https://bleeper.statuspage.io/api/v2/incidents.json',
 	visitorURL: 'https://bleeper-eu-1.eu-4.evennode.com/api/v1/total-visitors-online?api_key='+nifty_api_key

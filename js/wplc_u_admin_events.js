@@ -37,9 +37,9 @@ jQuery(function(){
       /* find closest server */
       bleeper_ping_servers(function(lowest_ping_index) {
           
-          if(typeof bleeper_end_point_override !== "undefined"){
+          if(typeof wplc_end_point_override !== "undefined"){
             /* use the override if we have set it */
-            node_uri = bleeper_end_point_override; //Override
+            node_uri = wplc_end_point_override; //Override
           } else {
             if (typeof bleeper_server_location !== "undefined") {
               // use this as the user selected the server in the settings
@@ -49,7 +49,7 @@ jQuery(function(){
               node_uri = bleeper_server_list[lowest_ping_index];
             }
           }
-          if (window.console) { console.log("[Bleeper] Connecting to "+node_uri); }
+          if (window.console) { console.log("[WPLC] Connecting to "+node_uri); }
           jQuery.event.trigger({type: "bleeper_dom_ready"});
           
       });
@@ -457,7 +457,7 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
 
     jQuery(document).on("bleeper_add_initiate_button_no_col", function(e) {
       
-        if(typeof bleeper_integration_pro_active === "undefined"){
+        if(typeof wplc_integration_pro_active === "undefined"){
             var tmp_chatid = typeof e.cid !== "undefined" ? e.cid : false;
         
             if(tmp_chatid !== false){
@@ -474,7 +474,7 @@ jQuery(document).on("bleeper_dom_ready", function(e) {
     });
 
     jQuery(document).on("bleeper_remove_initiate_button", function(e) {
-        if(typeof bleeper_integration_pro_active === "undefined"){
+        if(typeof wplc_integration_pro_active === "undefined"){
             var tmp_chatid = typeof e.cid !== "undefined" ? e.cid : false;
             if(tmp_chatid !== false){
                 jQuery('#vis'+ tmp_chatid + " #wplc_initiate_chat").remove();  
