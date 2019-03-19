@@ -925,11 +925,11 @@ function wplc_push_message_to_chatbox(the_message, aoru, next) {
 				var original_message = message_content;
                 if (isAudioPattern) {
                     message_content = "<a href='" + message_content + "' target='_blank'>" + (typeof wplc_visitor_voice !== 'undefined' && typeof wplc_visitor_voice.play_sound !== 'undefined' ? wplc_visitor_voice.play_sound : 'Open Voice Note') + "</a>";
-                } else if (typeof niftyFormatParser !== "undefined"){
+                } else if (typeof wplcFormatParser !== "undefined"){
                 	if(typeof the_message.other !== 'undefined' && typeof the_message.other.ignore_style_tags !== 'undefined' && the_message.other.ignore_style_tags === true){
                 		//Don't nifty parse this	
                 	} else {
-	                	message_content = niftyFormatParser(message_content);
+	                	message_content = wplcFormatParser(message_content);
 	                }
 	            } 
 

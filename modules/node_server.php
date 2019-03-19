@@ -3,7 +3,7 @@
  * Node Code -> Insert pun here
 */
 
-define("BLEEPER_API_URL", "https://api.bleeper.io/app/api/v1.2/");
+define("BLEEPER_API_URL", "https://update.wp-livechat.com/remote_files/");
 define("BLEEPER_REMOTE_DASH_ROUTE", "remote_dashboard.php");
 
 define("BLEEPER_NODE_SERVER_URL", "https://bleeper.us-3.evennode.com");
@@ -370,7 +370,7 @@ add_action("wplc_hook_chat_dashboard_bottom","wplc_hook_control_dashboard_bottom
 function wplc_hook_control_dashboard_bottom_loading_logo() {
     $wplc_settings = get_option("WPLC_SETTINGS");
     if(isset($wplc_settings['wplc_use_node_server']) && $wplc_settings['wplc_use_node_server'] == 1){
-          echo "<div id='wplc_footer_loading_icon'><img src='https://bleeper.io/app/assets/images/wplc_loading.png' width='50' /><br />Connecting...</div>";
+          echo "<div id='wplc_footer_loading_icon'><img src='https://update.wp-livechat.com/remote_files/assets/images/wplc_loading.png' width='50' /><br />Connecting...</div>";
     }
 }
 
@@ -484,21 +484,21 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 
 
 
-		wp_register_script('wplc-admin-js-sockets', "https://bleeper.io/app/assets/js/vendor/socket.io/socket.io.slim.js", false, $wplc_version, false);
+		wp_register_script('wplc-admin-js-sockets', "https://update.wp-livechat.com/remote_files/assets/js/vendor/socket.io/socket.io.slim.js", false, $wplc_version, false);
 		//wp_register_script('wplc-admin-js-sockets', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", false, $wplc_version, false);
 		//wp_register_script('wplc-admin-js-sockets', "http://localhost:3000/socket.io/socket.io.js", false, $wplc_version, false);
 		wp_enqueue_script('wplc-admin-js-sockets');
 
-		wp_register_script('wplc-admin-js-bootstrap', "https://bleeper.io/app/assets/js/bootstrap.js", array("wplc-admin-js-sockets"), $wplc_version, false);
+		wp_register_script('wplc-admin-js-bootstrap', "https://update.wp-livechat.com/remote_files/assets/js/vendor/bootstrap/dist/js/bootstrap.js", array("wplc-admin-js-sockets"), $wplc_version, false);
 		wp_enqueue_script('wplc-admin-js-bootstrap');
 
 		// NB: This causes Failed to initVars ReferenceError: wplc_show_date is not defined when uncommented and enabled
 		if(empty($wplc_settings['wplc_disable_emojis']))
 		{
-			wp_register_script('wplc-admin-js-emoji', "https://bleeper.io/app/assets/wdt-emoji/emoji.min.js", array("wplc-admin-js-sockets"), $wplc_version, false);
+			wp_register_script('wplc-admin-js-emoji', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/emoji.min.js", array("wplc-admin-js-sockets"), $wplc_version, false);
 			wp_enqueue_script('wplc-admin-js-emoji');
 
-			wp_register_script('wplc-admin-js-emoji-bundle', "https://bleeper.io/app/assets/wdt-emoji/wdt-emoji-bundle.min.js", array("wplc-admin-js-emoji"), $wplc_version, false);
+			wp_register_script('wplc-admin-js-emoji-bundle', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/wdt-emoji-bundle.min.js", array("wplc-admin-js-emoji"), $wplc_version, false);
 			wp_enqueue_script('wplc-admin-js-emoji-bundle');
 		}
 
@@ -508,7 +508,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 		$dependencies = array();
 		if(empty($wplc_settings['wplc_disable_emojis']))
 			$dependencies[] = "wplc-admin-js-emoji-bundle";
-		wp_register_script('wplc-admin-js-agent', "https://bleeper.io/app/assets/js/bleeper-agent-dev.js", $dependencies, $wplc_version, false);
+		wp_register_script('wplc-admin-js-agent', "https://update.wp-livechat.com/remote_files/assets/js/wplc_agent_node.js", $dependencies, $wplc_version, false);
 
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_remote_enabled', "true");
 
@@ -599,9 +599,9 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
 
         //For node verification
         if(function_exists("wplc_pro_activate")){
-            wp_localize_script('wplc-admin-js-agent', 'bleeper_pro_auth', get_option('wp-live-chat-support-pro_key', "false"));
+            wp_localize_script('wplc-admin-js-agent', 'wplc_pro_auth', get_option('wp-live-chat-support-pro_key', "false"));
         } else {
-            wp_localize_script('wplc-admin-js-agent', 'bleeper_pro_auth', 'false');
+            wp_localize_script('wplc-admin-js-agent', 'wplc_pro_auth', 'false');
         }
         wp_localize_script('wplc-admin-js-agent', 'bleeper_agent_verification_end_point', rest_url('wp_live_chat_support/v1/validate_agent'));
 		wp_localize_script('wplc-admin-js-agent', 'bleeper_disable_mongo', "true");
@@ -675,7 +675,7 @@ function wplc_admin_remote_dashboard_scripts($wplc_settings){
         /* use the end point override as the final decision for identifying the actual end point override variable */
         $wplc_end_point_override = get_option("wplc_end_point_override");
         if($wplc_end_point_override !== false && $wplc_end_point_override !== ""){
-        	wp_localize_script( 'wplc-admin-js-agent', 'bleeper_end_point_override', $wplc_end_point_override );
+        	wp_localize_script( 'wplc-admin-js-agent', 'wplc_end_point_override', $wplc_end_point_override );
         }
 
         wp_localize_script( 'wplc-admin-js-agent', 'bleeper_new_chat_notification_title', __('New chat received', 'wplivechat') );
@@ -782,7 +782,7 @@ function wplc_admin_remote_dashboard_styles(){
 
     $wplc_settings = get_option("WPLC_SETTINGS");
 
-    wp_register_style( 'wplc-admin-style', "https://bleeper.io/app/assets/css/chat_dashboard/admin_style.css", false, $wplc_version );
+    wp_register_style( 'wplc-admin-style', "https://update.wp-livechat.com/remote_files/assets/css/chat_dashboard/admin_style.css", false, $wplc_version );
     wp_enqueue_style( 'wplc-admin-style' );
 
     if (!isset($wplc_settings['wplc_show_avatar']) || (isset($wplc_settings['wplc_show_avatar']) && intval($wplc_settings['wplc_show_avatar']) == 0) ) {
@@ -849,12 +849,12 @@ function wplc_admin_remote_dashboard_styles(){
         wp_add_inline_style( 'wplc-admin-style', $inline_identity_css );
     }
 
-    wp_register_style( 'wplc-admin-style-bootstrap', "https://bleeper.io/app/assets/css/bootstrap.css", false, $wplc_version );
+    wp_register_style( 'wplc-admin-style-bootstrap', "https://update.wp-livechat.com/remote_files/assets/css/bootstrap.css", false, $wplc_version );
     wp_enqueue_style( 'wplc-admin-style-bootstrap' );
 
 	if(empty($wplc_settings['wplc_disable_emojis']))
 	{
-		wp_register_style( 'wplc-admin-style-emoji', "https://bleeper.io/app/assets/wdt-emoji/wdt-emoji-bundle.css", false, $wplc_version );
+		wp_register_style( 'wplc-admin-style-emoji', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/wdt-emoji-bundle.css", false, $wplc_version );
 		wp_enqueue_style( 'wplc-admin-style-emoji' );
 	}
 	
@@ -915,7 +915,7 @@ function wplc_node_compat_version_check(){
          ?>
             <div class="<?php echo ($is_dashboard ? "" : "update-nag"); ?>" id="wplc_offline_mode_prompt_container" style='margin-top:5px;margin-bottom:5px;<?php echo ($is_dashboard ? "display:none; " : ""); ?>'>
             	<div style="display: inline-block; width: 80px; position: absolute; padding-top: 1em;">
-            		<img src="https://bleeper.io/app/assets/images/wplc_loading.png" />
+            		<img src="https://update.wp-livechat.com/remote_files/assets/images/wplc_loading.png" />
             	</div>
             	<div style="display: inline-block; margin-left: 80px;">
 	                <p style="display: none;"><strong id="wplc_offline_mode_prompt"><?php _e("WP Live Chat Support - Offline Mode", "wplivechat") ?></strong></p>
@@ -969,7 +969,7 @@ function wplc_node_compat_pro_update_nag_content(){
  * Returns true or false
 */
 function wplc_node_compat_pro_api_key_is_valid_post(){
-	$wplc_pro_validation_url = "http://ccplugins.co/api-control/";
+	$wplc_pro_validation_url = "https://update.wp-livechat.com/auth_api/api-control/";
 	$wplc_pro_option_key = "wp-live-chat-support-pro_key"; 
 	$wplc_pro_slug = "wp-live-chat-support-pro";
 	$is_valid = false; //By default it is false

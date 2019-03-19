@@ -328,8 +328,8 @@ jQuery(function() {
                 /*Nifty format Parse*/
                 var wplc_chat_parsed = wplc_chat;
                 
-                //if(typeof niftyFormatParser !== "undefined"){
-                //    wplc_chat_parsed = niftyFormatParser(wplc_chat_parsed);
+                //if(typeof wplcFormatParser !== "undefined"){
+                //    wplc_chat_parsed = wplcFormatParser(wplc_chat_parsed);
                 //}
             
                 if( typeof wplc_display_name !== 'undefined' ){

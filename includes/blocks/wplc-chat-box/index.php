@@ -29,7 +29,7 @@ function wplc_gutenberg_settings_content() {
 	$gutenberg_enable = ( $gutenberg_settings['wplc_gutenberg_enable'] !== null ) ? $gutenberg_settings['wplc_gutenberg_enable'] : 1;
 	$checked = ( @$gutenberg_enable == 1 ? 'checked' : '' );
 	$gutenberg_size = ( $gutenberg_settings['wplc_gutenberg_size'] ) ? $gutenberg_settings['wplc_gutenberg_size'] : 2;
-	$gutenberg_defail_logo = 'https://bleeper.io/app/assets/images/wplc_loading.png';
+	$gutenberg_defail_logo = 'https://update.wp-livechat.com/remote_files/assets/images/wplc_loading.png';
 	$gutenberg_logo = ( $gutenberg_settings['wplc_gutenberg_logo'] == '' ) ? $gutenberg_defail_logo : $gutenberg_settings['wplc_gutenberg_logo'];
 	$gutenberg_text = ( $gutenberg_settings['wplc_gutenberg_text'] ) ? $gutenberg_settings['wplc_gutenberg_text'] : 'Live Chat';
 	$gutenberg_icon = ( $gutenberg_settings['wplc_gutenberg_icon'] ) ? $gutenberg_settings['wplc_gutenberg_icon'] : 'fa-commenting-o';
@@ -152,7 +152,7 @@ function wplc_gutenberg_save_settings() {
         if (isset($_POST['wplc_gutenberg_logo']) && $_POST['wplc_gutenberg_logo'] !== '0') {
             $wplc_gutenberg_data['wplc_gutenberg_logo'] = esc_attr($_POST['wplc_gutenberg_logo']);
         } else {
-            $wplc_gutenberg_data['wplc_gutenberg_logo'] = 'https://bleeper.io/app/assets/images/wplc_loading.png';
+            $wplc_gutenberg_data['wplc_gutenberg_logo'] = 'https://update.wp-livechat.com/remote_files/assets/images/wplc_loading.png';
         }
 
         if (isset($_POST['wplc_gutenberg_size']) && $_POST['wplc_gutenberg_size'] !== '0') {

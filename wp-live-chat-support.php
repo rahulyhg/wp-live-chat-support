@@ -3,7 +3,7 @@
   Plugin Name: WP Live Chat Support
   Plugin URI: http://www.wp-livechat.com
   Description: The easiest to use website live chat plugin. Let your visitors chat with you and increase sales conversion rates with WP Live Chat Support.
-  Version: 8.0.24
+  Version: 8.0.25
   Author: WP-LiveChat
   Author URI: http://www.wp-livechat.com
   Text Domain: wplivechat
@@ -11,6 +11,11 @@
 */
 
 /**
+ * 8.0.25 - 2019-03-19 - Medium priority
+ * Modified server integration code
+ * Modified remote file sources
+ * Added update notice to ensure stability
+ * 
  * 8.0.24 - 2019-03-04 - Medium priority
  * Added styling settings hook.
  * Added Slovenian translation files. Thanks to Zarko Germek
@@ -137,7 +142,7 @@ global $debug_start;
 $wplc_tblname_offline_msgs = $wpdb->prefix . "wplc_offline_messages";
 $wplc_tblname_chats = $wpdb->prefix . "wplc_chat_sessions";
 $wplc_tblname_msgs = $wpdb->prefix . "wplc_chat_msgs";
-$wplc_version = "8.0.24";
+$wplc_version = "8.0.25";
 
 define('WPLC_BASIC_PLUGIN_DIR', dirname(__FILE__));
 define('WPLC_BASIC_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -735,7 +740,7 @@ function wplc_push_js_to_front_basic() {
 	    	$bleeper_url = BLEEPER_NODE_SERVER_URL;
 	    }
 		//wp_register_script('wplc-node-server-script', trailingslashit( $bleeper_url ) . "socket.io/socket.io.js", array('jquery'), $wplc_version);
-		wp_register_script('wplc-node-server-script', "https://bleeper.io/app/assets/js/vendor/socket.io/socket.io.slim.js", array('jquery'), $wplc_version);
+		wp_register_script('wplc-node-server-script', "https://update.wp-livechat.com/remote_files/assets/js/vendor/socket.io/socket.io.slim.js", array('jquery'), $wplc_version);
 
 
 		//wp_register_script('wplc-node-server-script', 'http://localhost:3000/socket.io/socket.io.js', array('jquery'), $wplc_version);
@@ -769,28 +774,28 @@ function wplc_push_js_to_front_basic() {
 
         $wplc_end_point_override = get_option("wplc_end_point_override");
         if($wplc_end_point_override !== false && $wplc_end_point_override !== ""){
-        	wp_localize_script( 'wplc-server-script', 'bleeper_end_point_override', $wplc_end_point_override );
+        	wp_localize_script( 'wplc-server-script', 'wplc_end_point_override', $wplc_end_point_override );
         }
         //For node verification
         if(function_exists("wplc_pro_activate")){
-            wp_localize_script('wplc-server-script', 'bleeper_pro_auth', get_option('wp-live-chat-support-pro_key', "false"));
+            wp_localize_script('wplc-server-script', 'wplc_pro_auth', get_option('wp-live-chat-support-pro_key', "false"));
         } else {
-            wp_localize_script('wplc-server-script', 'bleeper_pro_auth', 'false');
+            wp_localize_script('wplc-server-script', 'wplc_pro_auth', 'false');
         }
 
 
 
  		//Emoji Libs
 		if(empty($wplc_settings['wplc_disable_emojis'])) {
-			//wp_register_script('wplc-user-js-emoji', "https://bleeper.io/app/assets/wdt-emoji/emoji.min.js", array("wplc-server-script", "wplc-server-script"), $wplc_version, false);
+			//wp_register_script('wplc-user-js-emoji', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/emoji.min.js", array("wplc-server-script", "wplc-server-script"), $wplc_version, false);
 			//wp_enqueue_script('wplc-user-js-emoji');
-			//wp_register_script('wplc-user-js-emoji-bundle', "https://bleeper.io/app/assets/wdt-emoji/wdt-emoji-bundle.min.js", array("wplc-server-script", "wplc-server-script", "wplc-user-js-emoji"), $wplc_version, false);
+			//wp_register_script('wplc-user-js-emoji-bundle', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/wdt-emoji-bundle.min.js", array("wplc-server-script", "wplc-server-script", "wplc-user-js-emoji"), $wplc_version, false);
 			//wp_enqueue_script('wplc-user-js-emoji-bundle');
 
-			wp_register_script('wplc-user-js-emoji-concat', "https://bleeper.io/app/assets/wdt-emoji/wdt-emoji-concat.min.js", array("wplc-server-script", "wplc-server-script"), $wplc_version, false);
+			wp_register_script('wplc-user-js-emoji-concat', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/wdt-emoji-concat.min.js", array("wplc-server-script", "wplc-server-script"), $wplc_version, false);
 			wp_enqueue_script('wplc-user-js-emoji-concat');
 
-			wp_register_style( 'wplc-admin-style-emoji', "https://bleeper.io/app/assets/wdt-emoji/wdt-emoji-bundle.css", false, $wplc_version );
+			wp_register_style( 'wplc-admin-style-emoji', "https://update.wp-livechat.com/remote_files/assets/wdt-emoji/wdt-emoji-bundle.css", false, $wplc_version );
 			wp_enqueue_style( 'wplc-admin-style-emoji' );
 		}
 
@@ -2563,9 +2568,6 @@ function wplc_admin_output_js() {
 }
 
 function wplc_admin_menu_layout() {
-    
-	
-
 
 	    do_action("wplc_hook_admin_menu_layout");
 	    if (function_exists("wplc_register_pro_version")) {
@@ -2582,7 +2584,8 @@ function wplc_admin_menu_layout() {
 
 	            </div>
 	            <?php
-	        }
+            }
+
 	        $wplc_ver = str_replace('.', '', $wplc_pro_version);
 	        $wplc_ver = intval($wplc_ver);
 	        if ($wplc_ver < 501) {
@@ -2603,7 +2606,32 @@ function wplc_admin_menu_layout() {
 	            </div>
 	            <?php
 	        }
-	    }
+        }
+
+        if(function_exists('wplc_pro_activate')){
+            global $wplc_pro_version;
+
+            $wplc_pro_version_number = str_replace('.', '', $wplc_pro_version);
+            $wplc_pro_version_number = intval($wplc_pro_version_number);
+
+            if($wplc_pro_version_number < 8011){
+                ?>
+                <div class='error below-h1'>
+                    <p><?php _e("Dear Pro User", "wplivechat") ?><br /></p>
+                    <p><?php _e("You are using an outdated version of <strong>WP Live Chat Support Pro</strong>.", "wplivechat") ?></p>
+                    <p>
+                        <strong><?php _e("Please update to the latest version of WP Live Chat Support Pro", 'wplivechat'); ?>
+                            <a href="https://wp-livechat.com/get-updated-version/" target=\"_BLANK\"> <?php _e("Version 8.0.11", "wplivechat"); ?></a>
+                            <?php _e("to ensure everything is working correctly.", "wplivechat"); ?>
+                        </strong>
+                    </p>
+                    <p><?php _e("You can update your plugin <a href='./update-core.php'>here</a>, <a href='./plugins.php'>here</a> or <a href='https://wp-livechat.com/get-updated-version/' target='_BLANK'>here</a>.", "wplivechat") ?></strong></p>
+                    <p><?php _e("If you are having difficulty updating the plugin, please contact", "wplivechat") ?> nick@wp-livechat.com</p>
+                </div>
+                <?php
+            }
+        }
+
 	    if ( ( get_option("WPLC_V8_FIRST_TIME") == true && !class_exists("APC_Object_Cache") ) || ( isset( $_GET['action'] ) && ( $_GET['action'] == 'welcome' || $_GET['action'] == 'credits' ) ) ){
 	        include 'includes/welcome_page.php';
 	        update_option('WPLC_V8_FIRST_TIME', false);
@@ -4536,7 +4564,7 @@ function wplc_extensions_menu() {
 ?>
     <h2 class="nav-tab-wrapper">
         <a href="admin.php?page=wplivechat-menu-extensions-page" title="<?php _e("Add-ons","wplivechat"); ?>" class="nav-tab <?php echo $normal; ?>"><?php _e("Add-ons","wplivechat"); ?></a><a href="admin.php?page=wplivechat-menu-extensions-page&type=additional" title="<?php _e("Suggested Plugins","wplivechat"); ?>" class="nav-tab  <?php echo $additional; ?>"><?php _e("Suggested Plugins","wplivechat"); ?></a>
-<span style='float: right; bottom:-5px; position: relative;'><img src='<?php echo plugins_url('/images/codecabin.png', __FILE__); ?>' style="height:15px;" /></span>
+<span style='float: right; bottom:-5px; position: relative;'></span>
     </h2>
     <div id="tab_container">
 
@@ -4609,7 +4637,7 @@ function wplc_extensions_menu() {
         echo "</div></p>";
 
 
-        $response = wp_remote_post( "https://ccplugins.co/api-wplc-extensions", array(
+        $response = wp_remote_post( "https://update.wp-livechat.com/auth_api/api-wplc-extensions", array(
                 'method' => 'POST',
                 'body' => array(
                     'action' => 'extensions',
@@ -4769,7 +4797,7 @@ function wplc_footer_mod( $footer_text ) {
             'https://wordpress.org/support/view/plugin-reviews/wp-live-chat-support?filter=5#postform'
         );
 
-        return str_replace( '</span>', '', $footer_text ) . ' | ' . $footer_text_mod . ' | ' . __('WP Live Chat Support is a product of','wplivechat') . ' <a target="_BLANK" href="http://codecabin.co.za/?utm_source=livechat&utm_medium=link&utm_campaign=footer" border="0"><img src="'.plugins_url('/images/codecabin.png', __FILE__).'" style="height:10px;"/></span></a>';
+        return str_replace( '</span>', '', $footer_text ) . ' | ' . $footer_text_mod;
     } else {
         return $footer_text;
     }
@@ -5005,44 +5033,44 @@ function wplc_get_chat_messages($cid, $only_read_messages = false, $wplc_setting
  */
 function wplc_build_api_check($page_content, $data) {
         $link = "#";
-        $image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
+        $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/add-on0.jpg";
         if ($data['string'] == "Multiple Agents") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/Agents-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/Agents-Small.jpg";
         }
         if ($data['string'] == "Cloud Server") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/Cloud-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/Cloud-Small.jpg";
         }
         if ($data['string'] == "Advanced Chat Box Control") {
           $link = "https://wp-livechat.com/extensions/advanced-chat-control/";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/AdvancedChatBox-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/AdvancedChatBox-Small.jpg";
         }
         if ($data['string'] == "Choose When Online") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/ChooseOnline-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/ChooseOnline-Small.jpg";
         }
         if ($data['string'] == "Encryption") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/Encryption-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/Encryption-Small.jpg";
         }
         if ($data['string'] == "Mobile and Desktop App") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/MobileDesktop-Small.jpg";
         }
         if ($data['string'] == "Initiate Chats") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/InitiateChat-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/InitiateChat-Small.jpg";
         }
         if ($data['string'] == "Include Exclude Pages") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/IncludeAndExclude-Small.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/IncludeAndExclude-Small.jpg";
         }
 
 
         if ($data['string'] == "WP Live Chat Support Pro") {
           $link = "";
-          $image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
+          $image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/add-on0.jpg";
         }
 
 
@@ -5099,7 +5127,7 @@ function wplc_filter_control_relevant_extensions_main_proe($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
 
   $rel_name = __("Pro Add-on","wplivechat");
-  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
+  $rel_image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/add-on0.jpg";
   $rel_link = "http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=relevant_pro";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -5126,7 +5154,7 @@ function wplc_filter_control_relevant_extensions_main_mobile($text) {
   if (function_exists("wplc_mobile_check_if_logged_in")) { return $text; }
 
   $rel_name = __("Mobile & Desktop App","wplivechat");
-  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/MobileDesktop-Icon.jpg";
+  $rel_image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/MobileDesktop-Icon.jpg";
   $rel_link = "https://wp-livechat.com/extensions/mobile-desktop-app-extension/?utm_source=plugin&amp;utm_medium=link&amp;utm_campaign=relevant_mobile";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -5153,7 +5181,7 @@ function wplc_filter_control_relevant_extensions_chatbox_proe($text) {
   if (function_exists("wplc_hook_control_intiate_check")) { return $text; }
 
   $rel_name = __("Pro Add-on","wplivechat");
-  $rel_image = "https://ccplugins.co/api-wplc-extensions/images/add-on0.jpg";
+  $rel_image = "https://update.wp-livechat.com/auth_api/api-wplc-extensions/images/add-on0.jpg";
   $rel_link = "http://www.wp-livechat.com/purchase-pro/?utm_source=plugin&utm_medium=link&utm_campaign=relevant_pro_chatbox";
   $text .= '<div class="wplc-extension relevant_extension">';
   $text .= '<a href="'.$rel_link.'" title="'.$rel_name.'" target="_BLANK" style="float:left;">';
@@ -5559,7 +5587,7 @@ function wplc_hook_control_admin_settings_chat_box_settings_after() {
           </tr>
           <tr>
               <td valign='top'>
-                  <?php _e("Long poll setup","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Only change these if you are an experienced developer or if you have received these figures from the Code Cabin Support team.", "wplivechat") ?>"></i>
+                  <?php _e("Long poll setup","wplivechat"); ?>: <i class="fa fa-question-circle wplc_light_grey wplc_settings_tooltip" title="<?php _e("Only change these if you are an experienced developer or if you have received these figures from the WP Live Chat Support team.", "wplivechat") ?>"></i>
               </td>
               <td valign='top'>
                 <?php

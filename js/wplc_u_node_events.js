@@ -5,22 +5,7 @@
  */
 var agent_joined = {};
 
-
-/**
- * This disables the MongoDB storage engine on the Node server
- * @type {Boolean}
- */
-var bleeper_disable_mongo = true;
-
-jQuery(function() {        
-    bleeper_disable_mongo = true;
-
-    /**
-     * Set the bleeper override settings
-     */
-    bleeper_disable_add_message = true;
-
-
+jQuery(function() {
     jQuery(document).on("wplc_open_chat", function(e) {
         jQuery("#bleeper_chat_ended").html('').hide();
         nc_status = Cookies.get("nc_status");
@@ -503,8 +488,8 @@ jQuery(function() {
         niftyUpdateStatusCookie('browsing');
         // restart connection as a visitor
         if (typeof io !== "undefined") {
-          socket = io.connect(NIFTY_SOCKET_URI, { query : query_string, transports: ['websocket'] } );
-          nifty_chat_delegates();
+          socket = io.connect(WPLC_SOCKET_URI, { query : query_string, transports: ['websocket'] } );
+          wplc_chat_delegates();
         }
 
         if(typeof Cookies !== "undefined"){

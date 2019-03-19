@@ -693,7 +693,7 @@ function wplc_gdpr_footer_mod( $footer_text ) {
     if(isset($_GET['page'])){
       if(strpos($_GET['page'], 'wplivechat') !== FALSE){
         $footer_text_addition =  __( 'Please refer to our %%PRIVACY_LINK%% for information on Data Processing', 'wplivechat' );
-        $footer_text_addition = str_replace("%%PRIVACY_LINK%%", "<a href='' target='_blank'>" . __(
+        $footer_text_addition = str_replace("%%PRIVACY_LINK%%", "<a href='https://wp-livechat.com/privacy-policy/' target='_blank'>" . __(
           "Privacy Policy", "wplivechat") . "</a>", $footer_text_addition);
 
         return str_replace( '</span>', '', $footer_text ) . ' | ' . $footer_text_addition . '</span>';

@@ -32,7 +32,7 @@
       </div>
       <div class="wplc_panel_col wplc_col_6">
         <div class="wplc_panel pull-right">
-          <em style='dispaly:block; float:left; margin-top:0px; margin-right:5px;'>A product of </em><a href='https://bleeper.io/?utm_source=wplc&utm_medium=link&utm_campaign=dash' target='_BLANK' title='Bleeper.io' border='0'><img src='https://bleeper.io/assets/images/bleeper-logo.png' alt='Bleeper - A Customer Communication Tool for Startups and Founders' title='Bleeper - A Customer Communication Tool for Startups and Founders' border='0' style='height:20px;'/></a>
+
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@
           
               
               <div class="resp-container">
-                  <iframe onload="resizeIframe(this)" id="idIframe" class="resp-iframe" width="100%" height="1300" src="https://bleeper.io/app/external-dashboard/"></iframe>
+                  <iframe onload="resizeIframe(this)" id="idIframe" class="resp-iframe" width="100%" height="1300" src="https://update.wp-livechat.com/remote_files/external-dashboard.php"></iframe>
               </div>
             
           </div>
